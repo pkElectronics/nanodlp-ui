@@ -25,6 +25,11 @@
             <a class="btn btn-default" href="/setup/export/nanosupport" translate>Settings for NanoSupport</a>
             <a class="btn btn-default" href="/setup/export" translate>Machine Settings</a>
             <a class="btn btn-default" href="/printer/backup" translate>Plates and Settings</a>
+			
+			{% if build!="athena" %}
+			<button id="BtnToggleHeater" class="btn btn-success" translate>Toggle Heater system</button> 		
+			{% endif %}
+	
         </div>
         <div class="col-md-4">
             <h4 translate>Other</h4>
@@ -55,6 +60,15 @@
             <a class="btn btn-default" href="/printer" translate>Status</a>
             <a class="btn btn-default" href="/plates/history" translate>History</a>
             <a class="btn btn-default" href="/term" translate>Gcode Terminal</a>
+
+			{% if build!="athena" %}
+
+			<form action="setup/wifi/country" method="post" class="edit-page" id="toolsform">
+					<input class="form-control" name="country" id="WiFiCountryTools" pattern="[A-Za-z]{2}|^$" style="width:50%">
+					<button type="submit" class="btn btn-success" translate>Change WiFi Country</button> 
+			</form>
+            {% endif %}
+
         </div>
         <div class="col-md-4">
             <h4 translate>NanoDLP</h4>

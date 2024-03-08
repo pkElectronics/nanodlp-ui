@@ -454,6 +454,7 @@ input:focus {
 	width: 185px;
 	float: left;
 	margin-top: 10px;
+	color: black;
 }
 
 .formula_keyword input {
@@ -621,6 +622,11 @@ dl {
 #setup .col-md-4 {
 	display: none;
 }
+
+#setup .col-md-11 {
+	display: none;
+}
+
 #setup .custom  .col-md-4 {
 	display: block;
 }

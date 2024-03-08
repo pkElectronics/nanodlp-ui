@@ -13,7 +13,7 @@
 			<translate>Edit Plate</translate> "{{plate.Path}}"
 		{% endif %}		
 	</legend>
-	<form method="post" class="edit-page upload-disable" enctype="multipart/form-data">
+	<form method="post" class="edit-page upload-disable" enctype="multipart/form-data" id="plate-upload-form">
 		<div class="row flex-row">
 			{% if not plate.PlateID %}
 			<div class="col-md-4">
