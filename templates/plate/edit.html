@@ -11,9 +11,9 @@
 			</ul>
 		{% else %}
 			<translate>Edit Plate</translate> "{{plate.Path}}"
-		{% endif %}
+		{% endif %}		
 	</legend>
-	<form method="post" class="edit-page upload-disable" enctype="multipart/form-data" id="plate-upload-form">
+	<form method="post" class="edit-page upload-disable" enctype="multipart/form-data">
 		<div class="row flex-row">
 			{% if not plate.PlateID %}
 			<div class="col-md-4">
@@ -29,7 +29,7 @@
 					</div>
 					<div id="upload-section" class="tab-pane fade in active">
 						<label for="ZipFile"><translate>File</translate> <span class="label label-default" translate>STL, OBJ, SLC, NSLICE, SVG, NanoDLP or Zip (PNG Files)</span></label>
-						<input name="ZipFile" class="form-control" id="ZipFile" type="file" accept=".zip,.obj,.slc,.svg,.stl,.cws,.nanodlp,.nslice">
+						<input name="ZipFile" class="form-control" id="ZipFile" type="file" data-size="{{fileSizeLimit}}" data-remote="{{remoteSlicing}}" accept=".zip,.obj,.slc,.svg,.stl,.cws,.nanodlp,.nslice">
 					</div>
 				</div>
 			</div>
@@ -103,18 +103,37 @@
 			</div>
 		</div>
 		<br>
-		<div class="progress progress-striped hide">
-			<div style="width: 0%" class="progress-bar progress-bar-main progress-bar-warning"></div>
+		<div class="progress hide">
+			<div style="width: 0%" class="progress-bar progress-bar-main progress-bar-striped active progress-bar-warning"></div>
 		</div>
-		<button type="submit" class="btn btn-success upload-button"><translate>Submit</translate><span class="upload-progress-bar"></span></button>
+		<button type="submit" class="btn btn-success upload-button"><translate>Submit</translate></button>
 		<button type="button" class="btn btn-success" id="browser_slice" disabled="disabled" translate>Slice on Browser and Submit</button>
 	</form>
-	{% if isARM %}
+	{% if isARM && !remoteSlicing %}
 	<div class="row">
 		<div class="col-md-12">
 			<br>
 			<br>
 			<div class="alert alert-info" translate>To speedup slicing you can use, NanoDLP remote slicer feature or SLC format.</div>
+		</div>
+	</div>
+	{% endif %}
+	<br>
+	<br>
+	<div class="row hide" id="largeFile">
+		<div class="col-md-12">
+			<div class="alert alert-danger">
+				<translate>File is too large to process, use remote slicing, web slicing or upload a sliced file.</translate>
+				<translate>It is possible to process files smaller than {{fileSizeLimit}}MB.</translate>
+			</div>
+		</div>
+	</div>	
+	{% if remoteSlicing %}
+	<div class="row">
+		<div class="col-md-12">
+			<br>
+			<br>
+			<div class="alert alert-success" translate>Remote slicing enabled.</div>
 		</div>
 	</div>
 	<br>
