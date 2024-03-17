@@ -11,7 +11,7 @@
 	</td>
 	<td>{% if WifiType!="" %}<input name="WifiPass" value="" placeholder="Wireless Password" class="form-control">{% endif %}</td>
 	<td>
-		{{Quality}}/70
+		{{Quality}}/100
 	</td>
 	<td><input type="submit" value="Connect" class="btn btn-success"></td>
 </tr>
@@ -61,11 +61,11 @@
 						</select>
 					</td>
 					<td><input name="WifiPass" value="" class="form-control" placeholder="Wireless Password"></td>
-					<td>-/70</td>
+					<td>-/100</td>
 					<td><input type="submit" value="Connect" class="btn btn-success"></td>
 				</form>
 			{% else %}
-				<tr><td colspan="5" translate>No wireless connection found</td></tr>
+				<tr><td colspan="5" translate class="alert alert-info">Searching wireless connections...</td></tr>
 			{% endif %}
 		</table>
 		<br>
@@ -80,4 +80,12 @@
 	</div>
 </div>
 <input name="IP" value="{{IP}}:{{Port}}" class="IP" type="hidden">
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<!-- wifi_split -->
+</span>
 {% endblock %}

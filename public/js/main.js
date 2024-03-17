@@ -49,8 +49,17 @@ $(function(){
 	settings_init();	
 	profile_settings_init();	
 	$('.conditional').conditionize();
-	changelog_init();	
+	changelog_init();
+	wireless_init();	
 });
+
+function wireless_init() {
+	if ($('#wifi').length > 0) {
+		$.get("/wifi/details", function (data) {			
+			$('#wifi').html(data.split("<!-- wifi_split -->")[1]);
+		});
+	}
+}
 
 function changelog_init() {
 	var t = $("#changelog-display");
@@ -217,12 +226,20 @@ function ajax_post_init(){
 }
 
 function post_init(){
-/*	$('.upload-disable').submit(function(e) {
+	$('.upload-disable').submit(function(e) {
+		$(".progress").removeClass("hide")		
+		setInterval(update_upload_progress,1000)
 		var form = $(this);
 		var submitButton = form.find('button[type="submit"]');
 		submitButton.prop('disabled', true);
 		$(".upload-progress-bar").show();
-	});*/
+	});
+}
+
+function update_upload_progress(){
+	$.get("/api/v1/progress/copy",function(d){
+		$(".progress-bar-main").css("width",d+"%");
+	});
 }
 
 function confirm_init(){

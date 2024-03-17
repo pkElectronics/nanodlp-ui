@@ -6,26 +6,12 @@
 			<img src="/static/general/boundaries.png" style="width: 240px;">
 			<div class="caption">
 				<h3>
-					<translate>Size</translate> {{helpPage("https://docs.nano3dtech.com/manual/display-calibration/#boundary")}}
+					<translate>Boundary & Size</translate> {{helpPage("https://docs.nano3dtech.com/manual/display-calibration/#boundary")}}
 				</h3>
 				<p>
 					<a href="/projector/generate/boundaries" class="btn btn-info svg">{{ icon(computer_icon) }}</a>
 					<a href="/projector/blank" class="btn btn-info svg" style="color:black">{{ icon(filldisplay_icon) }}</a>
 				</p>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-3 {% if viewMode == 0 %}hidden{% endif %}" >
-		<div class="box">
-			<img src="/static/general/calibration-red.png" style="width: 240px;">
-			<div class="caption">
-				<h3>
-					<translate>Pixel Check</translate> {{helpPage("https://docs.nano3dtech.com/manual/display-calibration/#pixel-check")}}
-				</h3>
-				<p>
-					<a href="/projector/generate/hr" class="btn btn-info svg">{{ icon(hr_icon) }}</a>
-					<a href="/projector/generate/vr" class="btn btn-info svg">{{ icon(vr_icon) }}</a>
-					<a href="/projector/blank" class="btn btn-info svg" style="color:black">{{ icon(filldisplay_icon) }}</a>
 			</div>
 		</div>
 	</div>
@@ -131,5 +117,20 @@
 		</div>
 	</div>
 </div>
-
+{% if width==1920 && height==1080 && build=="microlay" %}
+<div class="row">
+	<div class="col-md-3">
+		<br>
+		<br>
+		<div class="box">
+			<img src="/static/general/calibration-1920x1080.png" style="width: 100%;">
+			<div class="caption">
+				<h3 translate>FullHD Calibration</h3>
+				<p><a href="/projector/display/general***calibration-1920x1080.png" class="btn btn-primary"
+						translate>Display</a> <a href="/projector/blank" class="btn" translate>Close</a></p>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
 {% endblock %}
