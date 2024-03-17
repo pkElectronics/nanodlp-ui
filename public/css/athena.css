@@ -97,3 +97,7 @@
   width: 100%;
   color: black;
 }
+
+.tooltip-inner{
+  color:white;
+}
