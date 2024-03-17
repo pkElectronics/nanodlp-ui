@@ -4,12 +4,12 @@
 <form action="/wifi/connect" method="post">
 <tr>
 	<td>
-		<input name="WifiSSID" value="{{WifiSSID}}" class="WifiSSID" type="hidden" class="form-control">{{WifiSSID}}
+		<input name="WifiSSID" value="{{WifiSSID}}" class="WifiSSID" type="hidden">{{WifiSSID}}
 	</td>
 	<td>
-		<input name="WifiType" value="{{WifiType}}" class="WifiType" type="hidden" class="form-control">{{WifiType}}
+		<input name="WifiType" value="{{WifiType}}" class="WifiType" type="hidden">{{WifiType}}
 	</td>
-	<td>{% if WifiType!="" %}<input name="WifiPass" value="" placeholder="Wireless Password" class="form-control">{% endif %}</td>
+	<td>{% if WifiType!="" %}<input name="WifiPass" value="" placeholder="Wireless Password">{% endif %}</td>
 	<td>
 		{{Quality}}/100
 	</td>
@@ -17,6 +17,8 @@
 </tr>
 </form>
 {% endmacro %}
+<span id="wifi">
+	<!-- wifi_split -->
 <div class="row layer_details">
 	<div class="col-md-6">
 		<span class="glyphicon glyphicon-info-sign text-success"></span>
@@ -51,16 +53,18 @@
 				<form action="/wifi/connect" method="post">
 				<tr>
 					<td>
-						<input name="WifiSSID" class="form-control" placeholder="Enter Hidden SSID">
+						<input name="WifiSSID" class="WifiSSID" placeholder="Enter Hidden SSID">
 					</td>
 					<td>
-						<select name="WifiType" class="form-control">
+						<select name="WifiType">
 							<option value="" {% if WifiType=="" %}selected{% endif %} translate>No Encryption</option>
 							<option value="WEP" {% if WifiType=="WEP" %}selected{% endif %} translate>WEP</option>
 							<option value="WPA" {% if WifiType=="WPA" %}selected{% endif %} translate>WPA</option>
 						</select>
 					</td>
+
 					<td><input name="WifiPass" value="" class="form-control" placeholder="Wireless Password"></td>
+
 					<td>-/100</td>
 					<td><input type="submit" value="Connect" class="btn btn-success"></td>
 				</form>
