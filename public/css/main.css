@@ -708,3 +708,9 @@ dl {
 	  width: 100%;
 	}
 }
+
+.faulty-box{
+	max-height: 60px;
+    overflow-y: scroll;
+}
+
