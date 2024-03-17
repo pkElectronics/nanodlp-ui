@@ -531,15 +531,30 @@ function progressHandler(e){
 	if(e.loaded === e.total){
 		tex.html("File is being processed");
 		progtex.html("");
+		$("#btn-uploadmodal-cancel").prop('hidden', true);
+		setInterval(processingHandler, 500)
 	}
 
 	return true;
 }
 
+function processingHandler() {
+	$.get("/api/v1/progress/copy", function (d) {
+		let bar = $("#upload-modal-progress-bar");
+		bar.width(d + "%");
+
+		let progtex = $("#upload-modal-progress-text");
+		progtex.html(d+"%");
+
+		if(d === 100){
+			completeHandler();
+		}
+	});
+}
 function completeHandler(){
 	setTimeout(function(){
 		removeUploadProgressModal();
-		history.back();
+		window.location.replace("/plates");
 	},10000);
 }
 
@@ -615,7 +630,7 @@ $('.upload-disable').submit(function(e) {
 
 		upload_xhr = new XMLHttpRequest();
 		upload_xhr.upload.addEventListener("progress", progressHandler, false);
-		upload_xhr.addEventListener("loadend", completeHandler, false);
+		//upload_xhr.addEventListener("loadend", completeHandler, false);
 		upload_xhr.addEventListener("error", errorHandler, false);
 		upload_xhr.addEventListener("abort", abortHandler, false);
 		upload_xhr.open("POST", "/plate/add");

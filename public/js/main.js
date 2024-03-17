@@ -237,7 +237,7 @@ function file_size_limit_apply(){
 }
 
 function post_init(){
-	$('.upload-disable').submit(function(e) {
+	/*$('.upload-disable').submit(function(e) {
 		e.preventDefault();
 		$(".progress").removeClass("hide");
 		setInterval(update_upload_progress,1000)
@@ -253,7 +253,7 @@ function post_init(){
                 window.location.replace("/plates");
             }
         });
-	});
+	});*/
 	$('#ZipFile').change(function() {
 		file_size_limit_apply();
 	});
