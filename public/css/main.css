@@ -26,6 +26,10 @@ table {
 .btn-default{
 	border-color: rgba(0, 0, 0, .1)
 }
+/* Athena Gold on hover */
+.btn-default:hover{
+	border-color: #f0ad4e;
+}
 
 .alert .btn{
 	margin-bottom: 0;

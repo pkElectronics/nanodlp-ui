@@ -45,27 +45,6 @@
 		</td>
 	</tr>
 
-	<tr>
-		<td></td>
-		<td><span translate>Calibration Plate</span>{{helpModal("calibration-plate")}}</td>
-		<td colspan="3"><span translate>Rect:</span> {{generator.BlockWidth}}*{{generator.BlockHeight}}*{{generator.Depth}}
-			<br>
-			<span translate>Pillars:</span> {{generator.PillarSize}}*{{generator.Depth}}
-		</td>
-		<td colspan="1">
-			{% if 0 != status.PlateID or status.Printing == false %}
-			<a class="btn btn-success ask" href="/printer/start/0" data-ask="calibrate-confirm"><span
-					class="glyphicon glyphicon-play tip"></span><translate class="hide">Start the print</translate></a>
-			{% else %}
-			<div class="input-append">
-				<a class="btn btn-danger ask" href="/printer/stop" title="stop" data-ask="stop-confirm"><span
-						class="glyphicon glyphicon-stop"></span></a>
-			</div>
-			{% endif %}
-			<a class="btn btn-default tip" href="/plate/generator" title="Generate Calibration Plate"><span class="glyphicon glyphicon-refresh"></span><translate class="hide">Regenerate calibration plate</translate></a>
-			<a class="btn btn-default tip" href="/plate/preview/0"><span class="glyphicon glyphicon-eye-open"></span><translate class="hide">Preview</translate></a>
-		</td>
-	</tr>
 
 </table>
 <a class="btn btn-danger ask" href="/plates/delete" data-ask="deleteall-confirm">Delete All Jobs</a>
