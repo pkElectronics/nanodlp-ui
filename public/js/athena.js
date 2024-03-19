@@ -78,9 +78,25 @@ if ( resinTitle && resinTitle.startsWith("[AFP]") ){
 	}
 }
 
-
-
-
+	$('.form-control').each(function() {
+		var originalValue = $(this).val();
+		var step = $(this).attr('step');
+		// Check if the original value is a valid number and if step is less than 1
+		if (!isNaN(originalValue) && originalValue !== "" && step && parseFloat(step) < 1) {
+		var formattedValue = parseFloat(originalValue).toFixed(2);
+		$(this).val(formattedValue);
+		}
+ 	 });
+  
+  	$('.form-control').change(function() {
+		var originalValue = $(this).val();
+		var step = $(this).attr('step');
+		// Check if the original value is a valid number and if step is less than 1
+		if (!isNaN(originalValue) && originalValue !== "" && step && parseFloat(step) < 1) {
+		var formattedValue = parseFloat(originalValue).toFixed(2);
+		$(this).val(formattedValue);
+		}
+ 	 });
 });
 
 // Support Page Helpers
@@ -279,22 +295,18 @@ $("#btnMove100000").click(function () {
 });
 
 $("#btnStop").click(function () {
-  console.log(`/printer/force-stop`);
   $.ajax({ url: `/printer/force-stop`, type: "GET", dataType: "json" });
 });
 
 $("#btnMoveHome").click(function () {
-  console.log(`/z-axis/calibrate`);
   $.ajax({ url: `/z-axis/calibrate`, type: "GET", dataType: "json" });
 });
 
 $("#btnMovePark").click(function () {
-  console.log(`/z-axis/top`);
   $.ajax({ url: `/z-axis/top`, type: "GET", dataType: "json" });
 });
 
 $("#btnMoveBottom").click(function () {
-  console.log(`/z-axis/bottom`);
   $.ajax({ url: `/z-axis/bottom`, type: "GET", dataType: "json" });
 });
 
