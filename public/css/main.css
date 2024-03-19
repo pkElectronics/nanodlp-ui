@@ -259,11 +259,11 @@ table#plates th{
 }
 
 .req-processed {
-	visibility: hidden;
+	visibility: none;
 }
 
 .plate-processed .req-processed {
-	visibility: hidden;
+	visibility: none;
 }
 
 .req-not-processed {
