@@ -134,7 +134,7 @@
 						value="{% if row.PlateID == status.PlateID && status.ResumeID<row.LayersCount %}{{status.ResumeID}}{% endif %}"
 						type="number" min="0" size="3" max="{{row.LayersCount}}">
 					<span class="input-group-btn">
-					<button class="btn btn-default layer-id" disabled>/ {{row.LayersCount}}</div>
+					<button class="btn btn-default layer-id" disabled>/ {{row.LayersCount}}</button>
 					<translate class="hide">Layer ID</translate>
 					<button type="submit" class="btn btn-warning resume req-processed tip"
 						data-confirm='Are you sure you want to resume plate {{row.Path}} from layer [LayerID]?'
