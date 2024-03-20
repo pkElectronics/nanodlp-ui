@@ -587,14 +587,11 @@ dl {
 	right: 0;
 }
 .svg {
-	padding: 5px 10px 1px 10px;
+	padding: 5px 10px 2px 10px;
 }
 .svg svg.bi{
-	width: 20px;
-	height: 20px;
-}
-#plates .svg{
-	padding:5px 10px 5px 10px;
+	width: 25px;
+	height: 25px;
 }
 .glyphicon-ring {
 	width: 44px;
@@ -687,7 +684,7 @@ dl {
 	max-height: 60px;
     overflow-y: scroll;
 }
-  
+
   
 @keyframes upload-progress {
 	0% {
