@@ -26,11 +26,11 @@
                 <li><a href="/printer"><span class="glyphicon glyphicon-phone"></span>&nbsp; <translate>Status</translate></a></li>
                 <li><a href="/plates/history"><span class="glyphicon glyphicon-list-alt"></span>&nbsp; <translate>Print History</translate></a></li>
                 <li><a href="/tools"><span class="glyphicon glyphicon-cog"></span>&nbsp; <translate>Tools</translate></a></li>
-                <li><a href="/support"><span class="glyphicon glyphicon-question-sign"></span>&nbsp; <translate>Support</translate></a></li>
                 {% endif %}
                 <li><a href="#" id="expertModeCheckbox"><span class="glyphicon glyphicon-dashboard"></span>&nbsp; {% if viewMode == 1 %}<translate>Basic Mode</translate>{% else %}<translate>Expert Mode</translate>{% endif %}</a> </li>
             </ul>            
-        </li>        
+        </li>   
+        <li><a href="/support"><span class="glyphicon glyphicon-question-sign"></span>&nbsp; <translate>Support</translate></a></li>     
     </ul>
     <ul class="nav navbar-nav navbar-right">
         {% if rampsReconnect %}
@@ -42,6 +42,9 @@
             <li><a class="svg error label label-danger" href="/printer">{{ icon(heart_icon) }}</a></li>
         {% endif %}
         {% if os=="linux" %}
+        <li>
+            <td id="resin"></td>
+        </li>
         <li>
             {% if wifi!="" %}
                 <a href="/wifi"><span class="label label-success">{{wifi}} &nbsp;<span class="glyphicon glyphicon-signal"></span></span></a>
