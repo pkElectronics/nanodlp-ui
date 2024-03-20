@@ -14,7 +14,6 @@ $(function(){
 		setInterval(function(){update_status();}, 1500);
 		setInterval(function(){update_stat();}, 5000);
 		setInterval(function(){display_notification();}, 2000);
-
 		$(window).focus(function() {
 			update_status();
 		});
@@ -26,7 +25,6 @@ $(function(){
 		update_status();
 		setInterval(function () { update_status(); }, 4000);
 		setInterval(function(){display_notification();}, 2000);
-
 	}
 	sortable_table_init();	
 	terminal_init();
@@ -266,8 +264,11 @@ function post_init(){
 }
 
 function update_upload_progress(){
-	$.get("/api/v1/progress/copy",function(d){
-		$(".progress-bar-main").css("width",d+"%");
+	$.get("/api/v1/progress/details/copy",function(d){
+		$(".progress-bar-main").css("width",d["Percentage"]+"%");
+		if (d["Percentage"]>10){
+			$(".progress-bar-main").html(d["Text"]);
+		}		
 	});
 }
 
@@ -649,10 +650,9 @@ function display_notification(){
 	}).done(function(data){
 		var msg="";
 		if (data===null) return;
-		
+
 		if(data.length > 0){
-			$.each(data,function(k,v){
-				
+			$.each(data,function(k,v){		
 				if( display_notification.prev_data === "" || v['Timestamp'] >= display_notification.prev_data['Timestamp']){
 					
 					var date = new Date();
@@ -699,7 +699,6 @@ function display_notification(){
 			display_notification.prev_msg=msg;
 			$("#notificationModal").remove();
 			$(".navbar").after(msg);
-
 
 
 			$('#btn-modal-continue').click(function(){
@@ -1025,13 +1024,13 @@ function search_init(){
 }
 
 $("#expertModeCheckbox").click(function (e) {
-  e.preventDefault();
-  $.ajax({
-    url: "/printer/view/toggle",
-    type: "GET",
-    dataType: "json",
-    complete: () => {
-      window.location.reload(true);
-    },
-  });
+	e.preventDefault();
+	$.ajax({
+		url: "/printer/view/toggle",
+		type: "GET",
+		dataType: "json",
+		complete: () => { 
+			window.location.reload(true);
+		},
+ 	 });
 });
