@@ -190,9 +190,10 @@
 				  </a>
 				  </li>
 				  {% endif %}				  
+				  <li class="req-processed"><a href="/analytic/{{ row.PlateID }}"><span class="glyphicon glyphicon-stats"></span> &nbsp; <translate>Analytic</translate></a></li>
 				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/analytic"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Analytic Data</translate></a></li>
 				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/nanodlp"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download NanoDLP</translate></a></li>
-				  <!-- <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/cbddlp"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download CBDDLP</translate></a></li>
+				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/cbddlp"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download CBDDLP</translate></a></li>
 				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/photon"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download Photon</translate></a></li>
 				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/ctb"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download CTB</translate></a></li>
 				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/cws"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download CWS</translate></a></li>
@@ -205,7 +206,7 @@
 				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/pw0"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download PW0</translate></a></li>
 				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/sl1"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download SL1</translate></a></li>
 				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/uvj"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download UVJ</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/zcodex"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download ZCODEX</translate></a></li> -->
+				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/zcodex"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download ZCODEX</translate></a></li>
 				  {% if (row.Type) %}<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/{{ row.Type }}"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download {{ row.Type|upper }}</translate></a></li>{% endif %}
 				</ul>
 			</div>
