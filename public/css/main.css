@@ -458,7 +458,7 @@ input:focus {
 	width: 185px;
 	float: left;
 	margin-top: 10px;
-	color: black;
+color: black;
 }
 
 .formula_keyword input {
@@ -585,7 +585,7 @@ dl {
 	margin: 0 auto;
 	left: 0;
 	right: 0;
-}
+	}
 .svg {
 	padding: 5px 10px 2px 10px;
 }
@@ -685,7 +685,7 @@ dl {
     overflow-y: scroll;
 }
 
-  
+
 @keyframes upload-progress {
 	0% {
 	  width: 0;
@@ -701,8 +701,8 @@ dl {
 @keyframes upload-progress {
 	0% {
 	  width: 0;
-	}
-	50% {
+}
+50% {
 	  width: 50%;
 	}
 	100% {
@@ -715,3 +715,6 @@ dl {
     overflow-y: scroll;
 }
 
+.form-inline .btn{
+	margin-bottom: 0;
+}
