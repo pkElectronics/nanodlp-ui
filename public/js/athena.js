@@ -59,6 +59,12 @@ $("#DwEnableSimple").change(function (){
 
 $(document).ready(function() {
 
+// Add click event listener to the confirm button on forceStop 
+// navigates user to /plates after a forceStop
+$("#confirmButton").click(function(){
+	$(this).attr("href", "/plates");
+})
+
 currentUrl = window.location.href
 resinTitle = $("#Title").val()
 
