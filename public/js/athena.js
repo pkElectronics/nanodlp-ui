@@ -61,8 +61,18 @@ $(document).ready(function() {
 
 // Add click event listener to the confirm button on forceStop 
 // navigates user to /plates after a forceStop
-$("#confirmButton").click(function(){
-	$(this).attr("href", "/plates");
+$("#confirmButton").click(function(){    
+    // Save a reference to the current element
+    var $this = $(this);
+    
+    // This setTimeout is just a placeholder to simulate some delay
+    setTimeout(function() {
+        // Change the href attribute after the delay
+        $this.attr("href", "/plates");
+        
+        // Manually trigger the click event to navigate to the new URL
+        $this.trigger("click");
+    }, 2000); // Adjust the delay time as needed (in milliseconds)
 })
 
 currentUrl = window.location.href
