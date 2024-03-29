@@ -41,10 +41,10 @@
         {% if printerError %}
             <li><a class="svg error label label-danger" href="/printer">{{ icon(heart_icon) }}</a></li>
         {% endif %}
-        {% if os=="linux" %}
-        <li>
-            <a href="/printer"><small> Resin: <span id="navbar-resin-temp"></span>°C</small></a>
+        <li id="navbar-resin-temp" style="display:none">
+            <a href="/printer"><small> Resin: <span id="navbar-resin-temp-text"></span>°C</small></a>
         </li>
+        {% if os=="linux" %}
         <li>
             {% if wifi!="" %}
                 <a href="/wifi"><span class="label label-success">{{wifi}} &nbsp;<span class="glyphicon glyphicon-signal"></span></span></a>
