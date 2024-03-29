@@ -590,7 +590,11 @@ function update_status(){
 		}
 		update_timeline();
 		current_status_display();
-		$("#navbar-resin-temp").text(data['resin']);
+
+		if (data['resin']) {
+			$('#navbar-resin-temp').show()
+			$("#navbar-resin-temp-text").text(data['resin']);
+		}
 	}).fail(function() {
 		update_status.problem++;
 		if (update_status.problem>2){
