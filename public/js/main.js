@@ -604,23 +604,25 @@ function update_status(){
 	});
 }
 
-function update_stat(){
+function update_stat() {
 	$.ajax({
-		url:'stat',
+		url: 'stat',
 		dataType: 'json',
 		type: 'GET',
 		timeout: 1200
-	}).done(function(data){
-		var total = 0;
-		var perc;
-		if (data===null) return;
-		$.each(data,function(k,v){
-			total+=v;
-		});
-		$.each(data,function(k,v){
-			perc=v*100/total;
-			$("#"+k).attr("title",$("#"+k).html()+": "+Math.floor(perc)+"% "+Math.floor(v/1000000000)+"s");
-			$("#"+k).width(perc+"%");
+	}).done(function (data) {
+		if (data === null) return;
+
+		const total = Object.values(data).reduce((sum, value) => sum + value, 0);
+		
+		Object.entries(data).forEach(([key, value]) => {
+			const percentage = Math.floor(value * 100 / total);
+			const statElem = $("#" + key);
+
+			const duration = (value / 1000000000000).toFixed(2);
+			statElem.attr("title", `${statElem.html()}: ${percentage}% ${duration}s`);
+
+			statElem.width(percentage + "%");
 		});
 	});
 }
