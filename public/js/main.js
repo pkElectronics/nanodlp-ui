@@ -5,7 +5,7 @@ $(function(){
 	// Run for index page
 	display_notification();
 	notification_close();
-	setTimeout(function(){display_notification();}, 2000);
+	setInterval(function(){display_notification();}, 8000);
 	if($('#buzzer').length>0){
 		display_console_log();
 		setInterval(function(){display_console_log();}, 3000);
@@ -584,10 +584,13 @@ function update_status(){
 				$(".printing-obj").slideDown();
 			}
 			layer_progress(data['PrevLayerTime'],data['LayerStartTime']);
+			update_stat();
 		}
 		if ($("#stat").length>0){
 			change_stats(data,['proc','disk','mem','uptime','proc_numb','temp', 'resin']);
 		}
+		var log=$.parseJSON(data["log"]);
+		last_value('msg',log['msg']);
 		update_timeline();
 		current_status_display();
 	}).fail(function() {
@@ -599,9 +602,9 @@ function update_status(){
 	});
 }
 
-function update_stat(){
+async function update_stat(){
 	$.ajax({
-		url:'stat',
+		url:'/stat',
 		dataType: 'json',
 		type: 'GET',
 		timeout: 1200
@@ -639,10 +642,14 @@ function change_stats(data,keys){
 	});
 }
 
-display_notification.prev_msg='';
 display_notification.prev_data='';
-
-function display_notification(){	
+display_notification.modal='';
+display_notification.notification='';
+function display_notification(){
+	if (display_notification.notification==""){
+		display_notification.notification=$("#notification-template").html();
+		display_notification.modal=$("#modal-template").html();
+	}
 	$.ajax({
 		url:'/notification',
 		type: 'GET',
@@ -652,8 +659,8 @@ function display_notification(){
 		if (data===null) return;
 
 		if(data.length > 0){
-			$.each(data,function(k,v){		
-				if( display_notification.prev_data === "" || v['Timestamp'] >= display_notification.prev_data['Timestamp']){
+		$.each(data,function(k,v){
+			if( display_notification.prev_data === "" || v['Timestamp'] >= display_notification.prev_data['Timestamp']){
 					
 					var date = new Date();
 					date.setTime(v['Timestamp']*1000);
@@ -699,7 +706,7 @@ function display_notification(){
 			display_notification.prev_msg=msg;
 			$("#notificationModal").remove();
 			$(".navbar").after(msg);
-
+		
 
 			$('#btn-modal-continue').click(function(){
 				try {     
@@ -740,7 +747,7 @@ function display_notification(){
 			$('#notificationModal').modal('hide');
 			$("#notificationModal").remove();
 		}
-		
+
 		
 
 
@@ -775,7 +782,7 @@ Modal content...
 
 function notification_close(){
 	$("body").delegate('.notification-service button','click', function (e) {
-		$.get("/notification/disable/"+$(this).parent().data("notification"));
+		$.get("/notification/disable/"+$(this).parents(".notification-service").data("notification"));
 	});
 }
 
@@ -1030,7 +1037,7 @@ $("#expertModeCheckbox").click(function (e) {
 		type: "GET",
 		dataType: "json",
 		complete: () => { 
-			window.location.reload(true);
+		window.location.reload(true);
 		},
  	 });
 });
