@@ -114,9 +114,9 @@
 				<a class="btn btn-success" href="/printer/auto-shutdown/disable" alt="Disable shutdown after job completion"
 				translate>Disable Auto Shutdown</a>
 				{% else %}
-				<a class="btn btn-warning" href="/printer/auto-shutdown/enable" alt="Enable shutdown after job completion" translate>Enable
-					Auto Shutdown</a>
+				<a class="btn btn-warning" href="/printer/auto-shutdown/enable" alt="Enable shutdown after job completion" translate>Enable Auto Shutdown</a>
 				{% endif %}
+				<a class="btn btn-danger" href="#" data-toggle="modal" data-target="#warningModal">Force Stop</a>
 				&nbsp; 
 			</span>
 
@@ -137,6 +137,26 @@
 		</div>
 	</div>
 </div>
+<!-- Warning Modal -->
+<div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		  <h4 class="modal-title" id="myModalLabel">Warning!</h4>
+		</div>
+		<div class="modal-body">
+		Warning, Force Stop will reset the printer. Printing progress will be lost and the printer will need to be homed before movement can occur.</br>
+		Try using normal stop first and if that fails, then use this Force Stop.
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		  <a id="confirmButton" class="btn btn-danger" href="/printer/force-stop" alt="Force Stop" translate>Confirm</a>
+		</div>
+	  </div>
+	</div>
+  </div>
+<translate class="hide" id="force-stop">yeet</translate>
 <translate class="hide" id="stop-confirm">Are you sure you want to stop printing? It will stop after the current layer is completed. If you want to abort the current layer, go to the `Setup` page, click on `Tools` tab and click the `Force Stop` button.</translate>
 <translate class="hide" id="poweroff-confirm">Are you sure you want to power off the printer?</translate>
 <translate class="hide" id="projectoroff-confirm">Are you sure you want to power off the projector?</translate>

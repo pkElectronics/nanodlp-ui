@@ -1,0 +1,67 @@
+[
+	{
+		"ID": 0,
+		"Name": "Analytic Chart",
+		"NameActive": "",
+		"Position": "/",
+		"Condition": "",
+		"Color": "btn btn-success",
+		"Gcode": "",
+		"GcodeActive": "",
+		"HTML": "\u003ca class=\"btn btn-success\" href=\"/analytic\"\u003eAnalytic Charts\u003c/a\u003e",
+		"ConfirmText": "",
+		"State": 0
+	},
+	{
+		"ID": 1,
+		"Name": "Heater is Off",
+		"NameActive": "Heater is On (25C)",
+		"Position": "/",
+		"Condition": "idle-obj",
+		"Color": "toggle",
+		"Gcode": "SET_RESIN_HEATER TARGET=25",
+		"GcodeActive": "RESIN_HEATER_OFF",
+		"HTML": "",
+		"ConfirmText": "",
+		"State": 0
+	},
+	{
+		"ID": 2,
+		"Name": "Trigger",
+		"NameActive": "",
+		"Position": "/",
+		"Condition": "hidden",
+		"Color": "btn btn-success",
+		"Gcode": "TRIGGER",
+		"GcodeActive": "",
+		"HTML": "",
+		"ConfirmText": "",
+		"State": 0
+	},
+	{
+		"ID": 3,
+		"Name": "Perform Update",
+		"NameActive": "",
+		"Position": "/",
+		"Condition": "hidden",
+		"Color": "btn btn-warning",
+		"Gcode": "[[Exec /home/pi/athena-start-update.sh]]",
+		"GcodeActive": "",
+		"HTML": "",
+		"ConfirmText": "",
+		"State": 0
+	},
+	{
+		"ID": 4,
+		"Name": "Tare/Zero",
+		"NameActive": "",
+		"Position": "/",
+		"Condition": "hidden",
+		"Color": "btn btn-success",
+		"Gcode": "[[PressureWrite 1]]",
+		"GcodeActive": "",
+		"HTML": "",
+		"ConfirmText": "",
+		"State": 0
+	}
+]
