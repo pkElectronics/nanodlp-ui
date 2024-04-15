@@ -136,6 +136,25 @@
 			<div class="alert alert-success" translate>Remote slicing enabled.</div>
 		</div>
 	</div>
+	{% endif %}
+	<br>
+	<br>
+	<div class="row hide" id="largeFile">
+		<div class="col-md-12">
+			<div class="alert alert-danger">
+				<translate>File is too large to process, use remote slicing, web slicing or upload a sliced file.</translate>
+				<translate>It is possible to process files smaller than {{fileSizeLimit}}MB.</translate>
+			</div>
+		</div>
+	</div>	
+	{% if remoteSlicing %}
+	<div class="row">
+		<div class="col-md-12">
+			<br>
+			<br>
+			<div class="alert alert-success" translate>Remote slicing enabled.</div>
+		</div>
+	</div>
 	<br>
 	<br>
 	{% endif %}

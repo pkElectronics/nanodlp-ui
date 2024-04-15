@@ -601,6 +601,7 @@ a.key {
 	margin: 0 auto;
 	left: 0;
 	right: 0;
+	opacity: 0.8;
 }
 
 .svg {
@@ -710,21 +711,6 @@ a.key {
 .faulty-box {
 	max-height: 60px;
 	overflow-y: scroll;
-}
-
-
-@keyframes upload-progress {
-	0% {
-		width: 0;
-	}
-
-	50% {
-		width: 50%;
-	}
-
-	100% {
-		width: 100%;
-	}
 }
 
 @keyframes upload-progress {

@@ -5,26 +5,22 @@ $(function(){
 	// Run for index page
 	display_notification();
 	notification_close();
-	setTimeout(function(){display_notification();}, 2000);
+	setInterval(function(){display_notification();}, 8000);
 	if($('#buzzer').length>0){
-		display_console_log();
-		setInterval(function(){display_console_log();}, 3000);
 		update_status();
-		update_stat();
 		setInterval(function(){update_status();}, 1500);
-		setInterval(function(){update_stat();}, 5000);
-		setInterval(function(){display_notification();}, 2000);
 		$(window).focus(function() {
 			update_status();
 		});
 		dashboard_init();
 	} else {
-		// Log as status
-		display_console_log();
-		setInterval(function () { display_console_log(); }, 5000);
 		update_status();
 		setInterval(function () { update_status(); }, 4000);
-		setInterval(function(){display_notification();}, 2000);
+	}
+	// /printer route for logger
+	if($('#console').length>0){
+		display_console_log();
+		setInterval(function () { display_console_log(); }, 3000);
 	}
 	sortable_table_init();	
 	terminal_init();
@@ -584,10 +580,13 @@ function update_status(){
 				$(".printing-obj").slideDown();
 			}
 			layer_progress(data['PrevLayerTime'],data['LayerStartTime']);
+			update_stat();
 		}
 		if ($("#stat").length>0){
 			change_stats(data,['proc','disk','mem','uptime','proc_numb','temp', 'resin']);
 		}
+		var log=$.parseJSON(data["log"]);
+		last_value('msg',log['msg']);
 		update_timeline();
 		current_status_display();
 
@@ -604,9 +603,9 @@ function update_status(){
 	});
 }
 
-function update_stat(){
+async function update_stat(){
 	$.ajax({
-		url:'stat',
+		url:'/stat',
 		dataType: 'json',
 		type: 'GET',
 		timeout: 1200
@@ -646,8 +645,13 @@ function change_stats(data,keys){
 
 display_notification.prev_msg='';
 display_notification.prev_data='';
-
-function display_notification(){	
+display_notification.modal='';
+display_notification.notification='';
+function display_notification(){
+	if (display_notification.notification==""){
+		display_notification.notification=$("#notification-template").html();
+		display_notification.modal=$("#modal-template").html();
+	}
 	$.ajax({
 		url:'/notification',
 		type: 'GET',
@@ -655,100 +659,19 @@ function display_notification(){
 	}).done(function(data){
 		var msg="";
 		if (data===null) return;
-
-		if(data.length > 0){
-			$.each(data,function(k,v){		
-				if( display_notification.prev_data === "" || v['Timestamp'] >= display_notification.prev_data['Timestamp']){
-					
-					var date = new Date();
-					date.setTime(v['Timestamp']*1000);
-
-					var hour = date.getHours();
-					var min = date.getMinutes();
-					var sec = date.getSeconds();
-
-					hour = (hour < 10 ? "0" : "") + hour;
-					min = (min < 10 ? "0" : "") + min;
-					sec = (sec < 10 ? "0" : "") + sec;
-
-					var str = hour + ":" + min + ":" + sec;
-		
-					msg='<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="false">'
-						+'<div class="modal-dialog">'
-						+'<div class="modal-content">'
-						+'<div class="modal-header">'
-						+'<h4 class="modal-title" id="modalLabelSmall"><center>'+v["Type"].toUpperCase()+'</center></h4>'
-						+'</div>' //end modal header
-						+'<div class="modal-body">'
-						+'<center>'+str+' - '+v["Text"]+'</center>'
-						+'</br>'
-						+'</div>' //end modal body
-						+'<div class="div-modal-buttons">'
-						+'<button type="button" id="btn-modal-continue" class="btn btn-info btn-mod-l"> Continue Anyways</button>'
-						+'<button type="button" id="btn-modal-cancel" class="btn btn-danger btn-mod-r"> Cancel Print</button>'
-						+'</div>' //end modal footer
-						+'</div>' //end model content
-						+'</div>' //end modal dialog
-						+'</div>'; //end modal fade
-
-					if(v["Type"] === "Error"){
-						$('#btn-modal-continue').hide();
-					}
-					display_notification.prev_data=v;
-
-
-				}
-			});
-			
-			if (msg==display_notification.prev_msg) return;
-			display_notification.prev_msg=msg;
-			$("#notificationModal").remove();
-			$(".navbar").after(msg);
-
-
-			$('#btn-modal-continue').click(function(){
-				try {     
-					const response = fetch('/notification/disable/'+display_notification.prev_data["Timestamp"], {
-					  method: 'get'				  
-					});
-					const response2 = fetch('/printer/unpause', {
-					  method: 'get'				  
-					});
-					console.log('Completed!', response);
-				} catch(err) {
-					console.error('Error: ${err}');
-				}
-				$('#notificationModal').modal('hide');
-
-			}); 
-			$('#btn-modal-cancel').click(function(){
-				try {     
-					const response = fetch('/notification/disable/:'+display_notification.prev_data["Timestamp"], {
-					  method: 'get'				  
-					});
-					const response2 = fetch('/api/v1/printer/printer/stop', {
-					  method: 'get'				  
-					});
-					console.log('Completed!', response);
-				} catch(err) {
-					console.error('Error: ${err}');
-				}
-				$('#notificationModal').modal('hide');
-			}); 
-			
-			$('#notificationModal').modal({backdrop: 'static', keyboard: false})  
-			$('#notificationModal').modal('show');
-			
-		
-		}else{
-			msg="";
-			$('#notificationModal').modal('hide');
-			$("#notificationModal").remove();
-		}
-		
-		
-
-
+		$.each(data,function(k,v){
+			if (v["Type"]=="modal"){
+				var el = display_notification.modal;
+			} else {
+				var el = display_notification.notification;
+			}
+			msg += el.replace("[[Text]]", v["Text"]).replace("[[Type]]", v["Type"]).replace("[[Timestamp]]", v["Timestamp"]);
+		});
+		if (msg==display_notification.prev_data) return;
+		display_notification.prev_data=msg;
+		$(".notification-service").remove();
+		$(".navbar").after(msg);
+		$('.modal-notification').modal('show')
 	});
 }
 
@@ -780,7 +703,7 @@ Modal content...
 
 function notification_close(){
 	$("body").delegate('.notification-service button','click', function (e) {
-		$.get("/notification/disable/"+$(this).parent().data("notification"));
+		$.get("/notification/disable/"+$(this).parents(".notification-service").data("notification"));
 	});
 }
 
