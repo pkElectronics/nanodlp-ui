@@ -101,3 +101,7 @@
 .tooltip-inner{
   color:white;
 }
+
+.navbar-brand{
+  font-size: 14px !important;
+}
