@@ -49,7 +49,7 @@
             <a class="btn btn-default {% if viewMode == 0 %}hidden{% endif %}" href="/printer/edit/pi " translate>Edit Raspberry Pi Settings</a>
             <a class="ajax btn btn-default {% if viewMode == 0 %}hidden{% endif %}" data-ajax="/" href="/printer/expand-fs" data-confirm="expand-confirm" translate>Expand Filesystem</a>
             {% endif %}
-            {% if os=="linux" %}            
+            {% if os=="linux" %}
             <a class="btn btn-default" href="/setup/timezone" translate>Change Timezone</a>
             {% endif %}
             <a class="btn btn-default" href="/printer" translate>Status</a>
@@ -60,7 +60,7 @@
             <h4 translate>NanoDLP</h4>
             <a class="ajax btn btn-default" data-ajax="/" href="/printer/reload" translate>Reload NanoDLP</a>
             <a class="ajax btn btn-default" data-ajax="/" href="/printer/terminate" data-confirm="terminate-confirm" translate>Terminate NanoDLP</a>
-            <a class="btn btn-default" href="/printer/upgrade" translate>Upgrade NanoDLP</a>    
+            <a class="btn btn-default" href="/printer/upgrade" translate>Upgrade NanoDLP</a>
             <a class="btn btn-default" href="/debug" translate>Download Debug</a>
             <a class="btn btn-default" href="/support" translate>Report a Problem</a>
             <a class="btn btn-default" href="/analytic" translate>Analytic Dashboard</a>
@@ -72,6 +72,25 @@
             <a class="ajax btn btn-default" data-ajax="/" href="/printer/reload" translate>Enable & Start DSI HMI</a>
             <a class="btn btn-default" href="/printer/upgrade/dsi/nanodlp-dsi.beta.tar.gz" translate>Upgrade DSI HMI</a>
         </div>
-    </div>    
+    </div>
+    <div class="row flex-row">
+        <div class="col-md-12">
+            <h3 translate>ATHENA</h3>
+        </div>
+    </div>
+    <div class="row flex-row">
+        <div class="col-md-4">
+            <h4 translate>Heater</h4>
+            <button id="BtnToggleHeater" class="btn btn-default" translate>Toggle Heater system</button>
+        </div>
+        <div class="col-md-4">
+            <h4 translate>Wifi</h4>
+            <form action="setup/wifi/country" method="post" class="edit-page" id="toolsform">
+                <input class="form-control" name="country" id="WiFiCountryTools" pattern="[A-Za-z]{2}|^$" style="width:50%">
+                <button type="submit" class="btn btn-default" translate>Set WiFi Country</button>
+            </form>
+
+        </div>
+    </div>
 </div>
 {% endblock %}
