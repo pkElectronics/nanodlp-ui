@@ -16,10 +16,6 @@ function isNotAllNull(subArray) {
 }
 
 function renderChart(name, dataRows, series) {
-    // Filter data and series if they are entirely null
-    const filteredData = dataRows.filter(isNotAllNull);
-    const filteredSeries = series.filter((_, index) => isNotAllNull(dataRows[index]));
-
     let plotHeight = $(window).height() - 300;
     if (plotHeight < 400) plotHeight = 400;
     let opts = {
@@ -28,16 +24,15 @@ function renderChart(name, dataRows, series) {
         class: "my-chart",
         width: $("#uplot").innerWidth(),
         height: plotHeight,
-        series: filteredSeries,
-        axes: prepareAxis(filteredSeries),
+        series: series,
+        axes: prepareAxis(series),
     };
     if ($("#uplot").html() != "") {
-        plot.setData(filteredData);
+        plot.setData(dataRows);
         return;
     }
     $("#uplot").html("");
-    plot = new uPlot(opts, filteredData, $("#uplot")[0]);
-
+    plot = new uPlot(opts, dataRows, $("#uplot")[0]);
 }
 
 function prepareAxis(series) {
@@ -137,7 +132,6 @@ function downloadCSV(series, o) {
     window.URL.revokeObjectURL(url);
 }
 
-
 const processData = (dataResponse) => {
     let previousAggregateValue;
     const series = getSeries();
@@ -193,32 +187,19 @@ function buildChartFromData(name, dataResponse, exp) {
         return;
     }
 
-
     const series = getSeries();
     const processedData = processData(dataResponse);
     const filteredData = processedData.filter(isNotAllNull);
     const backFilledData = backFillData(filteredData);
     const filteredSeries = series.filter((_, index) => isNotAllNull(processedData[index]));
 
+
     if (JSON.stringify(dplot) == JSON.stringify(dataResponse) && !exp) {
         return
     }
     dplot = dataResponse;
 
-    dataResponse.forEach(responseItem => {
-        let currentAggregateValue = aggregateFunc(responseItem["ID"], aggregate);
-        if (currentAggregateValue != previousAggregateValue) {
-            for (j = 0; j < series.length; j++) {
-                processedData[j][dataPointIndex] = null;
-            }
-            processedData[0][dataPointIndex] = currentAggregateValue;
-            previousAggregateValue = currentAggregateValue;
-            dataPointIndex++;
-        }
-        processedData[responseItem["T"] + 1][dataPointIndex - 1] = responseItem["V"];
-    })
 
-    if (exp) return downloadCSV(series, processedData);
-    renderChart(name, processedData, series);
-
+    if (exp) return downloadCSV(filteredSeries, backFilledData);
+    renderChart(name, backFilledData, filteredSeries);
 }
