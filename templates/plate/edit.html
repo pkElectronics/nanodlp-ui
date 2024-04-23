@@ -13,7 +13,7 @@
 			<translate>Edit Plate</translate> "{{plate.Path}}"
 		{% endif %}		
 	</legend>
-	<form method="post" class="edit-page upload-disable" enctype="multipart/form-data">
+	<form method="post" class="edit-page upload-disable" id="plate-upload-form" enctype="multipart/form-data">
 		<div class="row flex-row">
 			{% if not plate.PlateID %}
 			<div class="col-md-4">
@@ -114,7 +114,26 @@
 		<div class="col-md-12">
 			<br>
 			<br>
-			<div class="alert alert-info" translate>To speedup slicing you can use, NanoDLP remote slicer feature or SLC format.</div>
+			<div class="alert alert-info" translate>To speedup slicing you can use, NanoDLP remote slicer feature.</div>
+		</div>
+	</div>
+	{% endif %}
+	<br>
+	<br>
+	<div class="row hide" id="largeFile">
+		<div class="col-md-12">
+			<div class="alert alert-danger">
+				<translate>File is too large to process, use remote slicing, web slicing or upload a sliced file.</translate>
+				<translate>It is possible to process files smaller than {{fileSizeLimit}}MB.</translate>
+			</div>
+		</div>
+	</div>	
+	{% if remoteSlicing %}
+	<div class="row">
+		<div class="col-md-12">
+			<br>
+			<br>
+			<div class="alert alert-success" translate>Remote slicing enabled.</div>
 		</div>
 	</div>
 	{% endif %}

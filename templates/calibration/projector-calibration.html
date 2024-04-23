@@ -6,37 +6,43 @@
 		<br>
 	</div>
 	<div class="col-md-3">
-		<img src="/static/general/boundaries.png" style="width: 240px;">
-		<h3>
-			<translate>Size</translate> {{helpPage("https://docs.nano3dtech.com/manual/display-calibration/#boundary")}}
-		</h3>
-		<p>
-			<a href="/projector/generate/boundaries" class="btn btn-info svg">{{ icon(computer_icon) }}</a>
-			<a href="/projector/generate/boundaries-red" class="btn btn-info svg" style="color:red">{{ icon(computer_icon) }}</a>
-			<a href="/projector/blank" class="btn btn-info svg" style="color:black">{{ icon(filldisplay_icon) }}</a>
-		</p>
-	</div>
-	<div class="col-md-3 {% if viewMode == 0 %}hidden{% endif %}" >
-			<img src="/static/general/calibration-red.png" style="width: 240px;">
+		<div class="box">
+			<img src="/static/general/boundaries.png" style="width: 240px;">
 			<div class="caption">
 				<h3>
-					<translate>Pixel Check</translate> {{helpPage("https://docs.nano3dtech.com/manual/display-calibration/#pixel-check")}}
+					<translate>Boundary & Size</translate> {{helpPage("https://docs.nano3dtech.com/manual/display-calibration/#boundary")}}
 				</h3>
 				<p>
-					<a href="/projector/generate/hr" class="btn btn-info svg">{{ icon(hr_icon) }}</a>
-					<a href="/projector/generate/vr" class="btn btn-info svg">{{ icon(vr_icon) }}</a>
+					<a href="/projector/generate/boundaries" class="btn btn-info svg">{{ icon(computer_icon) }}</a>
+					<a href="/projector/blank" class="btn btn-info svg" style="color:black">{{ icon(filldisplay_icon) }}</a>
+				</p>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3" >
+		<div class="box">
+			<img src="/static/general/athena.png" style="width: 240px;" class="rotate180">
+			<div class="caption">
+				<h3>
+					<translate>Show Logo</translate> {{helpPage("https://docs.nano3dtech.com/manual/display-calibration/#pixel-check")}}
+				</h3>
+				<p>
+					<a href="/projector/display/general***athena.png" class="btn btn-info svg">{{ icon(computer_icon) }}</a>
 					<a href="/projector/blank" class="btn btn-info svg" style="color:black">{{ icon(filldisplay_icon) }}</a>
 			</div>
 	</div>
 	<div class="col-md-3">
-		<img src="/static/general/calibration.png" style="width: 240px;">
-		<h3>
-			<translate>Grid</translate> {{helpPage("https://docs.nano3dtech.com/manual/display-calibration/#focus")}}
-		</h3>
-		<p>
-			<a href="/projector/generate/calibration" class="btn btn-info svg">{{ icon(computer_icon) }}</a>
-			<a href="/projector/generate/calibration-red" class="btn btn-info svg" style="color:red">{{ icon(computer_icon) }}</a>
-			<a href="/projector/blank" class="btn btn-info svg" style="color:black">{{ icon(filldisplay_icon) }}</a>
+		<div class="box">
+			<img src="/static/general/calibration.png" style="width: 240px;">
+			<div class="caption">
+				<h3>
+					<translate>Grid</translate> {{helpPage("https://docs.nano3dtech.com/manual/display-calibration/#focus")}}
+				</h3>
+				<p>
+					<a href="/projector/generate/calibration" class="btn btn-info svg">{{ icon(computer_icon) }}</a>
+					<a href="/projector/blank" class="btn btn-info svg" style="color:black">{{ icon(filldisplay_icon) }}</a>
+			</div>
+		</div>
 	</div>
 	<div class="col-md-3">
 		<img src="/static/general/white.png" style="width: 240px;">

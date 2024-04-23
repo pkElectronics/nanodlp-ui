@@ -1,24 +1,134 @@
 {% extends "../base.html" %}
 {% block content %}
+<div class="modal fade" id="support_notification" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="false">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="modalLabelSmall"><center>Creating Ticket</center></h4>
+			</div>
+			<div class="modal-body">
+				<div class="progress">
+					<div id="anotherbar" class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-valuenow="1000" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+					</div>
+				</div>
+				<div>
+					<center>
+						Diagnostic Data is being collected and sent, thanks for your patience.
+					</center>
+				</div>
+			</div>
+		</div> 
+	</div>
+</div>
+
 <div class="starter-template">
     <div class="row flex-row">
         <div class="col-md-12">
-            <h2 translate>Support</h2>
-            <h3 translate>Report a Bug</h3>
-            <p translate>By submitting form below, your printer log files and configurations will be transmitted for debugging purpose.</p>                    
-            <form action="/support" method="post" class="edit-page">
-                <input class="form-control" name="email" type="email" placeholder="Email address" required>
-                <textarea class="form-control" name="report" placeholder="Detail of the bug you want to report." required></textarea>
-                <input class="btn btn-success" type="submit" value="Send">
+            <h2 translate>Support Resources</h2>
+		</div>
+	</div>
+    <div class="row flex-row">
+		<div class="col-md-4">
+			<center>
+		
+            <h3 translate>Questions or up for a Chat? </br>Join our Discord</h3>
+			<br>
+            <a href="https://discord.gg/55wshXG7pp" target="_blank" translate><img width="15%" src="https://olymp.concepts3d.eu/static/athena-discord.png"></img></a>
+			</center>
+		</div>
+		<div class="col-md-4">
+			<center>
+				<h3 translate>Manual and Getting started</h3>
+				<br>
+				<a href="https://www.concepts3d.ca/support" target="_blank" translate>www.concepts3d.ca/support</a>
+			</center>
+		</div>
+		<div class="col-md-4">
+		<center>
+            <h3 translate>Reach out to our support Team</h3>
+			<br>
+            <a href="mailto:support@concepts3d.ca" target="_blank" translate>support@concepts3d.ca</a>
+			</center>
+		</div>	
+	</div>
+		<br>
+	<br>
+	<br>
+	<br>
+
+    <div class="row flex-row">
+		<div class="col-md-12">
+			<center>
+				<h2 translate>Shop for Upgrades, Spares and Consumables</h2>
+			</center>
+		</div>
+	</div>
+    <div class="row flex-row">
+
+		<div class="col-md-4 mapcontainer">
+			<a href="https://concepts3d.ca" target="_blank">
+				<div id="container">
+					<img class="bottom" src="static/shots/america-blur.png" />
+					<img class="top" src="static/shots/america-clear.png" />
+					<div class="maps-text">Americas</div>
+				</div>
+			</a>
+		</div>	
+		<div class="col-md-4 mapcontainer">
+			<a href="https://concepts3d.eu" target="_blank">
+				<div id="container">	
+					<img class="bottom" src="static/shots/europe-blur.png" />
+					<img class="top" src="static/shots/europe-clear.png" />
+					<div class="maps-text">Europe</div>
+
+				</div>
+			</a>
+		</div>		
+		<div class="col-md-4 mapcontainer">
+			<a href="https://concepts3d.ca" target="_blank">
+				<div id="container">
+					<img class="bottom" src="static/shots/asia-blur.png" />
+					<img class="top" src="static/shots/asia-clear.png" />
+					<div class="maps-text">Asia - Pacific</div>
+				</div>
+			</a>
+		</div>
+	</div>
+	<br>
+	<br>
+	<br>
+    <div class="row">	
+	    <div class="col-md-12">
+			<a href="https://www.vecteezy.com/free-vector/low-poly-world-map" style="text-size:6px" >Low Poly World Map Vectors by Vecteezy</a>
+		</div>
+	</div>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+    <div class="row flex-row">
+        <div class="col-md-12">
+	
+			<h3 translate>Open a Ticket</h3>
+            <p translate>If requested by our Support team or if you belive you found an issue with the machine or it's software, please fill out the form below and click send.</p>                    
+            <p translate>Please provide your name and email address so we can reach out to you.</p>                    
+            <p translate>By submitting the form you agree that your printer configuration and log files will be transmitted to a server operated by Concepts3D or it's affiliates.</p>                    
+            <p translate>You will receive a confirmation email where you can download the data that has been submitted for your own validation.</p>                    
+            <form class="edit-page" id="SupportForm">
+                <input id="SupportNameField" class="form-control" name="name" type="name" placeholder="Your Name" required>
+                <input id="SupportEmailField" class="form-control" name="email" type="email" placeholder="Email address" required>
+				<textarea id="SupportTextField" class="form-control" name="report" placeholder="Detail of the bug you want to report." required></textarea>
+                <input id="SupportSubmitButton" class="btn btn-success" value="Send">
             </form>
-            <br>           
-            <h3 translate>Resources</h3>
-            <ul>
-                <li><a href="https://docs.nano3dtech.com/" target="_blank" translate>Online Document</a>
-                <li><a href="https://www.nano3dtech.com/forum/" target="_blank" translate>Support Forum</a>
-                <li><a href="https://www.facebook.com/groups/nanodlp" target="_blank" translate>NanoDLP Facebook Group</a>
-            </ul>            
+            <br>  
+					
+			<br>
+		</div>
         </div>
     </div>
 </div>
+<br>           
+<br>           
+<br>           
 {% endblock %}

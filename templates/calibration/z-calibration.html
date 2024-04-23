@@ -1,118 +1,47 @@
-{% extends "../base.html" %}
-{% block content %}
+{% extends "../base.html" %} {% block content %}
 <div class="row">
-	<div class="col-sm-6">
-		<legend translate>Platform Information</legend>
-		<!--ajax_result-->
-		<div class="ajax_result">
-			{% if msg %}
-			<div class="alert alert-info" role="alert">{{msg}}</div>
-			{% endif %}
-			<table width="100%" class="table table-striped table-hover">
-				<thead>
-					<tr>
-						<th translate>Height</th>
-						<th translate>Millimeter</th>
-						<th translate>Pulse</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td translate>Zero Level</td>
-						<td>0</td>
-						<td>0</td>
-					</tr>
-					<tr class="success">
-						<td translate>Current</td>
-						<td><b id="current-height-mm">{{CurrentHeightMm}}</b></td>
-						<td><b id="current-height-pulse">{{Status.CurrentHeight}}</b></td>
-					</tr>
-					<tr>
-						<td translate>End Level</td>
-						<td><b id="axis-height-mm">{{ZAxisHeightMm}}</b></td>
-						<td><b id="axis-height-pulse">{{Config.ZAxisHeight}}</b></td>
-					</tr>
-				</tbody>
-			</table>
-			{% if ZAxisPin %}
-				<br>
-				<a href="/z-axis/touch-limit" type="button" class="btn btn-default" translate>Calibrate Zero Position ⇧</a>
-				<br>
-				<br>
-				<legend translate>Save Z Axis Calibration</legend>
-				<a href="/z-axis/calibrate" class="btn  btn-danger btn-lg ask" data-ask="measure-confirm" role="button" translate>Measure Z-Axis Length ⇧ </a>
-				<translate class="hide" id="measure-confirm">Are you sure you want to set this height as the bottom?</translate>
-				<br>
-				<br>
-				{% if ZAxisEnable>0 %}
-					<a href="/z-axis/enable/1" type="button" class="btn btn-default" translate>Enable Motor</a> &nbsp;
-					<a href="/z-axis/enable/0" type="button" class="btn btn-default" translate>Disable Motor</a>
-				{% endif %}
-			{% else %}
-				<a href="/z-axis/record-height" type="button" class="btn btn-default" translate>Record Current Height as Axis Height</a>
-			{% endif %}
-		</div>
-		<!--ajax_result-->
-		<br><br>
-		{{ buttonsView(buttons,"/z-calibration") }}
-	</div>
-	<div class="col-sm-6">
-		<legend translate>Move</legend>
-		<div class="row calibration">
-			<div class="col-xs-6 right_link">
-				<a href="/z-axis/bottom" type="button" class="btn btn-danger btn-sm" translate>Floor ⇩</a>
-				<a href="/z-axis/move/down/micron/200000" type="button" class="btn btn-default btn-sm">200mm ⇩</a>
-				<a href="/z-axis/move/down/micron/100000" type="button" class="btn btn-default btn-sm">100mm ⇩</a>
-				<a href="/z-axis/move/down/micron/50000" type="button" class="btn btn-default btn-sm">50mm ⇩</a>
-				<a href="/z-axis/move/down/micron/10000" type="button" class="btn btn-default btn-sm">10mm ⇩</a>
-				<a href="/z-axis/move/down/micron/1000" type="button" class="btn btn-default btn-sm">1mm ⇩</a>
-				<a href="/z-axis/move/down/micron/500" type="button" class="btn btn-default btn-sm">0.5mm ⇩</a>
-				<a href="/z-axis/move/down/micron/100" type="button" class="btn btn-default btn-sm">0.1mm ⇩</a>
-				<a href="/z-axis/move/down/pulse/100" type="button" class="btn btn-default btn-sm side_left" translate>100 Pulse ⇩</a>
-				<a href="/z-axis/move/down/pulse/10" type="button" class="btn btn-default btn-sm side_left" translate>10 Pulse ⇩</a>
-				<a href="/z-axis/move/down/pulse/1" type="button" class="btn btn-default btn-sm side_left" translate>1 Pulse ⇩</a>
-			</div>
-			<div class="col-xs-6 left_link">
-				<a href="/z-axis/top" type="button" class="btn btn-default btn-sm" translate>Top ⇧</a>
-				<a href="/z-axis/move/up/micron/200000" type="button" class="btn btn-default btn-sm">200mm ⇧</a>
-				<a href="/z-axis/move/up/micron/100000" type="button" class="btn btn-default btn-sm">100mm ⇧</a>
-				<a href="/z-axis/move/up/micron/50000" type="button" class="btn btn-default btn-sm">50mm ⇧</a>
-				<a href="/z-axis/move/up/micron/10000" type="button" class="btn btn-default btn-sm">10mm ⇧</a>
-				<a href="/z-axis/move/up/micron/1000" type="button" class="btn btn-default btn-sm">1mm ⇧</a>
-				<a href="/z-axis/move/up/micron/500" type="button" class="btn btn-default btn-sm">0.5mm ⇧</a>
-				<a href="/z-axis/move/up/micron/100" type="button" class="btn btn-default btn-sm">0.1mm ⇧</a>
-				<a href="/z-axis/move/up/pulse/100" type="button" class="btn btn-default btn-sm side_right" translate>100 Pulse ⇧</a>
-				<a href="/z-axis/move/up/pulse/10" type="button" class="btn btn-default btn-sm side_right" translate>10 Pulse ⇧</a>
-				<a href="/z-axis/move/up/pulse/1" type="button" class="btn btn-default btn-sm side_right" translate>1 Pulse ⇧</a>
-			</div>
-		</div>
-		{% if ZAxisPin %}
-		<br>
-		<legend translate>Move to layer</legend>
-		<form class="edit-page" method="POST">
-			<fieldset>
-				<div class="control-group">
-					<label class="control-label" for="appendedtext" translate>Plate</label>
-					<select name="ProfileID" class="form-control" required>
-			        {% for profile in profiles %}
-						<option value="{{profile.ProfileID}}">{{profile.Title}}</option>
-					{% endfor %}
-					</select>
-				</div>
-				<br>
-				<div class="control-group">
-					<label class="control-label" translate>Layer</label>
-					<input id="appendedtext" name="LayerID" class="form-control" placeholder="Layer ID" type="text" required>
-					<br>
-					<br>
-					<div class="controls">
-						<button value="down" class="btn btn-default" translate>Move to Layer</button>
-					</div>
-				</div>
-
-			</fieldset>
-		</form>
-		{% endif %}
-	</div>
+  <div class="col-sm-4">
+    <legend translate>Platform Information</legend>
+    <table width="100%" class="table table-striped table-hover" style="margin-top:50px;">
+      <thead>
+      <tr>
+        <th translate>Height</th>
+        <th translate>Millimeter</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td translate>Zero Level</td>
+        <td>0</td>
+      </tr>
+      <tr class="success">
+        <td translate>Current</td>
+        <td><b id="current-height-mm">{{CurrentHeightMm}}</b></td>
+      </tr>
+      <tr>
+        <td translate>End Level</td>
+        <td><b id="axis-height-mm">{{ZAxisHeightMm}}</b></td>
+      </tr>
+      </tbody>
+    </table>
+    <a href="/z-axis/record-height" type="button" class="btn btn-primary"  style="margin-top:35px;" translate>Record Current Height as Axis Height</a>
+  </div>
+  <div class="col-sm-8">
+    <legend translate>Move</legend>
+    <div class="btn-group-vertical" style="padding-right: 10px">
+      <button id="btnUp" class="btn btn-primary btn-axis-move" style="margin-bottom: 20px"><span class="glyphicon glyphicon-chevron-up"></span></button>
+      <button id="btnMove100000" class="btn btn-default btn-movement">100 mm</button>
+      <button id="btnMove10000" class="btn btn-default btn-movement">10 mm</button>
+      <button id="btnMove1000" class="btn btn-default btn-movement btn-movement-active">1 mm</button>
+      <button id="btnMove100" class="btn btn-default btn-movement">0.1 mm</button>
+      <button id="btnDown" class="btn btn-primary btn-axis-move" style="margin-top: 20px"><span class="glyphicon glyphicon-chevron-down"></span></button>
+    </div>
+    <div class="btn-group-vertical" style="padding-top: 80px">
+      <button id="btnMoveHome" class="btn btn-default">HOME</button>
+      <button id="btnMovePark" class="btn btn-default">PARK</button>
+      <button id="btnMoveBottom" class="btn btn-default">FLOOR</button>
+      <button id="btnStop" class="btn btn-danger" style="margin-top: 45px">STOP</button>
+    </div>
+  </div>
 </div>
 {% endblock %}

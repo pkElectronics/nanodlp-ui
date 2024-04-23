@@ -164,10 +164,11 @@
 	<link rel="icon" href="/static/favicon.ico">
 
 	<!-- Bootstrap core CSS -->
-	<link href='/static/boot3/css/bootstrap.{{theme}}.min.css' rel="stylesheet">
+	<link href='/static/boot3/css/bootstrap.{{theme}}.min.css?{{version}}(athenav7)' rel="stylesheet">
 
 	<!-- Custom styles for this template -->
-	<link href='/static/css/main.css?{{version}}' rel="stylesheet">
+	<link href='/static/css/main.css?{{version}}(athenav7)' rel="stylesheet">
+	<link href='/static/css/athena.css?{{version}}(athenav7)' rel="stylesheet">
 	<title>{% if title %}{{ title }}{% endif %}</title>
 	{% block head %} {% endblock %}
 	<script src='/static/boot3/js/jquery.min.js'></script>
@@ -193,12 +194,13 @@
 	<script src='/static/js/favico-0.3.10.min.js'></script>
 	<script src='/static/js/jquery.sparkline.min.js'></script>
 	<script src='/static/js/conditionize.flexible.jquery.min.js'></script>	
-	<script src='/static/js/main.js?{{version}}'></script>
+	<script src='/static/js/main.js?{{version}}(athenav7)'></script>
 	<script src='/static/js/formula.js'></script>
 	<script src='/static/js/slicer.js'></script>
 	<script src='/static/js/preview.js'></script>
 	<script src='/static/js/po.js'></script>
 	<script>if (window.module) module = window.module;</script>
+	<script src='/static/js/athena.js?{{version}}(athenav7)'></script>
 	{% block js %} {% endblock %} {% block tail %} {% endblock %}
 	<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 		<div class="modal-dialog" role="document">

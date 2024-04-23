@@ -188,7 +188,7 @@ function profile_settings_open(t){
 
 function dashboard_init() {
 	$.get("/info", function (data) {
-		$(".nanodlp-content").html("<br>"+data);
+		// $(".nanodlp-content").html("<br>"+data);
 	});
 	$("html").delegate('#change-preview','click',function(e){
 		$(this).parent().toggleClass("toggle");
@@ -237,7 +237,7 @@ function file_size_limit_apply(){
 }
 
 function post_init(){
-	$('.upload-disable').submit(function(e) {
+	/*$('.upload-disable').submit(function(e) {
 		e.preventDefault();
 		$(".progress").removeClass("hide");
 		setInterval(update_upload_progress,1000)
@@ -253,7 +253,7 @@ function post_init(){
                 window.location.replace("/plates");
             }
         });
-	});
+	});*/
 	$('#ZipFile').change(function() {
 		file_size_limit_apply();
 	});
@@ -589,6 +589,11 @@ function update_status(){
 		last_value('msg',log['msg']);
 		update_timeline();
 		current_status_display();
+
+		if (data['resin']) {
+			$('#navbar-resin-temp').show()
+			$("#navbar-resin-temp-text").text(data['resin']);
+		}
 	}).fail(function() {
 		update_status.problem++;
 		if (update_status.problem>2){
@@ -638,6 +643,7 @@ function change_stats(data,keys){
 	});
 }
 
+display_notification.prev_msg='';
 display_notification.prev_data='';
 display_notification.modal='';
 display_notification.notification='';
@@ -668,6 +674,32 @@ function display_notification(){
 		$('.modal-notification').modal('show')
 	});
 }
+
+/*
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#smallShoes">
+Click Me
+</button>
+
+<!-- The modal -->
+<div class="modal fade" id="smallShoes" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="true">
+<div class="modal-dialog modal-sm">
+<div class="modal-content">
+
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+<h4 class="modal-title" id="modalLabelSmall">Modal Title</h4>
+</div>
+
+<div class="modal-body">
+Modal content...
+</div>
+
+</div>
+</div>
+</div>
+*/
 
 function notification_close(){
 	$("body").delegate('.notification-service button','click', function (e) {
@@ -922,8 +954,14 @@ function search_init(){
 	});
 }
 
-$('#expertModeCheckbox').click(function(e) {
+$("#expertModeCheckbox").click(function (e) {
 	e.preventDefault();
-	$.ajax({url: '/printer/view/toggle',type: 'GET',dataType: 'json'}); 
-	window.location.reload(true);
+	$.ajax({
+		url: "/printer/view/toggle",
+		type: "GET",
+		dataType: "json",
+		complete: () => { 
+			window.location.reload(true);
+		},
+ 	 });
 });

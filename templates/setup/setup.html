@@ -123,7 +123,7 @@
 					<option value="0" {% if Theme==0 %}selected{% endif %} translate>Blue / Dark</option>
 					<option value="1" {% if Theme==1 %}selected{% endif %} translate>Blue / Light</option>
 					<option value="2" {% if Theme==2 %}selected{% endif %} translate>Black / Light</option>
-					<option value="3" {% if Theme==3 %}selected{% endif %} translate>Brown / Light</option>
+					<option value="3" {% if Theme==3 %}selected{% endif %} translate>Athena / Dark</option>
 					<option value="4" {% if Theme==4 %}selected{% endif %} translate>Black / Dark</option>
 				</select>
 
@@ -312,26 +312,26 @@
 
 			</div>
 
-			<div class="col-md-4 i_code i_option i_lock">
+			<div class="col-md-11 i_code i_option i_lock">
 				<label for="ShieldBootup">{{helpPage("https://docs.nano3dtech.com/manual/code/")}} {{formulaModal()}}
 					<translate>Bootup Code</translate></label>
 				<textarea class="form-control" name="ShieldBootup" id="ShieldBootup">{{ShieldBootup}}</textarea>
 
 			</div>
-			<div class="col-md-4 i_code i_option i_lock">
+			<div class="col-md-11 i_code i_option i_lock">
 				<label for="ShieldShutdown">{{helpPage("https://docs.nano3dtech.com/manual/code/")}} {{formulaModal()}}
 					<translate>Shutdown Code</translate></label>
 				<textarea class="form-control" name="ShieldShutdown" id="ShieldShutdown">{{ShieldShutdown}}</textarea>
 
 			</div>
-			<div class="col-md-4 i_code i_axis i_option i_lock">
+			<div class="col-md-11 i_code i_axis i_option i_lock">
 				<label for="ShieldStart">
 					<translate>Start of Print Code</translate> {{helpPage("https://docs.nano3dtech.com/manual/code/")}} 
 					{{formulaModal()}}
 				</label>
 				<textarea class="form-control" name="ShieldStart" id="ShieldStart">{{ShieldStart}}</textarea>
 			</div>
-			<div class="col-md-4 i_code i_axis i_option i_lock">
+			<div class="col-md-11 i_code i_axis i_option i_lock">
 				<label for="ShieldResume">
 					<translate>Resume Print Code</translate> {{helpPage("https://docs.nano3dtech.com/manual/code/")}} 
 					{{formulaModal()}}
@@ -339,13 +339,13 @@
 				<textarea class="form-control" name="ShieldResume" id="ShieldResume">{{ShieldResume}}</textarea>
 
 			</div>
-			<div class="col-md-4 i_code i_axis i_option i_lock">
+			<div class="col-md-11 i_code i_axis i_option i_lock">
 				<label for="ShieldFinish">
 					<translate>Print Stop Code</translate> {{formulaModal()}}
 				</label>
 				<textarea class="form-control" name="ShieldFinish" id="ShieldFinish">{{ShieldFinish}}</textarea>
 			</div>
-			<div class="col-md-4 i_code i_axis i_option i_lock">
+			<div class="col-md-11 i_code i_axis i_option i_lock">
 				<label for="ManualMoveGcode">
 					<translate>Manual Movement Code Template</translate>
 				</label>
@@ -353,7 +353,7 @@
 					id="ManualMoveGcode">{{ManualMoveGcode}}</textarea>
 
 			</div>
-			<div class="col-md-4 i_code i_option i_lock">
+			<div class="col-md-11 i_code i_option i_lock">
 				<label for="BoardParser">
 					<translate>Controller Board Output Parser</translate>
 				</label>
@@ -597,7 +597,7 @@
 					{% endfor %}
 				</datalist>
 			</div>
-			<div class="col-md-4 i_display i_quality i_code i_option i_lock">
+			<div class="col-md-4 i_display i_quality i_option i_lock">
 				<label for="LightOutputFormula">
 					<translate>Light Output Formula</translate> <span class="label label-default"
 						translate>Percentage</span>  {{helpPage("https://docs.nano3dtech.com/manual/code/#light-output")}} {{formulaModal()}}
@@ -630,7 +630,7 @@
 						translate>μm/Second</span> {{helpPage("https://docs.nano3dtech.com/manual/speed/")}}
 				</label>
 				<input class="form-control" value="{{MaxSpeed}}" name="MaxSpeed" id="MaxSpeed" type="number"
-					step="0.001">
+					step="1">
 			</div>
 			<div class="col-md-4 i_axis i_option i_lock">
 				<label for="MinSpeed">
