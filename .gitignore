@@ -1,9 +1,7 @@
 build
 distro
 db
-public/status.json
 db/*
-public/plates/*
 webserver*
 *.log
 *.sh
@@ -11,8 +9,10 @@ nanodlp
 nanodlp.exe
 nanodlp.exe.bak
 setup
+public/plates/*
 public/general/athena.png
 public/image_version
 public/channel
 public/printer_type
+public/status.json
 .idea/
