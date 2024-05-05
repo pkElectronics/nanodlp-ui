@@ -5,6 +5,8 @@
 		<h2 translate>Display Calibration</h2>
 		<br>
 	</div>
+</div>
+<div class="row">
 	<div class="col-md-3">
 		<div class="box">
 			<img src="/static/general/boundaries.png" style="width: 240px;">
@@ -30,6 +32,7 @@
 					<a href="/projector/display/general***athena.png" class="btn btn-info svg">{{ icon(computer_icon) }}</a>
 					<a href="/projector/blank" class="btn btn-info svg" style="color:black">{{ icon(filldisplay_icon) }}</a>
 			</div>
+		</div>
 	</div>
 	<div class="col-md-3">
 		<div class="box">
@@ -45,6 +48,8 @@
 		</div>
 	</div>
 	<div class="col-md-3">
+		<div class="box">
+
 		<img src="/static/general/white.png" style="width: 240px;">
 		<h3>
 			<translate>Full White</translate> {{helpPage("https://docs.nano3dtech.com/manual/display-calibration/#white")}}
@@ -56,6 +61,7 @@
 			{% endif %}
 			<a href="/projector/blank" class="btn btn-info svg" style="color:black">{{ icon(filldisplay_icon) }}</a>
 		</p>
+	</div>
 	</div>
 </div>
 <br>
@@ -100,7 +106,6 @@
 		<br>
 	</div>
 </div>
-{{ buttonsView(buttons,"/projector-calibration") }}
 {% if width==1920 && height==1080 && build=="microlay" %}
 <div class="row">
 	<div class="col-md-3">
