@@ -333,6 +333,7 @@ function repair_init(){
 		t.addClass("animated");
 		$.get(t.attr("href")).always(function(){
 			t.remove();
+			update_plates_list();
 		});
 	});
 }
@@ -542,10 +543,7 @@ function update_status(){
 			$("audio#buzzer")[0].play();
 		}
 		if (update_status.running != data['Printing'] && update_status.once && $("#plates-list").length>0){
-			$.get("/plates/list",function(d){
-				$("#plates-list").html(d+"</table>");
-				update_plates_resume();
-			});
+			update_plates_list();
 		}
 		update_status.once = true
 		update_status.running = data['Printing'];
@@ -965,3 +963,10 @@ $("#expertModeCheckbox").click(function (e) {
 		},
  	 });
 });
+
+function update_plates_list(){
+	$.get("/plates/list",function(d){
+		$("#plates-list").html(d+"</table>");
+		update_plates_resume();
+	});
+}
