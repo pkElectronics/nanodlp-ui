@@ -21,7 +21,7 @@
                 {% endif %}
                 <li><a href="/z-calibration"><span class="glyphicon glyphicon-resize-vertical"></span>&nbsp; <translate>Z Axis Control</translate></a></li>
                 <li><a href="/projector-calibration"><span class="glyphicon glyphicon-picture"></span>&nbsp; <translate>Display Calibration</translate></a></li>
-                <li role="separator" class="divider"></li>
+                {% if build!="athena" %}<li role="separator" class="divider"></li>{% endif %}
                 {% if !manHighLock %}
                 <li class="{% if viewMode == 0 %}hidden{% endif %}"><a href="/setup"><span class="glyphicon glyphicon-wrench"></span>&nbsp; <translate>Machine Settings</translate></a></li>                
                 <li><a href="/term"><span class="glyphicon glyphicon-phone"></span>&nbsp; <translate>Gcode Terminal</translate></a></li>

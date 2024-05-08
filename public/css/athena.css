@@ -105,3 +105,11 @@
 .navbar-brand{
   font-size: 14px !important;
 }
+
+.force-stop{
+  margin-bottom: 10% !important;
+}
+
+.btn-default {
+  border-color: #F5F5F5; !important;
+}
