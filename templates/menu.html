@@ -23,7 +23,6 @@
                 <li><a href="/projector-calibration"><span class="glyphicon glyphicon-picture"></span>&nbsp; <translate>Display Calibration</translate></a></li>
                 {% if build!="athena" %}<li role="separator" class="divider"></li>{% endif %}
                 {% if !manHighLock %}
-                <li class="{% if viewMode == 0 %}hidden{% endif %}"><a href="/setup"><span class="glyphicon glyphicon-wrench"></span>&nbsp; <translate>Machine Settings</translate></a></li>                
                 <li><a href="/term"><span class="glyphicon glyphicon-phone"></span>&nbsp; <translate>Gcode Terminal</translate></a></li>
                 <li class="{% if viewMode == 0 %}hidden{% endif %}"><a href="/add-protection"><span class="glyphicon glyphicon-lock"></span>&nbsp; <translate>Password Protection</translate></a></li>
                 <li class="{% if viewMode == 0 %}hidden{% endif %}"><a href="/setup/custom-buttons"><span class="glyphicon glyphicon-pencil"></span>&nbsp; <translate>Custom Buttons</translate></a></li>

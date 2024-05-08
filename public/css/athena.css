@@ -111,5 +111,10 @@
 }
 
 .btn-default {
-  border-color: #F5F5F5; !important;
+  border-color: #F5F5F5 !important;
+}
+
+/* Athena Gold on hover */
+.btn-default:hover {
+  border-color: #f0ad4e !important;
 }

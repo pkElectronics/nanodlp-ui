@@ -71,9 +71,10 @@
 		<h3 translate>UV LED / Projector</h3>
 		<a href="/projector/on" class="btn btn-default" translate>Turn On</a>
 		<a href="/projector/off" class="btn btn-default" translate>Turn Off</a>
-		<a href="/shutter/open" class="btn btn-default" translate>Shutter Open</a>
-		<a href="/shutter/close" class="btn btn-default" translate>Shutter Close</a>
+		{% if build != "athena" %}<a href="/shutter/open" class="btn btn-default" translate>Shutter Open</a>{% endif %}
+		{% if build != "athena" %}<a href="/shutter/close" class="btn btn-default" translate>Shutter Close</a>{% endif %}
 	</div>
+	{% if build != "athena" %}
 	<div class="col-md-4 {% if viewMode == 0 %}hidden{% endif %} edit-page">
 		<h3 translate>Mask and Lamp</h3>
 		<a href="/mask/add" class="btn btn-default" translate>Edit Mask</a>
@@ -105,6 +106,7 @@
 		</form>
 		<br>
 	</div>
+	{% endif %}
 </div>
 {% if width==1920 && height==1080 && build=="microlay" %}
 <div class="row">
