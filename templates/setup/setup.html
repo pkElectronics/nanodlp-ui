@@ -359,6 +359,14 @@
 				</label>
 				<textarea class="form-control" name="BoardParser" id="BoardParser">{{BoardParser}}</textarea>
 			</div>
+
+			<div class="col-md-11 i_code i_option i_lock">
+				<label for="MultiCureGcode">
+					<translate>Multicure Gcode</translate>
+				</label>
+				<textarea class="form-control" name="MultiCureGcode" id="MultiCureGcode">{{MultiCureGcode}}</textarea>
+			</div>
+
 			<div class="col-md-4 conditional i_shutter i_code i_option i_lock"
 				data-condition="['1','0'].includes(#ShutterMode) && ['i_shutter','i_code'].includes(#scategory)">
 				<label for="ShutterOpenGcode">
@@ -795,7 +803,6 @@
 		<input type="hidden" name="TopGcode" value="{{TopGcode}}">
 		<input type="hidden" name="CalibrationGcode" value="{{CalibrationGcode}}">
 		<input type="hidden" name="UpgradeGcode" value="{{UpgradeGcode}}">
-		<input type="hidden" name="MultiCureGcode" value="{{MultiCureGcode}}">
 		<input type="hidden" name="BottomGcode" value="{{BottomGcode}}">
 		<input type="hidden" name="PressureType" value="{{PressureType}}">
 		<input type="hidden" name="PressureAddress" value="{{PressureAddress}}">

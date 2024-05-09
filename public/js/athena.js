@@ -673,3 +673,113 @@ $('.upload-disable').submit(function(e) {
 	}
 
 });
+
+$(function() {
+	setInterval(function(){display_notification_athena();}, 2000);
+});
+
+display_notification.prev_msg='';
+display_notification.prev_data='';
+
+function display_notification_athena(){
+	$.ajax({
+		url:'/notification',
+		type: 'GET',
+		timeout: 2000
+	}).done(function(data){
+		var msg="";
+		if (data===null) return;
+
+		if(data.length > 0){
+			$.each(data,function(k,v){
+
+				if( display_notification.prev_data === "" || v['Timestamp'] >= display_notification.prev_data['Timestamp']){
+
+					var date = new Date();
+					date.setTime(v['Timestamp']*1000);
+
+					var hour = date.getHours();
+					var min = date.getMinutes();
+					var sec = date.getSeconds();
+
+					hour = (hour < 10 ? "0" : "") + hour;
+					min = (min < 10 ? "0" : "") + min;
+					sec = (sec < 10 ? "0" : "") + sec;
+
+					var str = hour + ":" + min + ":" + sec;
+
+					msg='<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="false">'
+						+'<div class="modal-dialog">'
+						+'<div class="modal-content">'
+						+'<div class="modal-header">'
+						+'<h4 class="modal-title" id="modalLabelSmall"><center>'+v["Type"].toUpperCase()+'</center></h4>'
+						+'</div>' //end modal header
+						+'<div class="modal-body">'
+						+'<center>'+str+' - '+v["Text"]+'</center>'
+						+'</br>'
+						+'</div>' //end modal body
+						+'<div class="div-modal-buttons">'
+						+'<button type="button" id="btn-modal-continue" class="btn btn-info btn-mod-l"> Continue Anyways</button>'
+						+'<button type="button" id="btn-modal-cancel" class="btn btn-danger btn-mod-r"> Cancel Print</button>'
+						+'</div>' //end modal footer
+						+'</div>' //end model content
+						+'</div>' //end modal dialog
+						+'</div>'; //end modal fade
+
+					if(v["Type"] === "Error"){
+						$('#btn-modal-continue').hide();
+					}
+					display_notification.prev_data=v;
+
+
+				}
+			});
+
+			if (msg===display_notification.prev_msg) return;
+			display_notification.prev_msg=msg;
+			$("#notificationModal").remove();
+			$(".navbar").after(msg);
+
+
+
+			$('#btn-modal-continue').click(function(){
+				try {
+					const response = fetch('/notification/disable/'+display_notification.prev_data["Timestamp"], {
+						method: 'get'
+					});
+					const response2 = fetch('/printer/unpause', {
+						method: 'get'
+					});
+					console.log('Completed!', response);
+				} catch(err) {
+					console.error('Error: ${err}');
+				}
+				$('#notificationModal').modal('hide');
+
+			});
+			$('#btn-modal-cancel').click(function(){
+				try {
+					const response = fetch('/notification/disable/:'+display_notification.prev_data["Timestamp"], {
+						method: 'get'
+					});
+					const response2 = fetch('/api/v1/printer/printer/stop', {
+						method: 'get'
+					});
+					console.log('Completed!', response);
+				} catch(err) {
+					console.error('Error: ${err}');
+				}
+				$('#notificationModal').modal('hide');
+			});
+
+			$('#notificationModal').modal({backdrop: 'static', keyboard: false})
+			$('#notificationModal').modal('show');
+
+
+		}else{
+			msg="";
+			$('#notificationModal').modal('hide');
+			$("#notificationModal").remove();
+		}
+	});
+}

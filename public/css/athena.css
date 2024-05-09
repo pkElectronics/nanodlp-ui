@@ -118,3 +118,7 @@
 .btn-default:hover {
   border-color: #f0ad4e !important;
 }
+
+#setup .col-md-11 {
+  display: none;
+}
