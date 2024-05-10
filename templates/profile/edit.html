@@ -617,7 +617,7 @@
 	</form>	
 </div>
 	<!-- ************************** ATHENA SIMPLE RESIN PAGE -->
-	<div id="setup-profile2"> 
+<div id="setup-profile2">
 	<form action="" method="post" class="edit-page {% if viewMode == 1 %}hidden{% endif %}" id="setup2">
 		<div class="row flex-row" id="options">
 			<div class="col-md-12 i_basic i_option">
@@ -797,6 +797,31 @@
 					</div>
 					<div class="clearfix "></div>
 				</div>
+
+
+
+				<div class="col-md-12 i_basic i_option" style="padding-top: 10px;">
+					<div class="col-md-5 i_burnin i_option">
+						<label for="LiftSpeed"><translate>Lift Speed (<b>mm/m</b>)</translate></label>
+					</div>
+					<div class="col-md-4 i_burnin i_option text-nowrap">
+						<input class="form-control" value="{% if profile.LiftSpeed==0 %}1{% else %}{{profile.LiftSpeed}}{% endif %}" name="LiftSpeed" id="LiftSpeed" step="1" type="number" required min="1" max="1005">
+					</div>
+					<div class="clearfix "></div>
+				</div>
+
+				<div class="col-md-12 i_basic i_option" style="padding-top: 10px;">
+					<div class="col-md-5 i_burnin i_option">
+						<label for="RetractSpeed"><translate>Retract Speed (<b>mm/m</b>)</translate></label>
+					</div>
+					<div class="col-md-4 i_burnin i_option text-nowrap">
+						<input class="form-control" value="{% if profile.RetractSpeed==0 %}1{% else %}{{profile.RetractSpeed}}{% endif %}" name="RetractSpeed" id="RetractSpeed" step="1" type="number" required min="1" max="1005">
+					</div>
+					<div class="clearfix "></div>
+				</div>
+
+
+
 			</div>
 
 			<!-- Slicer Options -->
@@ -885,7 +910,6 @@
 				</div>
 			</div>
 			
-		</div>
 		</div>
 		<input type="hidden" value="{{profile.Color}}" name="Color">
 		<input type="hidden" value="{{profile.ShieldDuringCure}}" name="ShieldDuringCure">
