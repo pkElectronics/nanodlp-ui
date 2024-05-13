@@ -583,6 +583,7 @@ function completeHandler(){
 	setTimeout(function(){
 		removeUploadProgressModal();
 		window.location.replace("/plates");
+		window.location.reload(true);
 	},10000);
 }
 
