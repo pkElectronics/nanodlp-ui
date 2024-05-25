@@ -676,6 +676,7 @@ $('.upload-disable').submit(function(e) {
 });
 
 $(function() {
+	fetch_resin_target();
 	setInterval(function(){fetch_resin_target();}, 10000);
 });
 
