@@ -5,7 +5,7 @@ $(function(){
 	// Run for index page
 	display_notification();
 	notification_close();
-	setInterval(function(){display_notification();}, 8000);
+	//setInterval(function(){display_notification();}, 8000);
 	if($('#buzzer').length>0){
 		update_status();
 		setInterval(function(){update_status();}, 1500);
@@ -589,7 +589,7 @@ function update_status(){
 		current_status_display();
 
 		if (data['resin']) {
-			$('#navbar-resin-temp').show()
+			$('.navbar-resin-temp').show()
 			$("#navbar-resin-temp-text").text(data['resin']);
 		}
 	}).fail(function() {

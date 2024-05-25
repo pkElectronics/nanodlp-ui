@@ -676,11 +676,37 @@ $('.upload-disable').submit(function(e) {
 });
 
 $(function() {
+	setInterval(function(){fetch_resin_target();}, 10000);
+});
+
+function fetch_resin_target(){
+		$.ajax({
+			url:'/analytic/value/12',
+			type: 'GET',
+			timeout: 2000
+		}).done(function(data) {
+			var msg = "";
+			if (data === null) return;
+			$('.navbar-resin-temp').show()
+
+			$("#navbar-resin-target-text").text(data);
+
+			if(data == 0){
+				$("#navbar-heater-text").text("Standby");
+			}else{
+				$("#navbar-heater-text").text("Heating");
+			}
+
+		});
+}
+
+
+$(function() {
 	setInterval(function(){display_notification_athena();}, 2000);
 });
 
-display_notification.prev_msg='';
-display_notification.prev_data='';
+display_notification_athena.prev_msg='';
+display_notification_athena.prev_data='';
 
 function display_notification_athena(){
 	$.ajax({
@@ -694,7 +720,7 @@ function display_notification_athena(){
 		if(data.length > 0){
 			$.each(data,function(k,v){
 
-				if( display_notification.prev_data === "" || v['Timestamp'] >= display_notification.prev_data['Timestamp']){
+				if( display_notification_athena.prev_data === "" || v['Timestamp'] >= display_notification_athena.prev_data['Timestamp']){
 
 					var date = new Date();
 					date.setTime(v['Timestamp']*1000);
@@ -719,25 +745,29 @@ function display_notification_athena(){
 						+'<center>'+str+' - '+v["Text"]+'</center>'
 						+'</br>'
 						+'</div>' //end modal body
-						+'<div class="div-modal-buttons">'
-						+'<button type="button" id="btn-modal-continue" class="btn btn-info btn-mod-l"> Continue Anyways</button>'
-						+'<button type="button" id="btn-modal-cancel" class="btn btn-danger btn-mod-r"> Cancel Print</button>'
-						+'</div>' //end modal footer
+						+'<div class="div-modal-buttons">';
+					if(v["Type"] !== "error") {
+						msg += '<button type="button" id="btn-modal-continue" class="btn btn-info btn-mod-l"> Continue Anyways</button>';
+						msg += '<button type="button" id="btn-modal-cancel" class="btn btn-danger btn-mod-r"> Cancel Print</button>'
+					}else{
+						msg += '<button type="button" id="btn-modal-cancel" class="btn btn-danger btn-mod-center"> Cancel Print</button>'
+					}
+					msg+='</div>' //end modal footer
 						+'</div>' //end model content
 						+'</div>' //end modal dialog
 						+'</div>'; //end modal fade
 
-					if(v["Type"] === "Error"){
+					if(v["Type"] === "error"){
 						$('#btn-modal-continue').hide();
 					}
-					display_notification.prev_data=v;
+					display_notification_athena.prev_data=v;
 
 
 				}
 			});
 
-			if (msg===display_notification.prev_msg) return;
-			display_notification.prev_msg=msg;
+			if (msg===display_notification_athena.prev_msg) return;
+			display_notification_athena.prev_msg=msg;
 			$("#notificationModal").remove();
 			$(".navbar").after(msg);
 
@@ -745,7 +775,7 @@ function display_notification_athena(){
 
 			$('#btn-modal-continue').click(function(){
 				try {
-					const response = fetch('/notification/disable/'+display_notification.prev_data["Timestamp"], {
+					const response = fetch('/notification/disable/'+display_notification_athena.prev_data["Timestamp"], {
 						method: 'get'
 					});
 					const response2 = fetch('/printer/unpause', {
@@ -760,7 +790,7 @@ function display_notification_athena(){
 			});
 			$('#btn-modal-cancel').click(function(){
 				try {
-					const response = fetch('/notification/disable/:'+display_notification.prev_data["Timestamp"], {
+					const response = fetch('/notification/disable/:'+display_notification_athena.prev_data["Timestamp"], {
 						method: 'get'
 					});
 					const response2 = fetch('/api/v1/printer/printer/stop', {

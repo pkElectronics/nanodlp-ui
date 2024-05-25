@@ -45,8 +45,14 @@
         {% if printerError %}
             <li><a class="svg error label label-danger" href="/printer">{{ icon(heart_icon) }}</a></li>
         {% endif %}
-        <li id="navbar-resin-temp" style="display:none">
+        <li class="navbar-resin-temp" style="display:none">
             <a href="/printer"><small> Resin: <span id="navbar-resin-temp-text"></span>°C</small></a>
+        </li>
+        <li class="navbar-resin-temp" style="display:none">
+            <a href="/printer"><small> Target: <span id="navbar-resin-target-text"></span>°C</small></a>
+        </li>
+        <li class="navbar-resin-temp" style="display:none">
+            <a href="/printer"><small> Heater: <span id="navbar-heater-text"></span></small></a>
         </li>
         {% if os=="linux" %}
         <li>
