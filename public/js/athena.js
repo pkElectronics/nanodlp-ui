@@ -690,9 +690,9 @@ function fetch_resin_target(){
 			$('.navbar-resin-temp').show()
 
 			if(data == 0){
-				$("#navbar-resin-target-text").text("Off");
+				$("#navbar-resin-target-text").text("Heater is Off");
 			}else{
-				$("#navbar-resin-target-text").text(data);
+				$("#navbar-resin-target-text").text("Target :"+data+"°C");
 			}
 
 		});
