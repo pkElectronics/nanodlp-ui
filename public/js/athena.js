@@ -689,12 +689,10 @@ function fetch_resin_target(){
 			if (data === null) return;
 			$('.navbar-resin-temp').show()
 
-			$("#navbar-resin-target-text").text(data);
-
 			if(data == 0){
-				$("#navbar-heater-text").text("Standby");
+				$("#navbar-resin-target-text").text("Off");
 			}else{
-				$("#navbar-heater-text").text("Heating");
+				$("#navbar-resin-target-text").text(data);
 			}
 
 		});
