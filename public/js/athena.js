@@ -789,7 +789,7 @@ function display_notification_athena(){
 			});
 			$('#btn-modal-cancel').click(function(){
 				try {
-					const response = fetch('/notification/disable/:'+display_notification_athena.prev_data["Timestamp"], {
+					const response = fetch('/notification/disable/'+display_notification_athena.prev_data["Timestamp"], {
 						method: 'get'
 					});
 					const response2 = fetch('/api/v1/printer/printer/stop', {
