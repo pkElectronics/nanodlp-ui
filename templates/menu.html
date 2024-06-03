@@ -51,9 +51,9 @@
         {% if os=="linux" %}
         <li>
             {% if wifi!="" %}
-                <a href="/wifi"><span class="label">{{wifi}} &nbsp;<span class="glyphicon glyphicon-signal"></span></span></a>
+                <a href="/wifi"><span class="label wifi-navbar-disconnected">{{wifi}} &nbsp;<span class="wifi-navbar-connected glyphicon glyphicon-signal"></span></span></a>
             {% else %}
-                <a href="/wifi"><span class="label"><translate>Wi-Fi</translate> &nbsp;<span class="glyphicon glyphicon-signal"></span></span></a>
+                <a href="/wifi"><span class="wifi-navbar-disconnected label"><translate>Wi-Fi</translate> &nbsp;<span class="wifi-navbar-disconnected glyphicon glyphicon-signal"></span></span></a>
             {% endif %}
         </li>
         {% endif %}

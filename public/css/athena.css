@@ -122,3 +122,11 @@
 #setup .col-md-11 {
   display: none;
 }
+
+.wifi-navbar-connected{
+  color:lawngreen !important;
+}
+
+.wifi-navbar-disconnected{
+  color:#F5F5F5 !important;
+}
