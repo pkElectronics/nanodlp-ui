@@ -130,3 +130,13 @@
 .wifi-navbar-disconnected{
   color:#F5F5F5 !important;
 }
+
+a.list-group-item:hover {
+  color: #555555;
+  text-decoration: none;
+  background-color: #f5f5f5;
+}
+
+a.list-group-item {
+  color: #f5f5f5;
+}

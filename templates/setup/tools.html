@@ -53,31 +53,35 @@
     </div>
     <div class="row flex-row">
         <div class="col-md-4">
-
-            <h4 translate>Printer</h4>
-            <a class="ajax btn btn-default" data-ajax="/" href="/printer/force-stop" data-confirm="stop-confirm" translate>Force Stop</a>
-            <a class="ajax btn btn-default" data-ajax="/" href="/printer/off" data-confirm="poweroff-confirm" translate>Power Off</a>
-            <a class="ajax btn btn-default" data-ajax="/" href="/printer/restart" data-confirm="restart-confirm" translate>Restart</a>            
+            <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action disabled active" translate>Printer</a>
+            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/force-stop" data-confirm="stop-confirm" translate>Force Stop</a>
+            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/off" data-confirm="poweroff-confirm" translate>Power Off</a>
+            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/restart" data-confirm="restart-confirm" translate>Restart</a>
             {% if arch=="arm" %}
-            <a class="btn btn-default {% if viewMode == 0 %}hidden{% endif %}" href="/printer/edit/pi " translate>Edit Raspberry Pi Settings</a>
-            <a class="ajax btn btn-default {% if viewMode == 0 %}hidden{% endif %}" data-ajax="/" href="/printer/expand-fs" data-confirm="expand-confirm" translate>Expand Filesystem</a>
+            <a class="list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" href="/printer/edit/pi " translate>Edit Raspberry Pi Settings</a>
+            <a class="ajax list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" data-ajax="/" href="/printer/expand-fs" data-confirm="expand-confirm" translate>Expand Filesystem</a>
             {% endif %}
             {% if os=="linux" %}
-            <a class="btn btn-default" href="/setup/timezone" translate>Change Timezone</a>
+            <a class="list-group-item list-group-item-action" href="/setup/timezone" translate>Change Timezone</a>
             {% endif %}
-            <a class="btn btn-default" href="/printer" translate>Status</a>
-            <a class="btn btn-default" href="/plates/history" translate>History</a>
-            <a class="btn btn-default" href="/term" translate>Gcode Terminal</a>
+            <a class="list-group-item list-group-item-action" href="/printer" translate>Status</a>
+            <a class="list-group-item list-group-item-action" href="/plates/history" translate>History</a>
+            <a class="list-group-item list-group-item-action" href="/term" translate>Gcode Terminal</a>
+                </div>
         </div>
         <div class="col-md-4">
-            <h4 translate>NanoDLP</h4>
-            <a class="ajax btn btn-default" data-ajax="/" href="/printer/reload" translate>Reload NanoDLP</a>
-            <a class="ajax btn btn-default" data-ajax="/" href="/printer/terminate" data-confirm="terminate-confirm" translate>Terminate NanoDLP</a>
-            <a class="btn btn-default" href="/printer/upgrade" translate>Upgrade NanoDLP</a>
-            <a class="btn btn-default" href="/debug" translate>Download Debug</a>
-            <a class="btn btn-default" href="/support" translate>Report a Problem</a>
-            <a class="btn btn-default" href="/analytic" translate>Analytic Dashboard</a>
-            <a class="btn btn-default" href="/add-protection" translate>Password Protection</a>
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action disabled active" translate>NanoDLP</a>
+
+            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/reload" translate>Reload NanoDLP</a>
+            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/terminate" data-confirm="terminate-confirm" translate>Terminate NanoDLP</a>
+            <a class="list-group-item list-group-item-action" href="/printer/upgrade" translate>Upgrade NanoDLP</a>
+            <a class="list-group-item list-group-item-action" href="/debug" translate>Download Debug</a>
+            <a class="list-group-item list-group-item-action" href="/support" translate>Report a Problem</a>
+            <a class="list-group-item list-group-item-action" href="/analytic" translate>Analytic Dashboard</a>
+            <a class="list-group-item list-group-item-action" href="/add-protection" translate>Password Protection</a>
+                </div>
         </div>
         <div class="col-md-4">
             <div class="list-group">
