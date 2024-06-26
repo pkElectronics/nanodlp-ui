@@ -28,8 +28,8 @@
 						</select>
 					</div>
 					<div id="upload-section" class="tab-pane fade in active">
-						<label for="ZipFile"><translate>File</translate> <span class="label label-default" translate>STL, OBJ, SLC, NSLICE, SVG, NanoDLP or Zip (PNG Files)</span></label>
-						<input name="ZipFile" class="form-control" id="ZipFile" type="file" data-size="{{fileSizeLimit}}" data-remote="{{remoteSlicing}}" accept=".zip,.obj,.slc,.svg,.stl,.cws,.nanodlp,.nslice">
+						<label for="ZipFile"><translate>File</translate> <span class="label label-default" translate>STL, 3MF, OBJ, SLC, NSLICE, SVG, NanoDLP or Zip (PNG Files)</span></label>
+						<input name="ZipFile" class="form-control" id="ZipFile" type="file" data-size="{{fileSizeLimit}}" data-remote="{{remoteSlicing}}" accept=".3mf,.zip,.obj,.slc,.svg,.stl,.cws,.nanodlp,.nslice">
 					</div>
 				</div>
 			</div>
@@ -64,7 +64,7 @@
 				<br>				
 			</div>
 			<div class="col-md-4 collapse advanced">
-				<label for="MultiCure"><translate>Multiple Print</translate> <span class="label label-default" translate>Comma separated in second</span>{{helpPage("https://docs.nano3dtech.com/manual/multicure/")}}</label>
+				<label for="MultiCure"><translate>Multi-Cure</translate> <span class="label label-default" translate>Comma separated in second</span>{{helpPage("https://docs.nano3dtech.com/manual/multicure/")}}</label>
 				<input name="MultiCure" class="form-control" id="MultiCure" value="{{ plate.MultiCure }}" pattern="[\d.,]*">
 				<br>
 			</div>
