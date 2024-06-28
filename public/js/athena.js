@@ -425,6 +425,10 @@ $(document).ready(function() {
 
 			let update_status_helper = "";
 
+			$('#theBar').width(5+"%");
+			$('#theBar').html(5+"%");
+			$('#progress-message').html("Launching updater");
+
 			var counterBack = setInterval(function()
 			{
 
@@ -451,15 +455,6 @@ $(document).ready(function() {
 				},
 
 				});
-
-				i++;
-				if(i<100){
-					$('#theBar').width(i+"%");
-					$('#theBar').html(i+"%");
-				} else {
-				   clearTimeout(counterBack);
-				   location.reload(true);
-				}
 
 			}, 1000);
 						
