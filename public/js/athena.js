@@ -436,7 +436,9 @@ $(document).ready(function() {
 			$.ajax({
 				url: url_progress,
 				success: function( result ) {
-					if(update_status_helper === "") update_status_helper = "running";
+					if(update_status_helper === ""){
+						update_status_helper = "running";
+					}
 					$('#theBar').width(result+"%");
 					$('#theBar').html(result+"%");
 				},
