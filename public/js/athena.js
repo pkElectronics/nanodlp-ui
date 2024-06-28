@@ -334,41 +334,46 @@ var image_version = "";
 var printer_type= "";
 var version_str = "";
 
-$.ajax({
-  url: "/static/channel",
-  success: function( result ) {
-	channel = result;
-    $( "#channel" ).html( "Current Software Channel: "+result );
-	update_changelog();
-  },
-  error: function( result ){
-	channel = "stable";
-	$( "#channel" ).html( "Current Software Channel: "+channel );
-	update_changelog();
-  }
-});
+function update_channel() {
+	$.ajax({
+		url: "/static/channel",
+		success: function (result) {
+			channel = result;
+			$("#channel").html("Current Software Channel: " + result);
+			update_changelog();
+		},
+		error: function (result) {
+			channel = "stable";
+			$("#channel").html("Current Software Channel: " + channel);
+			update_changelog();
+		}
+	});
+}
+function update_printertype() {
+	$.ajax({
+		url: "/static/printer_type",
+		success: function (result) {
+			printer_type = result;
+			$("#printer_type").html("Printer Type: " + result);
+			update_changelog();
+		}
+	});
+}
 
-$.ajax({
-  url: "/static/printer_type",
-  success: function( result ) {
-	printer_type = result;
-    $( "#printer_type" ).html( "Printer Type: "+result );
-	update_changelog();
-  }
-});
-
-$.ajax({
-  url: "/static/image_version",
-  success: function( result ) {
-	image_version = result;
-    $( "#image_version" ).html( "Image Version: "+result );
-	parts = image_version.split('+');
-	version_str = parts[1];
-	$( "#version_str" ).html( "Upgrade from Version: "+parts[1] );
-	$("#athena-version-str").html(parts[1]);
-	update_changelog();
-  }
-});
+function update_image_version() {
+	$.ajax({
+		url: "/static/image_version",
+		success: function (result) {
+			image_version = result;
+			$("#image_version").html("Image Version: " + result);
+			parts = image_version.split('+');
+			version_str = parts[1];
+			$("#version_str").html("Upgrade from Version: " + parts[1]);
+			$("#athena-version-str").html(parts[1]);
+			update_changelog();
+		}
+	});
+}
 
 function update_changelog(){
 
@@ -408,20 +413,55 @@ function changeUpdateChannel(channel){
 
 
 $(document).ready(function() {
+	update_channel();
+	update_printertype();
+	update_image_version();
+
     $("#btn-update").click(function(){
         try {
 			var i = 1;
-			var counterBack = setInterval(function(){
-			i++;
-			if(i<100){
-				$('#theBar').width(i+"%");
-				$('#theBar').html(i+"%");
-			} else {
-			   clearTimeout(counterBack);
-			   location.reload(true);
-			}
+			let url_progress = window.location.origin + ":8080/athena_status.txt";
+			let url_message = window.location.origin + ":8080/athena_message.txt";
 
-			}, 2000);
+			let update_status_helper = "";
+
+			var counterBack = setInterval(function()
+			{
+
+
+			$.ajax({
+				url: url_progress,
+				success: function( result ) {
+					if(update_status_helper === "") update_status_helper = "running";
+					$('#theBar').width(result+"%");
+					$('#theBar').html(result+"%");
+				},
+				error: function( result){
+					if(update_status_helper === "running"){
+						clearTimeout(counterBack);
+						$('#update_notification').modal('hide');
+						update_image_version();
+					}
+				}});
+
+			$.ajax({
+				url: url_message,
+				success: function( result ) {
+						$('#progress-message').html(result);
+				},
+
+				});
+
+				i++;
+				if(i<100){
+					$('#theBar').width(i+"%");
+					$('#theBar').html(i+"%");
+				} else {
+				   clearTimeout(counterBack);
+				   location.reload(true);
+				}
+
+			}, 1000);
 						
 			$('#update_notification').modal({backdrop: 'static', keyboard: false})  
 			$('#update_notification').modal('show');			
