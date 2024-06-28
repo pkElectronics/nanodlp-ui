@@ -420,7 +420,7 @@ $(document).ready(function() {
     $("#btn-update").click(function(){
         try {
 			var i = 1;
-			let url_progress = window.location.origin + ":8080/athena_status.txt";
+			let url_progress = window.location.origin + ":8080/athena_progress.txt";
 			let url_message = window.location.origin + ":8080/athena_message.txt";
 
 			let update_status_helper = "";
