@@ -439,8 +439,10 @@ $(document).ready(function() {
 					if(update_status_helper === ""){
 						update_status_helper = "running";
 					}
-					$('#theBar').width(result+"%");
-					$('#theBar').html(result+"%");
+					result = result.replace(/[\r\n]+/gm, "") + "%";
+
+					$('#theBar').width(result)
+					$('#theBar').html(result);
 				},
 				error: function( result){
 					if(update_status_helper === "running"){
