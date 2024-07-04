@@ -426,8 +426,6 @@ function open_update_modal(){
 
 	var counterBack = setInterval(function()
 	{
-
-
 		$.ajax({
 			url: url_progress,
 			success: function( result ) {
