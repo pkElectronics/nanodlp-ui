@@ -410,60 +410,86 @@ function changeUpdateChannel(channel){
 		  }
 }
 
+const url_progress = window.location.origin + ":8080/athena_progress.txt";
+const url_message = window.location.origin + ":8080/athena_message.txt";
 
+function open_update_modal(){
+	var i = 1;
+
+	let update_status_helper = "";
+
+	let ajax_error_cnt = 0;
+
+	$('#theBar').width(5+"%");
+	$('#theBar').html(5+"%");
+	$('#progress-message').html("Launching updater");
+
+	var counterBack = setInterval(function()
+	{
+
+
+		$.ajax({
+			url: url_progress,
+			success: function( result ) {
+				if(update_status_helper === ""){
+					update_status_helper = "running";
+				}
+				result = result.replace(/[\r\n]+/gm, "") + "%";
+
+				$('#theBar').width(result)
+				$('#theBar').html(result);
+			},
+			error: function( result){
+				if(update_status_helper === "running"){
+					clearTimeout(counterBack);
+					$('#update_notification').modal('hide');
+					update_image_version();
+				}
+				ajax_error_cnt++;
+
+				if(ajax_error_cnt >= 20){
+					$('#progress-message').html("Connection to the updater seems to have failed, please reload this page");
+				}
+
+			}});
+
+		$.ajax({
+			url: url_message,
+			success: function( result ) {
+				$('#progress-message').html(result);
+			},
+
+		});
+
+	}, 1000);
+
+	$('#update_notification').modal({backdrop: 'static', keyboard: false})
+	$('#update_notification').modal('show');
+}
+
+function check_if_update_running(){
+	if (!$('#update_notification').is(':visible')) {
+
+		$.ajax({
+			url: url_progress,
+			success: function( result ) {
+				open_update_modal();
+			}
+		});
+
+	}
+}
 
 $(document).ready(function() {
 	update_channel();
 	update_printertype();
 	update_image_version();
 
+	check_if_update_running();
+
     $("#btn-update").click(function(){
         try {
-			var i = 1;
-			let url_progress = window.location.origin + ":8080/athena_progress.txt";
-			let url_message = window.location.origin + ":8080/athena_message.txt";
-
-			let update_status_helper = "";
-
-			$('#theBar').width(5+"%");
-			$('#theBar').html(5+"%");
-			$('#progress-message').html("Launching updater");
-
-			var counterBack = setInterval(function()
-			{
-
-
-			$.ajax({
-				url: url_progress,
-				success: function( result ) {
-					if(update_status_helper === ""){
-						update_status_helper = "running";
-					}
-					result = result.replace(/[\r\n]+/gm, "") + "%";
-
-					$('#theBar').width(result)
-					$('#theBar').html(result);
-				},
-				error: function( result){
-					if(update_status_helper === "running"){
-						clearTimeout(counterBack);
-						$('#update_notification').modal('hide');
-						update_image_version();
-					}
-				}});
-
-			$.ajax({
-				url: url_message,
-				success: function( result ) {
-						$('#progress-message').html(result);
-				},
-
-				});
-
-			}, 1000);
-						
-			$('#update_notification').modal({backdrop: 'static', keyboard: false})  
-			$('#update_notification').modal('show');			
+			open_update_modal();
 			const response = fetch('/gcode', {
 			  method: 'post',
 			   headers:{
