@@ -334,7 +334,8 @@
 				{% if profile.FillColor %}
 				<input class="form-control" value="{{profile.FillColor}}" name="FillColor" id="FillColor" type="color">
 				{% else %}
-				<input class="form-control" value="#ffffff" name="FillColor" id="FillColor" type="color"> {% endif %}
+				<input class="form-control" value="#ffffff" name="FillColor" id="FillColor" type="color">
+				{% endif %}
 			</div>
 			<div class="col-md-4 i_slicing i_option {{isHidden(basic.BlankColor)}}">
 				<label for="BlankColor">
@@ -909,6 +910,7 @@
 	    <input type="hidden" value="{{profile.CustomValues.RlThreshold}}" name="RlThreshold" id="RlThresholdSimple">
 		<input type="hidden" value="{{profile.ShieldBeforeLayer}}" name="ShieldBeforeLayer">
 		<input type="hidden" value="{{profile.ShieldAfterLayer}}" name="ShieldAfterLayer">
+		<input type="hidden" value="{{profile.FillColor}}" name="FillColor">
 	</form>
 	</div>
 	<br>
