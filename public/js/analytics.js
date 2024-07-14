@@ -43,7 +43,7 @@ function renderChart(name, dataRows, series) {
 
 function applyLegend(opts) {
     const storedString = localStorage.getItem("legends"); 
-    if (!storedString) return;
+    if (!storedString) return opts;
     const series = JSON.parse(storedString);
     series.forEach((element,index) => {
         if (element.show === false) opts.series[index].show = false;
