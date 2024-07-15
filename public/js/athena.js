@@ -1,3 +1,25 @@
+// Analytics api data endpoints
+//
+//	LayerHeight = 0
+// 	SolidArea = 1
+// 	AreaCount =2
+// 	LargestArea 3
+// 	Speed 4
+// 	Cure 5
+// 	Pressure 6
+// 	TemperatureInside 7
+// 	TemperatureOutside 8
+// 	LayerTime 9
+// 	LiftHeight 10
+// 	TemperatureMCU 11
+// 	TemperatureInsideTarget 12
+// 	TemperatureOutsideTarget 13
+// 	TemperatureMCUTarget 14
+// 	MCUFanRPM 15
+// 	UVFanRPM 16
+// 	DynamicWait  17
+//
+//
 //************** Resin Profile Functions  */
 
 $("#DwEnableSimple").change(function () {
@@ -741,6 +763,10 @@ $('.upload-disable').submit(function(e) {
 $(function() {
 	fetch_resin_target();
 	setInterval(function(){fetch_resin_target();}, 10000);
+
+	fetch_resin_actual();
+	setInterval(function(){fetch_resin_actual();}, 10000);
+
 });
 
 function fetch_resin_target(){
@@ -760,6 +786,21 @@ function fetch_resin_target(){
 			}
 
 		});
+}
+
+function fetch_resin_actual(){
+	$.ajax({
+		url:'/analytic/value/7',
+		type: 'GET',
+		timeout: 2000
+	}).done(function(data) {
+		if (data === 0){
+			$('.navbar-resin-temp').hide();
+		}else {
+			$('.navbar-resin-temp').show();
+			$("#navbar-resin-temp-text").text(data + "°C");
+		}
+	});
 }
 
 
