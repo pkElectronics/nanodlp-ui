@@ -46,7 +46,7 @@ function applyLegend(opts) {
     if (!storedString) return opts;
     const series = JSON.parse(storedString);
     series.forEach((element,index) => {
-        if (element.show === false) opts.series[index].show = false;
+        if (element.show === false && opts.series[index] !== undefined) opts.series[index].show = false;
     });
     return opts
 }
