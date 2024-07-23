@@ -798,7 +798,7 @@ function fetch_resin_actual(){
 			$('.navbar-resin-temp').hide();
 		}else {
 			$('.navbar-resin-temp').show();
-			$("#navbar-resin-temp-text").text(data + "°C");
+			$("#navbar-resin-temp-text").text(data + "");
 		}
 	});
 }
