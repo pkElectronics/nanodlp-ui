@@ -50,6 +50,13 @@ $("#setup2").submit(function(){
 	saveSpeed(slowRetractSpeed, retractSpeed, retractLayers, $("#SimpleDynamicRetractSpeed"))
 });
 
+/**
+ * Translation layer for saving the dynamic speed values
+ * @param slowSpeed - The value of the slow speed as an integer
+ * @param fastSpeed - The value of the fast speed as an integer
+ * @param layers - The count of layers to save
+ * @param formElement - The Jquery input element from the expert mode form
+ */
 function saveSpeed(slowSpeed, fastSpeed, layers, formElement) {
 	const newConfigTextBlock = `[JS] if ([[LayerNumber]] < ${layers}) {
     output = "${slowSpeed}";
@@ -241,6 +248,13 @@ $("#BtnToggleHeater").click(function(){
 	
 });
 
+/**
+ * Conversion layer for the dynamic speed code blocks
+ * @param dynamicSpeed - The code block from the NanoDLP API
+ * @param fastElem - JQuery html input to store the fast speed in
+ * @param slowElem - JQuery html input to store the slow speed in
+ * @param layersElem - JQuery html input to store the layers in
+ */
 function convertDynamicSpeed(dynamicSpeed, fastElem, slowElem, layersElem ) {
 	const liftSpeedData = decodeHTMLEntities(dynamicSpeed);
 	const bottomSpeed = liftSpeedData.match(/< \d+\) {\s*output = "(\d+)";/);
@@ -258,6 +272,12 @@ function convertDynamicSpeed(dynamicSpeed, fastElem, slowElem, layersElem ) {
 	}
 }
 
+/**
+ * Acts as a translation layer between expert values from NanoDLP API into simple form values on the Basic Mode page
+ * Any form values that need to be translated to simpler values should be handled here
+ * @param dynamicLiftSpeed - NanoDLP DynamicSpeed code block
+ * @param dynamicRetractSpeed - NanoDLP DynamicRetractSpeed code block
+ */
 function expertToSimpleElementConversion(dynamicLiftSpeed, dynamicRetractSpeed) {
 	convertDynamicSpeed(
 		dynamicLiftSpeed,
@@ -273,6 +293,9 @@ function expertToSimpleElementConversion(dynamicLiftSpeed, dynamicRetractSpeed) 
 	);
 }
 
+/*
+	Hack to decode NanoDLP safe values
+ */
 function decodeHTMLEntities(text) {
 	const textArea = document.createElement('textarea');
 	textArea.innerHTML = text;
