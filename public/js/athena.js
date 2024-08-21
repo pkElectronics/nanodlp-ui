@@ -652,14 +652,13 @@ function progressHandler(e){
 }
 
 function processingHandler() {
-	$.get("/api/v1/progress/copy", function (d) {
-		let bar = $("#upload-modal-progress-bar");
-		bar.width(d + "%");
+	$.get("/api/v1/progress/copy", function (response) {
+		const responsePercentage = response + "%";
 
-		let progtex = $("#upload-modal-progress-text");
-		progtex.html(d+"%");
+		$("#upload-modal-progress-bar").width(responsePercentage);
+		$("#upload-modal-progress-text").html(responsePercentage);
 
-		if(d === 100){
+		if(response === 100){
 			completeHandler();
 		}
 	});
@@ -668,7 +667,6 @@ function completeHandler(){
 	setTimeout(function(){
 		removeUploadProgressModal();
 		window.location.replace("/plates");
-		window.location.reload(true);
 	},10000);
 }
 
@@ -677,7 +675,7 @@ function errorHandler(){
 	tex = $("#upload-modal-text");
 	progtex = $("#upload-modal-progress-text");
 
-	tex.html("An error occured during upload");
+	tex.html("An error occurred during upload");
 	progtex.html("");
 	bar.width(100 + "%");
 
