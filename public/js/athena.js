@@ -37,7 +37,28 @@ $("#setup2").submit(function(){
 	$("#PdEnableSimple").prop("checked", true);
 	$("#RlEnableSimple").prop("checked", true);
 	$("#DwEnableSimple").prop("checked", true);
+
+	const slowLiftSpeed = document.getElementById('SimpleSlowLiftSpeed').value;
+	const liftSpeed = document.getElementById('SimpleLiftSpeed').value;
+	const liftLayers = document.getElementById('SimpleSlowLiftLayers').value;
+	const slowRetractSpeed = document.getElementById('SimpleSlowRetractSpeed').value;
+	const retractSpeed = document.getElementById('SimpleRetractSpeed').value;
+	const retractLayers = document.getElementById('SimpleSlowRetractLayers').value;
+
+
+	saveSpeed(slowLiftSpeed, liftSpeed, liftLayers, $("#SimpleDynamicSpeed"))
+	saveSpeed(slowRetractSpeed, retractSpeed, retractLayers, $("#SimpleDynamicRetractSpeed"))
 });
+
+function saveSpeed(slowSpeed, fastSpeed, layers, formElement) {
+	const newConfigTextBlock = `[JS] if ([[LayerNumber]] < ${layers}) {
+    output = "${slowSpeed}";
+} else {
+    output = "${fastSpeed}";
+};[/JS]`;
+
+	formElement.prop('value', newConfigTextBlock)
+}
 
 $("#CdEnableSimple").change(function (){
 	cdEnable = $("#CdEnableSimple");
@@ -220,7 +241,43 @@ $("#BtnToggleHeater").click(function(){
 	
 });
 
+function convertDynamicSpeed(dynamicSpeed, fastElem, slowElem, layersElem ) {
+	const liftSpeedData = decodeHTMLEntities(dynamicSpeed);
+	const bottomSpeed = liftSpeedData.match(/< \d+\) {\s*output = "(\d+)";/);
+	const fastSpeed = liftSpeedData.match(/else {\s*output = "(\d+)";/);
+	const layers = liftSpeedData.match(/LayerNumber\]\] < (\d+)/);
 
+	if (fastSpeed) {
+		fastElem.value = fastSpeed[1];
+	}
+	if (bottomSpeed) {
+		slowElem.value = bottomSpeed[1];
+	}
+	if (layers) {
+		layersElem.value = layers[1];
+	}
+}
+
+function expertToSimpleElementConversion(dynamicLiftSpeed, dynamicRetractSpeed) {
+	convertDynamicSpeed(
+		dynamicLiftSpeed,
+		document.getElementById('SimpleLiftSpeed'),
+		document.getElementById('SimpleSlowLiftSpeed'),
+		document.getElementById('SimpleSlowLiftLayers')
+	);
+	convertDynamicSpeed(
+		dynamicRetractSpeed,
+		document.getElementById('SimpleRetractSpeed'),
+		document.getElementById('SimpleSlowRetractSpeed'),
+		document.getElementById('SimpleSlowRetractLayers')
+	);
+}
+
+function decodeHTMLEntities(text) {
+	const textArea = document.createElement('textarea');
+	textArea.innerHTML = text;
+	return textArea.value;
+}
 
 $(document).ready(function(){
 	cdEnable = $("#CdEnableSimple");
