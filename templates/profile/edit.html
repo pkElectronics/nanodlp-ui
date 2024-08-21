@@ -616,7 +616,17 @@
 </div>
 	<!-- ************************** ATHENA SIMPLE RESIN PAGE -->
 	<div id="setup-profile2">
-	<form action="" method="post" class="edit-page {% if viewMode == 1 %}hidden{% endif %}" id="setup2">
+
+		<script>
+			$(document).ready(() => {
+				const liftSpeed = `{{profile.DynamicSpeed}}`;
+				const retractSpeed = `{{profile.DynamicRetractSpeed}}`;
+				expertToSimpleElementConversion(liftSpeed, retractSpeed)
+			});
+		</script>
+
+
+		<form action="" method="post" class="edit-page {% if viewMode == 1 %}hidden{% endif %}" id="setup2">
 		<div class="row flex-row" id="options">
 			<div class="col-md-12 i_basic i_option">
 					<h3><span translate>Details</span>
@@ -797,6 +807,42 @@
 				</div>
 			</div>
 
+			<div class="col-md-12 i_basic i_option">
+				<div class="col-md-6 i_basic i_option" style="padding-left: 0px;">
+					<h5><span translate><strong>Lift / Retract Options</strong></span></h5>
+				</div>
+				<div class="col-md-12 i_basic i_option" style="padding-top:5px;">
+					<div class="row">
+						<div class="col-md-3 i_basic i_option" style="padding-left: 0px;">
+							<label for="SimpleSlowLiftLayers">Slow Lift Layers</label>
+							<input class="form-control" name="SimpleSlowLiftLayers" id="SimpleSlowLiftLayers" type="number" required min="1" max="20">
+						</div>
+						<div class="col-md-3 i_basic i_option" style="padding-left: 0px;">
+							<label for="SimpleSlowLiftSpeed">Slow Lift Speed (um/s)</label>
+							<input class="form-control" name="SimpleSlowLiftSpeed" id="SimpleSlowLiftSpeed" type="number" required min="50" max="70">
+						</div>
+						<div class="col-md-3 i_basic i_option" style="padding-left: 0px;">
+							<label for="SimpleLiftSpeed">Lift Speed (um/s)</label>
+							<input class="form-control" name="SimpleLiftSpeed" id="SimpleLiftSpeed" type="number" required min="50" max="250">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-3 i_basic i_option" style="padding-left: 0px;">
+							<label for="SimpleSlowRetractLayers">Slow Retract Layers</label>
+							<input class="form-control" name="SimpleSlowRetractLayers" id="SimpleSlowRetractLayers" type="number" required min="1" max="20">
+						</div>
+						<div class="col-md-3 i_basic i_option" style="padding-left: 0px;">
+							<label for="SimpleSlowRetractSpeed">Slow Retract Speed (um/s)</label>
+							<input class="form-control" name="SimpleSlowRetractSpeed" id="SimpleSlowRetractSpeed" type="number" required min="50" max="600">
+						</div>
+						<div class="col-md-3 i_basic i_option" style="padding-left: 0px;">
+							<label for="SimpleRetractSpeed">Retract Speed (um/s)</label>
+							<input class="form-control" name="SimpleRetractSpeed" id="SimpleRetractSpeed" type="number" required min="100" max="600">
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<!-- Slicer Options -->
 			<div class="col-md-12 i_basic i_option" style="padding-top:10px;">
 				<div class="col-md-6 i_basic i_option" style="padding-left: 0px;">
@@ -886,8 +932,8 @@
 		</div>
 		</div>
 		<input type="hidden" value="{{profile.Color}}" name="Color">
-		<input type="hidden" value="{{profile.DynamicSpeed}}" name="DynamicSpeed">
-		<input type="hidden" value="{{profile.DynamicRetractSpeed}}" name="DynamicRetractSpeed">
+		<input type="hidden" value="{{profile.DynamicSpeed}}" name="DynamicSpeed" id="SimpleDynamicSpeed">
+		<input type="hidden" value="{{profile.DynamicRetractSpeed}}" name="DynamicRetractSpeed" id="SimpleDynamicRetractSpeed">
 		<input type="hidden" value="{{profile.LiftSpeed}}" name="LiftSpeed">
 		<input type="hidden" value="{{profile.RetractSpeed}}" name="RetractSpeed">
 		<input type="hidden" value="{{profile.ShieldDuringCure}}" name="ShieldDuringCure">
