@@ -258,9 +258,8 @@ function buildChartFromData(name, dataResponse, exp, axes) {
 }
 
 function renderSplitChart(filteredSeries, backFilledData, chartConfig, $uplot) {
-    const filteredSeries1 = filteredSeries.filter((i, idx) => idx === 0 || chartConfig.fields.some((conf) => conf.key === i.key) )
-    const backFilledData1 = backFilledData.filter((dataSeries, idx) => idx === 0 || chartConfig.fields.some(conf => conf.id + 1 === idx))
+    const filteredSeriesForChart = filteredSeries.filter((i, idx) => idx === 0 || chartConfig.fields.some((conf) => conf.key === i.key) )
+    const backFilledDataForChart = backFilledData.filter((dataSeries, idx) => idx === 0 || chartConfig.fields.some(conf => conf.id + 1 === idx))
 
-
-    renderChart(name, backFilledData1, filteredSeries1, $uplot);
+    renderChart(name, backFilledDataForChart, filteredSeriesForChart, $uplot);
 }
