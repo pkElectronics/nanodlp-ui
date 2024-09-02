@@ -24,8 +24,13 @@
         if (file == "") return
         if (reqRunning===true) return;
         reqRunning = true;
+
+
+
         $.getJSON("/analytic/file/" + file, function (response) {
-            return buildChartFromData("{{Name}}", response, exp);
+            const axes = JSON.parse(decodeHTMLEntities(`{{axes|safe}}`));
+
+            return buildChartFromData("{{Name}}", response, exp, axes);
         }).always(function () {
             reqRunning = false;
         });

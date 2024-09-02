@@ -31,15 +31,18 @@
         if (reqRunning===true) return;
         reqRunning = true;
         const range = $("#range").val();
+
         $.getJSON("/analytic/data/" + range, function (response) {
             if (response==null) return;
-            return buildChartFromData("Sensor reading", response, exp);
+
+            const axes = JSON.parse(decodeHTMLEntities(`{{axes|safe}}`));
+            return buildChartFromData("Sensor reading", response, exp, axes); //TODO
         }).always(function () {
             reqRunning = false;
         });
     }
 </script>
-<div id="uplot" data-axes='{{axes|safe}}'></div>
+<div id="uplot"></div>
 <br>
 <a class="btn btn-warning" href="/analytic/reset" translate>Reset Stats</a>
 <select id="range" class="form-control form-inline" style="display:inline;width: auto;">

@@ -108,9 +108,9 @@ function aggregateFunc(v, aggregate) {
     return Math.round(val / aggregate) * aggregate;
 }
 
-function getSeries() {
+function getSeries(axes) {
     let series = [{}];
-    $("#uplot").data("axes").forEach((element, key) => {
+    axes.forEach((element, key) => {
         series.push({
             show: true,
             spanGaps: true,
@@ -154,9 +154,8 @@ function downloadCSV(series, o) {
     window.URL.revokeObjectURL(url);
 }
 
-const processData = (dataResponse) => {
+const processData = (dataResponse, series) => {
     let previousAggregateValue;
-    const series = getSeries();
     const processedData = series.map(() => []);
     let dataPointIndex = 0;
 
@@ -204,13 +203,13 @@ const backFillData = (data) => {
 }
 
 
-function buildChartFromData(name, dataResponse, exp) {
+function buildChartFromData(name, dataResponse, exp, axes) {
     if (dataResponse.length === 0) {
         return;
     }
 
-    const series = getSeries();
-    const processedData = processData(dataResponse);
+    const series = getSeries(axes);
+    const processedData = processData(dataResponse, series);
     const filteredData = processedData.filter(isNotAllNull);
     const backFilledData = backFillData(filteredData);
     const filteredSeries = series.filter((_, index) => isNotAllNull(processedData[index]));
