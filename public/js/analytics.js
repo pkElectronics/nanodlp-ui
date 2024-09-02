@@ -1,4 +1,8 @@
-let dplot, plot;
+let cachedData, plot;
+
+let uplots = [];
+
+const LOCAL_STORAGE_KEY = "legends-2";
 
 const ColourValues = [
     "FF0000", "00FF00", "0000FF", "FFFF00", "FF00FF", "00FFFF", "000000",
@@ -24,7 +28,7 @@ const CHART_CONFIG = {
             { key: 'Pressure', id: 6 },
             { key: 'LayerTime', id: 9 },
             { key: 'LiftHeight', id: 10 },
-            { key: 'DynamicWait', id: 15 },
+            { key: 'DynamicWait', id: 17 },
 
         ]
     },
@@ -35,8 +39,10 @@ const CHART_CONFIG = {
             { key: 'TemperatureOutside', id: 8 },
             { key: 'TemperatureMCU', id: 11 },
             { key: 'TemperatureInsideTarget', id: 12 },
-            { key: 'MCUFanRPM', id: 13 },
-            { key: 'UVFanRPM', id: 14 },
+            { key: 'TemperatureOutsideTarget', id: 13 },
+            { key: 'TemperatureMCETarget', id: 14 },
+            { key: 'MCUFanRPM', id: 15 },
+            { key: 'UVFanRPM', id: 16 },
         ]
     },
 }
@@ -45,42 +51,49 @@ function isNotAllNull(subArray) {
     return subArray.some(element => element !== null);
 }
 
-function renderChart(name, dataRows, series, $uplot) {
-    // Filter data and series if they are entirely null
-    const filteredData = dataRows.filter(isNotAllNull);
+function renderChart(name, dataRows, series, uplotId) {
+    const $uplot = $(`#${uplotId}`);
+
+    if (dataRows.length <= 1) return;
 
     let plotHeight = 400
+    const axes = prepareAxis(series);
     let opts = {
         title: name,
         class: "my-chart",
         width: $uplot.innerWidth(),
         height: plotHeight,
         series: series,
-        axes: prepareAxis(series),
+        axes: axes,
+        cursor: {
+            sync: {
+                key: 'chartCursorSync'
+            }
+        }
     };
-    if ($uplot.html() != "") { // Run once
-        plot.setData(filteredData);
-        return;
-    }
-    opts = applyLegend(opts);
+    opts = applyLegend(opts, uplotId);
     $uplot.html("");
-    plot = new uPlot(opts, filteredData, $uplot[0]);
-    saveLegend();
+    const newUplot = new uPlot(opts, dataRows, $uplot[0]);
+    uplots.push({ id: uplotId, uplot: newUplot });
+    plot = newUplot;
 }
 
-function applyLegend(opts) {
-    const storedString = localStorage.getItem("legends"); 
+function applyLegend(opts, uplotId) {
+    const storedString = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!storedString) return opts;
     const series = JSON.parse(storedString);
-    series.forEach((element,index) => {
+    series[uplotId].forEach((element,index) => {
         if (element.show === false && opts.series[index] !== undefined) opts.series[index].show = false;
     });
     return opts
 }
 
-function saveLegend() {
+function addSaveLegendHandler() {
     $(".u-legend .u-series").click(function () {
-        localStorage.setItem("legends", JSON.stringify(plot.series));
+        const cacheData = uplots.reduce((acc, uplot) => {
+            return {...acc, [uplot.id]: uplot.uplot.series};
+        }, {});
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cacheData));
     });
 }
 
@@ -138,7 +151,8 @@ function aggregateFunc(v, aggregate) {
 }
 
 function getSeries(axes) {
-    let series = [{}];
+    let fmt = uPlot.fmtDate("{HH}:{mm}:{ss}");
+    let series = [{value: (self, ts) => ts !== null ? fmt(new Date(ts * 1000)) : '--'}];
     axes.forEach((element, key) => {
         series.push({
             key: element.Key,
@@ -240,26 +254,27 @@ function buildChartFromData(name, dataResponse, exp, axes) {
 
     const series = getSeries(axes);
     const processedData = processData(dataResponse, series);
-    const filteredData = processedData.filter(isNotAllNull);
-    const backFilledData = backFillData(filteredData);
-    const filteredSeries = series.filter((_, index) => isNotAllNull(processedData[index]));
+    const backFilledData = backFillData(processedData);
 
-
-    if (JSON.stringify(dplot) == JSON.stringify(dataResponse) && !exp) {
+    if (JSON.stringify(cachedData) === JSON.stringify(dataResponse) && !exp) {
+        // exit if data hasn't changed from last time
         return
     }
-    dplot = dataResponse;
+    cachedData = dataResponse;
 
+    if (exp) return downloadCSV(series, backFilledData);
+    renderSplitChart(series, backFilledData, CHART_CONFIG.chart1, "uplot-1");
+    renderSplitChart(series, backFilledData, CHART_CONFIG.chart2, "uplot-2");
 
-    if (exp) return downloadCSV(filteredSeries, backFilledData);
-
-    renderSplitChart(filteredSeries, backFilledData, CHART_CONFIG.chart1, $("#uplot-1"))
-    renderSplitChart(filteredSeries, backFilledData, CHART_CONFIG.chart2, $("#uplot-2"))
+    addSaveLegendHandler()
 }
 
-function renderSplitChart(filteredSeries, backFilledData, chartConfig, $uplot) {
-    const filteredSeriesForChart = filteredSeries.filter((i, idx) => idx === 0 || chartConfig.fields.some((conf) => conf.key === i.key) )
+function renderSplitChart(series, backFilledData, chartConfig, uplotId) {
     const backFilledDataForChart = backFilledData.filter((dataSeries, idx) => idx === 0 || chartConfig.fields.some(conf => conf.id + 1 === idx))
+    const dataWithoutNulls = backFilledDataForChart.filter(isNotAllNull);
 
-    renderChart(name, backFilledDataForChart, filteredSeriesForChart, $uplot);
+    const seriesForChart = series.filter((i, idx) => idx === 0 || chartConfig.fields.some((conf) => conf.key === i.key) )
+    const seriesWithoutNulls = seriesForChart.filter((_, index) => isNotAllNull(backFilledDataForChart[index]));
+
+    renderChart(name, dataWithoutNulls, seriesWithoutNulls, uplotId);
 }
