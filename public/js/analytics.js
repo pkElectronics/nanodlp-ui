@@ -2,7 +2,7 @@ let cachedData, plot;
 
 let uplots = [];
 
-const LOCAL_STORAGE_KEY = "legends-2";
+const LOCAL_STORAGE_KEY = "legends:v2";
 
 const ColourValues = [
     "FF0000", "00FF00", "0000FF", "FFFF00", "FF00FF", "00FFFF", "000000",
@@ -15,6 +15,9 @@ const ColourValues = [
     "E00000", "00E000", "0000E0", "E0E000", "E000E0", "00E0E0", "E0E0E0",
 ];
 
+/**
+ * When adding new values to the chart on the backend, add the ID from the data endpoint and the key from the NanoDLP axes into this
+ */
 const CHART_CONFIG = {
     chart1: {
         uplotId: '#uplot-1',
