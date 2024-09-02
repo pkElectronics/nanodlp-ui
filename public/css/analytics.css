@@ -3,8 +3,9 @@
     text-align: left;
 }
 
-#uplot {
+.uplot {
     background-color: #fff;
+    width: 100%;
 }
 
 .u-label, .u-value, .u-title {
@@ -17,8 +18,4 @@
 
 .u-series {
     font-size: small;
-}
-
-.uplot {
-    width: 100%;
 }

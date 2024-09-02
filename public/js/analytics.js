@@ -11,33 +11,60 @@ const ColourValues = [
     "E00000", "00E000", "0000E0", "E0E000", "E000E0", "00E0E0", "E0E0E0",
 ];
 
+const CHART_CONFIG = {
+    chart1: {
+        uplotId: '#uplot-1',
+        fields: [
+            { key: 'LayerHeight', id: 0 },
+            { key: 'SolidArea', id: 1 },
+            { key: 'AreaCount', id: 2 },
+            { key: 'LargestArea', id: 3 },
+            { key: 'Speed', id: 4 },
+            { key: 'Cure', id: 5 },
+            { key: 'Pressure', id: 6 },
+            { key: 'LayerTime', id: 9 },
+            { key: 'LiftHeight', id: 10 },
+            { key: 'DynamicWait', id: 15 },
+
+        ]
+    },
+    chart2: {
+        uplotId: '#uplot-2',
+        fields: [
+            { key: 'TemperatureInside', id: 7 },
+            { key: 'TemperatureOutside', id: 8 },
+            { key: 'TemperatureMCU', id: 11 },
+            { key: 'TemperatureInsideTarget', id: 12 },
+            { key: 'MCUFanRPM', id: 13 },
+            { key: 'UVFanRPM', id: 14 },
+        ]
+    },
+}
+
 function isNotAllNull(subArray) {
     return subArray.some(element => element !== null);
 }
 
-function renderChart(name, dataRows, series) {
+function renderChart(name, dataRows, series, $uplot) {
     // Filter data and series if they are entirely null
     const filteredData = dataRows.filter(isNotAllNull);
-    const filteredSeries = series.filter((_, index) => isNotAllNull(dataRows[index]));
 
-    let plotHeight = $(window).height() - 300;
-    if (plotHeight < 400) plotHeight = 400;
+    let plotHeight = 400
     let opts = {
         title: name,
-        id: "chart1",
         class: "my-chart",
-        width: $("#uplot").innerWidth(),
+        width: $uplot.innerWidth(),
         height: plotHeight,
         series: series,
         axes: prepareAxis(series),
     };
-    if ($("#uplot").html() != "") { // Run once
+    if ($uplot.html() != "") { // Run once
         plot.setData(filteredData);
         return;
     }
     opts = applyLegend(opts);
-    $("#uplot").html("");
-    plot = new uPlot(opts, filteredData, $("#uplot")[0]);
+    $uplot.html("");
+    plot = new uPlot(opts, filteredData, $uplot[0]);
     saveLegend();
 }
 
@@ -85,7 +112,9 @@ function prepareAxis(series) {
     for (let j = halfOfAxisCount; j < axes.length; j++) {
         axes[j].side = 1;
     }
-    axes[1].grid.show = true;
+    if (axes[1]) {
+        axes[1].grid.show = true;
+    }
     return axes;
 }
 
@@ -112,6 +141,7 @@ function getSeries(axes) {
     let series = [{}];
     axes.forEach((element, key) => {
         series.push({
+            key: element.Key,
             show: true,
             spanGaps: true,
             label: element.Name,
@@ -222,5 +252,15 @@ function buildChartFromData(name, dataResponse, exp, axes) {
 
 
     if (exp) return downloadCSV(filteredSeries, backFilledData);
-    renderChart(name, backFilledData, filteredSeries);
+
+    renderSplitChart(filteredSeries, backFilledData, CHART_CONFIG.chart1, $("#uplot-1"))
+    renderSplitChart(filteredSeries, backFilledData, CHART_CONFIG.chart2, $("#uplot-2"))
+}
+
+function renderSplitChart(filteredSeries, backFilledData, chartConfig, $uplot) {
+    const filteredSeries1 = filteredSeries.filter((i, idx) => idx === 0 || chartConfig.fields.some((conf) => conf.key === i.key) )
+    const backFilledData1 = backFilledData.filter((dataSeries, idx) => idx === 0 || chartConfig.fields.some(conf => conf.id + 1 === idx))
+
+
+    renderChart(name, backFilledData1, filteredSeries1, $uplot);
 }
