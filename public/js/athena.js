@@ -37,7 +37,35 @@ $("#setup2").submit(function(){
 	$("#PdEnableSimple").prop("checked", true);
 	$("#RlEnableSimple").prop("checked", true);
 	$("#DwEnableSimple").prop("checked", true);
+
+	const slowLiftSpeed = document.getElementById('SimpleSlowLiftSpeed').value;
+	const liftSpeed = document.getElementById('SimpleLiftSpeed').value;
+	const liftLayers = document.getElementById('SimpleSlowLiftLayers').value;
+	const slowRetractSpeed = document.getElementById('SimpleSlowRetractSpeed').value;
+	const retractSpeed = document.getElementById('SimpleRetractSpeed').value;
+	const retractLayers = document.getElementById('SimpleSlowRetractLayers').value;
+
+
+	saveSpeed(slowLiftSpeed, liftSpeed, liftLayers, $("#SimpleDynamicSpeed"))
+	saveSpeed(slowRetractSpeed, retractSpeed, retractLayers, $("#SimpleDynamicRetractSpeed"))
 });
+
+/**
+ * Translation layer for saving the dynamic speed values
+ * @param slowSpeed - The value of the slow speed as an integer
+ * @param fastSpeed - The value of the fast speed as an integer
+ * @param layers - The count of layers to save
+ * @param formElement - The Jquery input element from the expert mode form
+ */
+function saveSpeed(slowSpeed, fastSpeed, layers, formElement) {
+	const newConfigTextBlock = `[JS] if ([[LayerNumber]] < ${layers}) {
+    output = "${slowSpeed}";
+} else {
+    output = "${fastSpeed}";
+};[/JS]`;
+
+	formElement.prop('value', newConfigTextBlock)
+}
 
 $("#CdEnableSimple").change(function (){
 	cdEnable = $("#CdEnableSimple");
@@ -220,7 +248,59 @@ $("#BtnToggleHeater").click(function(){
 	
 });
 
+/**
+ * Conversion layer for the dynamic speed code blocks
+ * @param dynamicSpeed - The code block from the NanoDLP API
+ * @param fastElem - JQuery html input to store the fast speed in
+ * @param slowElem - JQuery html input to store the slow speed in
+ * @param layersElem - JQuery html input to store the layers in
+ */
+function convertDynamicSpeed(dynamicSpeed, fastElem, slowElem, layersElem ) {
+	const liftSpeedData = decodeHTMLEntities(dynamicSpeed);
+	const bottomSpeed = liftSpeedData.match(/< \d+\) {\s*output = "(\d+)";/);
+	const fastSpeed = liftSpeedData.match(/else {\s*output = "(\d+)";/);
+	const layers = liftSpeedData.match(/LayerNumber\]\] < (\d+)/);
 
+	if (fastSpeed) {
+		fastElem.value = fastSpeed[1];
+	}
+	if (bottomSpeed) {
+		slowElem.value = bottomSpeed[1];
+	}
+	if (layers) {
+		layersElem.value = layers[1];
+	}
+}
+
+/**
+ * Acts as a translation layer between expert values from NanoDLP API into simple form values on the Basic Mode page
+ * Any form values that need to be translated to simpler values should be handled here
+ * @param dynamicLiftSpeed - NanoDLP DynamicSpeed code block
+ * @param dynamicRetractSpeed - NanoDLP DynamicRetractSpeed code block
+ */
+function expertToSimpleElementConversion(dynamicLiftSpeed, dynamicRetractSpeed) {
+	convertDynamicSpeed(
+		dynamicLiftSpeed,
+		document.getElementById('SimpleLiftSpeed'),
+		document.getElementById('SimpleSlowLiftSpeed'),
+		document.getElementById('SimpleSlowLiftLayers')
+	);
+	convertDynamicSpeed(
+		dynamicRetractSpeed,
+		document.getElementById('SimpleRetractSpeed'),
+		document.getElementById('SimpleSlowRetractSpeed'),
+		document.getElementById('SimpleSlowRetractLayers')
+	);
+}
+
+/*
+	Hack to decode NanoDLP safe values
+ */
+function decodeHTMLEntities(text) {
+	const textArea = document.createElement('textarea');
+	textArea.innerHTML = text;
+	return textArea.value;
+}
 
 $(document).ready(function(){
 	cdEnable = $("#CdEnableSimple");
@@ -652,14 +732,13 @@ function progressHandler(e){
 }
 
 function processingHandler() {
-	$.get("/api/v1/progress/copy", function (d) {
-		let bar = $("#upload-modal-progress-bar");
-		bar.width(d + "%");
+	$.get("/api/v1/progress/copy", function (response) {
+		const responsePercentage = response + "%";
 
-		let progtex = $("#upload-modal-progress-text");
-		progtex.html(d+"%");
+		$("#upload-modal-progress-bar").width(responsePercentage);
+		$("#upload-modal-progress-text").html(responsePercentage);
 
-		if(d === 100){
+		if(response === 100){
 			completeHandler();
 		}
 	});
@@ -668,7 +747,6 @@ function completeHandler(){
 	setTimeout(function(){
 		removeUploadProgressModal();
 		window.location.replace("/plates");
-		window.location.reload(true);
 	},10000);
 }
 
@@ -677,7 +755,7 @@ function errorHandler(){
 	tex = $("#upload-modal-text");
 	progtex = $("#upload-modal-progress-text");
 
-	tex.html("An error occured during upload");
+	tex.html("An error occurred during upload");
 	progtex.html("");
 	bar.width(100 + "%");
 
