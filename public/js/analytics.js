@@ -135,7 +135,7 @@ function prepareAxis(series) {
 }
 
 function determineDecimalPlaces(scale) {
-    let zeroPlaceScales = ["px", "Pressure"];
+    let zeroPlaceScales = ["px", "Pressure", "RPM"];
     let onePlaceScales = ["s", "mm", "°C"];
 
     if (zeroPlaceScales.includes(scale)) {
