@@ -109,60 +109,62 @@ $("#DwEnableSimple").change(function (){
 
 $(document).ready(function() {
 
-// Add click event listener to the confirm button on forceStop 
-// navigates user to /plates after a forceStop
-$("#confirmButton").click(function(){    
-    // Save a reference to the current element
-    var $this = $(this);
-    
-    // This setTimeout is just a placeholder to simulate some delay
-    setTimeout(function() {
-        // Change the href attribute after the delay
-        $this.attr("href", "/plates");
-        
-        // Manually trigger the click event to navigate to the new URL
-        $this.trigger("click");
-    }, 2000); // Adjust the delay time as needed (in milliseconds)
-})
+	// Add click event listener to the confirm button on forceStop
+	// navigates user to /plates after a forceStop
+	$("#confirmButton").click(function () {
+		// Save a reference to the current element
+		var $this = $(this);
 
-currentUrl = window.location.href
-resinTitle = $("#Title").val()
+		// This setTimeout is just a placeholder to simulate some delay
+		setTimeout(function () {
+			// Change the href attribute after the delay
+			$this.attr("href", "/plates");
 
-if ( resinTitle && resinTitle.startsWith("[AFP]") ){
-	
-	if ( currentUrl.includes("clone") ){
-		resinTitle = resinTitle.substring(6)
-		$("#Title").val(resinTitle)
-		$("#Title").trigger('change');
-		
-		$("#TitleSimple").val(resinTitle)
-		$("#TitleSimple").trigger('change');
-	}else{
-		$("#setup-profile :input").prop("disabled", true);
-		$("#setup-profile2 :input").prop("disabled", true);
-		$(".setting-cat").prop("disabled", false);
+			// Manually trigger the click event to navigate to the new URL
+			$this.trigger("click");
+		}, 2000); // Adjust the delay time as needed (in milliseconds)
+	})
+
+	currentUrl = window.location.href
+	resinTitle = $("#Title").val()
+
+	if (resinTitle && resinTitle.startsWith("[AFP]")) {
+
+		if (currentUrl.includes("clone")) {
+			resinTitle = resinTitle.substring(6)
+			$("#Title").val(resinTitle)
+			$("#Title").trigger('change');
+
+			$("#TitleSimple").val(resinTitle)
+			$("#TitleSimple").trigger('change');
+		} else {
+			$("#setup-profile :input").prop("disabled", true);
+			$("#setup-profile2 :input").prop("disabled", true);
+			$(".setting-cat").prop("disabled", false);
+		}
 	}
-}
 
-	$('.form-control').each(function() {
+	$('.form-control').each(function () {
 		var originalValue = $(this).val();
 		var step = $(this).attr('step');
 		// Check if the original value is a valid number and if step is less than 1
 		if (!isNaN(originalValue) && originalValue !== "" && step && parseFloat(step) < 1) {
-		var formattedValue = parseFloat(originalValue).toFixed(2);
-		$(this).val(formattedValue);
+			var formattedValue = parseFloat(originalValue).toFixed(2);
+			$(this).val(formattedValue);
 		}
- 	 });
-  
-  	$('.form-control').change(function() {
+	});
+
+	$('.form-control').change(function () {
 		var originalValue = $(this).val();
 		var step = $(this).attr('step');
 		// Check if the original value is a valid number and if step is less than 1
 		if (!isNaN(originalValue) && originalValue !== "" && step && parseFloat(step) < 1) {
-		var formattedValue = parseFloat(originalValue).toFixed(2);
-		$(this).val(formattedValue);
+			var formattedValue = parseFloat(originalValue).toFixed(2);
+			$(this).val(formattedValue);
 		}
- 	 });
+	});
+
+	$('[data-toggle="tooltip"]').tooltip();
 });
 
 // Support Page Helpers
@@ -995,3 +997,5 @@ function display_notification_athena(){
 		}
 	});
 }
+
+
