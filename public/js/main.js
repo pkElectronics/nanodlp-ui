@@ -964,8 +964,8 @@ $("#expertModeCheckbox").click(function (e) {
 });
 
 function update_plates_list(){
-	$.get("/plates/list",function(d){
-		$("#plates-list").html(d+"</table>");
+	$.get("/plates/list",function(plateDataHtml){
+		$("#plates-list").html("<h1>HI</h1>" + plateDataHtml + "</table>");
 		update_plates_resume();
 	});
 }
