@@ -1,4 +1,8 @@
-let dplot, plot;
+let cachedData, plot;
+
+let uplots = [];
+
+const LOCAL_STORAGE_KEY = "legends:v2";
 
 const ColourValues = [
     "FF0000", "00FF00", "0000FF", "FFFF00", "FF00FF", "00FFFF", "000000",
@@ -11,49 +15,88 @@ const ColourValues = [
     "E00000", "00E000", "0000E0", "E0E000", "E000E0", "00E0E0", "E0E0E0",
 ];
 
+/**
+ * When adding new values to the chart on the backend, add the ID from the data endpoint and the key from the NanoDLP axes into this
+ */
+const CHART_CONFIG = {
+    chart1: {
+        uplotId: '#uplot-1',
+        fields: [
+            { key: 'LayerHeight', id: 0 },
+            { key: 'SolidArea', id: 1 },
+            { key: 'AreaCount', id: 2 },
+            { key: 'LargestArea', id: 3 },
+            { key: 'Speed', id: 4 },
+            { key: 'Cure', id: 5 },
+            { key: 'Pressure', id: 6 },
+            { key: 'LayerTime', id: 9 },
+            { key: 'LiftHeight', id: 10 },
+            { key: 'DynamicWait', id: 17 },
+
+        ]
+    },
+    chart2: {
+        uplotId: '#uplot-2',
+        fields: [
+            { key: 'TemperatureInside', id: 7 },
+            { key: 'TemperatureOutside', id: 8 },
+            { key: 'TemperatureMCU', id: 11 },
+            { key: 'TemperatureInsideTarget', id: 12 },
+            { key: 'TemperatureOutsideTarget', id: 13 },
+            { key: 'TemperatureMCETarget', id: 14 },
+            { key: 'MCUFanRPM', id: 15 },
+            { key: 'UVFanRPM', id: 16 },
+        ]
+    },
+}
+
 function isNotAllNull(subArray) {
     return subArray.some(element => element !== null);
 }
 
-function renderChart(name, dataRows, series) {
-    // Filter data and series if they are entirely null
-    const filteredData = dataRows.filter(isNotAllNull);
-    const filteredSeries = series.filter((_, index) => isNotAllNull(dataRows[index]));
+function renderChart(name, dataRows, series, uplotId) {
+    const $uplot = $(`#${uplotId}`);
 
-    let plotHeight = $(window).height() - 300;
-    if (plotHeight < 400) plotHeight = 400;
+    if (dataRows.length <= 1) return;
+
+    let plotHeight = 400
+    const axes = prepareAxis(series);
     let opts = {
         title: name,
-        id: "chart1",
         class: "my-chart",
-        width: $("#uplot").innerWidth(),
+        width: $uplot.innerWidth(),
         height: plotHeight,
         series: series,
-        axes: prepareAxis(series),
+        axes: axes,
+        cursor: {
+            sync: {
+                key: 'chartCursorSync'
+            }
+        }
     };
-    if ($("#uplot").html() != "") { // Run once
-        plot.setData(filteredData);
-        return;
-    }
-    opts = applyLegend(opts);
-    $("#uplot").html("");
-    plot = new uPlot(opts, filteredData, $("#uplot")[0]);
-    saveLegend();
+    opts = applyLegend(opts, uplotId);
+    $uplot.html("");
+    const newUplot = new uPlot(opts, dataRows, $uplot[0]);
+    uplots.push({ id: uplotId, uplot: newUplot });
+    plot = newUplot;
 }
 
-function applyLegend(opts) {
-    const storedString = localStorage.getItem("legends"); 
+function applyLegend(opts, uplotId) {
+    const storedString = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!storedString) return opts;
     const series = JSON.parse(storedString);
-    series.forEach((element,index) => {
+    series[uplotId].forEach((element,index) => {
         if (element.show === false && opts.series[index] !== undefined) opts.series[index].show = false;
     });
     return opts
 }
 
-function saveLegend() {
+function addSaveLegendHandler() {
     $(".u-legend .u-series").click(function () {
-        localStorage.setItem("legends", JSON.stringify(plot.series));
+        const cacheData = uplots.reduce((acc, uplot) => {
+            return {...acc, [uplot.id]: uplot.uplot.series};
+        }, {});
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cacheData));
     });
 }
 
@@ -85,12 +128,14 @@ function prepareAxis(series) {
     for (let j = halfOfAxisCount; j < axes.length; j++) {
         axes[j].side = 1;
     }
-    axes[1].grid.show = true;
+    if (axes[1]) {
+        axes[1].grid.show = true;
+    }
     return axes;
 }
 
 function determineDecimalPlaces(scale) {
-    let zeroPlaceScales = ["px", "Pressure"];
+    let zeroPlaceScales = ["px", "Pressure", "RPM"];
     let onePlaceScales = ["s", "mm", "°C"];
 
     if (zeroPlaceScales.includes(scale)) {
@@ -108,10 +153,12 @@ function aggregateFunc(v, aggregate) {
     return Math.round(val / aggregate) * aggregate;
 }
 
-function getSeries() {
-    let series = [{}];
-    $("#uplot").data("axes").forEach((element, key) => {
+function getSeries(axes) {
+    let fmt = uPlot.fmtDate("{HH}:{mm}:{ss}");
+    let series = [{value: (self, ts) => ts !== null ? fmt(new Date(ts * 1000)) : '--'}];
+    axes.forEach((element, key) => {
         series.push({
+            key: element.Key,
             show: true,
             spanGaps: true,
             label: element.Name,
@@ -154,9 +201,8 @@ function downloadCSV(series, o) {
     window.URL.revokeObjectURL(url);
 }
 
-const processData = (dataResponse) => {
+const processData = (dataResponse, series) => {
     let previousAggregateValue;
-    const series = getSeries();
     const processedData = series.map(() => []);
     let dataPointIndex = 0;
 
@@ -204,24 +250,34 @@ const backFillData = (data) => {
 }
 
 
-function buildChartFromData(name, dataResponse, exp) {
+function buildChartFromData(name, dataResponse, exp, axes) {
     if (dataResponse.length === 0) {
         return;
     }
 
-    const series = getSeries();
-    const processedData = processData(dataResponse);
-    const filteredData = processedData.filter(isNotAllNull);
-    const backFilledData = backFillData(filteredData);
-    const filteredSeries = series.filter((_, index) => isNotAllNull(processedData[index]));
+    const series = getSeries(axes);
+    const processedData = processData(dataResponse, series);
+    const backFilledData = backFillData(processedData);
 
-
-    if (JSON.stringify(dplot) == JSON.stringify(dataResponse) && !exp) {
+    if (JSON.stringify(cachedData) === JSON.stringify(dataResponse) && !exp) {
+        // exit if data hasn't changed from last time
         return
     }
-    dplot = dataResponse;
+    cachedData = dataResponse;
 
+    if (exp) return downloadCSV(series, backFilledData);
+    renderSplitChart(series, backFilledData, CHART_CONFIG.chart1, "uplot-1");
+    renderSplitChart(series, backFilledData, CHART_CONFIG.chart2, "uplot-2");
 
-    if (exp) return downloadCSV(filteredSeries, backFilledData);
-    renderChart(name, backFilledData, filteredSeries);
+    addSaveLegendHandler()
+}
+
+function renderSplitChart(series, backFilledData, chartConfig, uplotId) {
+    const backFilledDataForChart = backFilledData.filter((dataSeries, idx) => idx === 0 || chartConfig.fields.some(conf => conf.id + 1 === idx))
+    const dataWithoutNulls = backFilledDataForChart.filter(isNotAllNull);
+
+    const seriesForChart = series.filter((i, idx) => idx === 0 || chartConfig.fields.some((conf) => conf.key === i.key) )
+    const seriesWithoutNulls = seriesForChart.filter((_, index) => isNotAllNull(backFilledDataForChart[index]));
+
+    renderChart(name, dataWithoutNulls, seriesWithoutNulls, uplotId);
 }

@@ -24,14 +24,20 @@
         if (file == "") return
         if (reqRunning===true) return;
         reqRunning = true;
+
+
+
         $.getJSON("/analytic/file/" + file, function (response) {
-            return buildChartFromData("{{Name}}", response, exp);
+            const axes = JSON.parse(decodeHTMLEntities(`{{axes|safe}}`));
+
+            return buildChartFromData("{{Name}}", response, exp, axes);
         }).always(function () {
             reqRunning = false;
         });
     }
 </script>
-<div id="uplot" data-axes='{{axes|safe}}'></div>
+<div id="uplot-1" class="uplot uplot-container"></div>
+<div id="uplot-2" class="uplot uplot-container"></div>
 <br>
 <select id="file" class="form-control form-inline" style="display:inline;width: auto;">
     {% if files|length == 0 %}
@@ -41,9 +47,6 @@
     <option value="{{path}}{{file}}" translate>{{file}}</option>
     {% endfor %}
 </select>
-<br>
-<br>
-<input id="aggregate" class="form-control form-inline" style="display:inline;width: auto;" placeholder="Aggregate - Second">
 <button class="btn btn-default" id="download-csv" href="#" translate>Download CSV</button>
 <a href="/plate/download/{{ plateID }}/analytic" class="btn btn-default" translate>Export All Data</a>
 {% endblock %}
