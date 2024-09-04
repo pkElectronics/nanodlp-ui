@@ -741,10 +741,10 @@ function processingHandler() {
 	});
 }
 function completeHandler(){
-	setTimeout(function(){
+	setTimeout(() => {
 		removeUploadProgressModal();
 		window.location.replace("/plates");
-	},10000);
+	}, 1000);
 }
 
 function errorHandler(){

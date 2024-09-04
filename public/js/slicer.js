@@ -3,11 +3,12 @@ $(function () {
 });
 
 var running = 0;
-var counter = 0;
-function slicer_progress() {	
+var counter = -1;
+function slicer_progress() {
 	counter++;
-	if (running == 0 && counter<6) return; 
-	counter=0;
+
+	// Run every 6th time or every time if running is true
+	if (!running == 0 && counter % 6 !== 0) return;
 	$.ajax({
 		url: '/slicer',
 		dataType: 'json',
