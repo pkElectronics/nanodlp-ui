@@ -254,22 +254,17 @@ $("#BtnToggleHeater").click(function(){
  * @param fastElem - JQuery html input to store the fast speed in
  * @param slowElem - JQuery html input to store the slow speed in
  * @param layersElem - JQuery html input to store the layers in
+ * @param defaults - Object containing defaultSpeed, defaultSlowSpeed and defaultLayers to fall back to if none found
  */
-function convertDynamicSpeed(dynamicSpeed, fastElem, slowElem, layersElem ) {
+function convertDynamicSpeed(dynamicSpeed, fastElem, slowElem, layersElem, defaults ) {
 	const liftSpeedData = decodeHTMLEntities(dynamicSpeed);
 	const bottomSpeed = liftSpeedData.match(/< \d+\) {\s*output = "(\d+)";/);
 	const fastSpeed = liftSpeedData.match(/else {\s*output = "(\d+)";/);
 	const layers = liftSpeedData.match(/LayerNumber\]\] < (\d+)/);
 
-	if (fastSpeed) {
-		fastElem.value = fastSpeed[1];
-	}
-	if (bottomSpeed) {
-		slowElem.value = bottomSpeed[1];
-	}
-	if (layers) {
-		layersElem.value = layers[1];
-	}
+	fastElem.value = fastSpeed ? fastSpeed[1] : defaults.defaultSpeed;
+	slowElem.value = bottomSpeed ? bottomSpeed[1] : defaults.defaultSlowSpeed;
+	layersElem.value = layers ? layers[1] : defaults.defaultLayers;
 }
 
 /**
@@ -283,13 +278,15 @@ function expertToSimpleElementConversion(dynamicLiftSpeed, dynamicRetractSpeed) 
 		dynamicLiftSpeed,
 		document.getElementById('SimpleLiftSpeed'),
 		document.getElementById('SimpleSlowLiftSpeed'),
-		document.getElementById('SimpleSlowLiftLayers')
+		document.getElementById('SimpleSlowLiftLayers'),
+		{ defaultSpeed: 50, defaultSlowSpeed: 150, defaultLayers: 30}
 	);
 	convertDynamicSpeed(
 		dynamicRetractSpeed,
 		document.getElementById('SimpleRetractSpeed'),
 		document.getElementById('SimpleSlowRetractSpeed'),
-		document.getElementById('SimpleSlowRetractLayers')
+		document.getElementById('SimpleSlowRetractLayers'),
+		{ defaultSpeed: 150, defaultSlowSpeed: 600, defaultLayers: 11}
 	);
 }
 
