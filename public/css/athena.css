@@ -98,10 +98,14 @@
   color: black;
 }
 
-.tooltip-inner{
+.tooltip-inner {
   color:white;
   font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
   max-width: 700px;
+}
+
+.i_option .tooltip {
+  min-width:200px
 }
 
 .navbar-brand{
