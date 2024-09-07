@@ -2,11 +2,20 @@
 {% block content %}
 <h2>
     <translate>Resin Profiles</translate>
-    {% if !profiles %}
-    <a class="btn btn-default tip" href="/profile/add" role="button"><span class="glyphicon glyphicon-plus"></span>
-        <translate class="hide">Add a new resin profile</translate>
-    </a>
+
+    <!-- Hack to only show button if the first profile exists for us to clone -->
+    {% if profiles %}
+        {% for profile in profiles %}
+            {% if profile.ProfileID == 1 %}
+                <!-- Athena profiles cannot be created from scratch, they must be cloned from an AFP -->
+                <a class="btn btn-default tip" href="/profile/clone/1" role="button"><span class="glyphicon glyphicon-plus"></span>
+                    <translate class="hide">Add a new resin profile</translate>
+                </a>
+            {% endif %}
+        {% endfor %}
     {% endif %}
+
+
     <a class="btn btn-default tip" href="/import"><span class="glyphicon glyphicon-import"></span>
         <translate class="hide">Import a resin profile</translate>
     </a>
