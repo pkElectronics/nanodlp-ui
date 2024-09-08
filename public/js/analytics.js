@@ -1,4 +1,4 @@
-let cachedData, plot;
+let cachedData;
 
 let uplots = [];
 
@@ -74,11 +74,17 @@ function renderChart(name, dataRows, series, uplotId) {
             }
         }
     };
+
+    const plotToUpdate = uplots.find(plot => plot.id === uplotId);
+    if (plotToUpdate) {
+        // Chart already exists, update the data and return so we don't rebuilt the whole HTML
+        plotToUpdate.uplot.setData(dataRows);
+        return;
+    }
+
     opts = applyLegend(opts, uplotId);
-    $uplot.html("");
     const newUplot = new uPlot(opts, dataRows, $uplot[0]);
     uplots.push({ id: uplotId, uplot: newUplot });
-    plot = newUplot;
 }
 
 function applyLegend(opts, uplotId) {
