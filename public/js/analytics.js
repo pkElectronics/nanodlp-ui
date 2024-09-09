@@ -76,7 +76,7 @@ function renderChart(name, dataRows, series, uplotId) {
     };
 
     const plotToUpdate = uplots.find(plot => plot.id === uplotId);
-    if (plotToUpdate) {
+    if (plotToUpdate && plotToUpdate.seriesLength === series.length) {
         // Chart already exists, update the data and return so we don't rebuilt the whole HTML
         plotToUpdate.uplot.setData(dataRows);
         return;
@@ -84,7 +84,7 @@ function renderChart(name, dataRows, series, uplotId) {
 
     opts = applyLegend(opts, uplotId);
     const newUplot = new uPlot(opts, dataRows, $uplot[0]);
-    uplots.push({ id: uplotId, uplot: newUplot });
+    uplots.push({ id: uplotId, uplot: newUplot, seriesLength: series.length });
 }
 
 function applyLegend(opts, uplotId) {
