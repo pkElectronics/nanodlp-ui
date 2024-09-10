@@ -59,9 +59,9 @@ $("#setup2").submit(function(){
  */
 function saveSpeed(slowSpeed, fastSpeed, layers, formElement) {
 	const newConfigTextBlock = `[JS] if ([[LayerNumber]] < ${layers}) {
-    output = "${slowSpeed}";
+output = "${slowSpeed}";
 } else {
-    output = "${fastSpeed}";
+output = "${fastSpeed}";
 };[/JS]`;
 
 	formElement.prop('value', newConfigTextBlock)
