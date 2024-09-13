@@ -82,6 +82,7 @@ function renderChart(name, dataRows, series, uplotId) {
         return;
     }
 
+    $uplot.html('');
     opts = applyLegend(opts, uplotId);
     const newUplot = new uPlot(opts, dataRows, $uplot[0]);
     uplots.push({ id: uplotId, uplot: newUplot, seriesLength: series.length });
