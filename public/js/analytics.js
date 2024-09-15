@@ -1,6 +1,8 @@
 let cachedData;
 
 let uplots = [];
+
+// Used primarily for pausing the chart auto-update on zoom
 let isZoomed = false;
 
 const LOCAL_STORAGE_KEY = "legends:v2";
@@ -77,6 +79,7 @@ function renderChart(name, dataRows, series, uplotId) {
         hooks: {
             setSelect: [
                 _ => {
+                    // Chart has been zoomed in
                     isZoomed = true;
                     $('#chart-paused-warning').show()
                 }
