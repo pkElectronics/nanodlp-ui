@@ -26,9 +26,9 @@
         }
     }
 
-    var reqRunning;
+    let reqRunning;
     function getData(exp) {
-        if (reqRunning===true) return;
+        if (reqRunning) return;
         reqRunning = true;
         const range = $("#range").val();
 
@@ -42,9 +42,16 @@
         });
     }
 </script>
+
 <div id="uplot-1" class="uplot uplot-container"></div>
 <div id="uplot-2" class="uplot uplot-container"></div>
-<br>
+<div class="row">
+    <div class="col-xs-6 col-xs-offset-3">
+        <div style="align-content: center; display: none" class="alert alert-info" id="chart-paused-warning">
+            <strong>Chart auto update is paused whilst zoomed in.</strong> double click to reset zoom
+        </div>
+    </div>
+</div>
 <a class="btn btn-warning" href="/analytic/reset" translate>Reset Stats</a>
 <select id="range" class="form-control form-inline" style="display:inline;width: auto;">
     <option value="start" selected="selected" translate>Start of The Print - Auto Update</option>

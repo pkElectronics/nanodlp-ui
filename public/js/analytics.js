@@ -2,6 +2,9 @@ let cachedData;
 
 let uplots = [];
 
+// Used primarily for pausing the chart auto-update on zoom
+let isZoomed = false;
+
 const LOCAL_STORAGE_KEY = "legends:v2";
 
 const ColourValues = [
@@ -72,11 +75,39 @@ function renderChart(name, dataRows, series, uplotId) {
             sync: {
                 key: 'chartCursorSync'
             }
+        },
+        hooks: {
+            setSelect: [
+                _ => {
+                    // Chart has been zoomed in
+                    isZoomed = true;
+                    $('#chart-paused-warning').show()
+                }
+            ],
+            setScale: [
+                (u, scale) => {
+                    // hack to determine if zoom has been reset, see https://github.com/leeoniya/uPlot/issues/565
+                    if (scale === 'x') {
+                        const { min, max } = u.scales.x;
+                        const xData = u.data[0];
+
+                        if (min === xData[0] && max === xData[xData.length - 1]) {
+                            isZoomed = false
+                            $('#chart-paused-warning').hide()
+                        }
+                    }
+                }
+            ]
         }
     };
 
+    if (isZoomed) {
+        return;
+    }
+
     const plotToUpdate = uplots.find(plot => plot.id === uplotId);
     if (plotToUpdate && plotToUpdate.seriesLength === series.length) {
+
         // Chart already exists, update the data and return so we don't rebuilt the whole HTML
         plotToUpdate.uplot.setData(dataRows);
         return;
