@@ -116,7 +116,15 @@ function renderChart(name, dataRows, series, uplotId) {
     $uplot.html('');
     opts = applyLegend(opts, uplotId);
     const newUplot = new uPlot(opts, dataRows, $uplot[0]);
-    uplots.push({ id: uplotId, uplot: newUplot, seriesLength: series.length });
+
+    let newUplotReference = { id: uplotId, uplot: newUplot, seriesLength: series.length };
+    if (plotToUpdate && plotToUpdate.seriesLength !== series.length) {
+        // This was a legend update trigger so we want to set our uplot reference with the new series length
+        uplots = uplots.map(uplot => uplot.id === plotToUpdate.id ? newUplotReference : uplot)
+    } else {
+        // This was the initial build and we want to create the reference in the uplot list
+       uplots.push(newUplotReference);
+    }
 }
 
 function applyLegend(opts, uplotId) {
