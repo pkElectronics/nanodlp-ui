@@ -68,7 +68,7 @@ output = "${fastSpeed}";
 }
 
 $("#CdEnableSimple").change(function (){
-	cdEnable = $("#CdEnableSimple");
+	const cdEnable = $("#CdEnableSimple");
 	if(cdEnable.is(':checked')){
 		cdEnable.prop('value', "0");
 	}else{
@@ -78,17 +78,19 @@ $("#CdEnableSimple").change(function (){
 });
 
 $("#PdEnableSimple").change(function (){
-	pdEnable = $("#PdEnableSimple");
+	const pdEnable = $("#PdEnableSimple");
 	if(pdEnable.is(':checked')){
 		pdEnable.prop('value', "0");
+		$('.peel-detection-settings :input').attr('disabled', false)
 	}else{
 		pdEnable.prop('value', "1");
+		$('.peel-detection-settings :input').attr('disabled', true)
 	}
 		
 });
 
 $("#RlEnableSimple").change(function (){
-	rlEnable = $("#RlEnableSimple");
+	const rlEnable = $("#RlEnableSimple");
 	if(rlEnable.is(':checked')){
 		rlEnable.prop('value', "0");
 	}else{
@@ -98,7 +100,7 @@ $("#RlEnableSimple").change(function (){
 });
 
 $("#DwEnableSimple").change(function (){
-	dwEnable = $("#DwEnableSimple");
+	const dwEnable = $("#DwEnableSimple");
 	if(dwEnable.is(':checked')){
 		dwEnable.prop('value', "0");
 	}else{
