@@ -81,10 +81,10 @@ $("#PdEnableSimple").change(function (){
 	const pdEnable = $("#PdEnableSimple");
 	if(pdEnable.is(':checked')){
 		pdEnable.prop('value', "0");
-		$('.peel-detection-settings :input').attr('disabled', false)
+		$('.peel-detection-settings').show()
 	}else{
 		pdEnable.prop('value', "1");
-		$('.peel-detection-settings :input').attr('disabled', true)
+		$('.peel-detection-settings').hide()
 	}
 		
 });
@@ -304,7 +304,7 @@ function decodeHTMLEntities(text) {
 }
 
 $(document).ready(function(){
-	cdEnable = $("#CdEnableSimple");
+	const cdEnable = $("#CdEnableSimple");
 	if(cdEnable.length){
 		if( cdEnable.val() !== "0"){
 			cdEnable.prop('checked', false);
@@ -314,19 +314,21 @@ $(document).ready(function(){
 			cdEnable.prop('value', "0");
 		}
 	}
-	
-	pdEnable = $("#PdEnableSimple");
+
+	const pdEnable = $("#PdEnableSimple");
 	if(pdEnable.length){
 		if( pdEnable.val() !== "0"){
 			pdEnable.prop('checked', false);
 			pdEnable.prop('value', "1");
+			$('.peel-detection-settings').hide()
 		}else{
 			pdEnable.prop('checked', true);
 			pdEnable.prop('value', "0");
+			$('.peel-detection-settings :input').show()
 		}
 	}
-	
-	rlEnable = $("#RlEnableSimple");
+
+	const rlEnable = $("#RlEnableSimple");
 	if(rlEnable.length){
 		if( rlEnable.val() !== "0"){
 			rlEnable.prop('checked', false);
@@ -336,8 +338,8 @@ $(document).ready(function(){
 			rlEnable.prop('value', "0");
 		}
 	}
-	
-	dwEnable = $("#DwEnableSimple");
+
+	const dwEnable = $("#DwEnableSimple");
 	if(dwEnable.length){
 		if( dwEnable.val() !== "0"){
 			dwEnable.prop('checked', false);
