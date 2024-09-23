@@ -66,46 +66,22 @@ output = "${fastSpeed}";
 
 	formElement.prop('value', newConfigTextBlock)
 }
+function setUpCheckboxToggle($checkboxElem, $toggleSection) {
+	$checkboxElem.change(() => {
+		if ($checkboxElem.is(':checked')) {
+			$checkboxElem.prop('value', "0");
+			if ($toggleSection) $toggleSection.show();
+		} else {
+			$checkboxElem.prop('value', "1");
+			if ($toggleSection) $toggleSection.hide();
+		}
+	})
+}
 
-$("#CdEnableSimple").change(function (){
-	cdEnable = $("#CdEnableSimple");
-	if(cdEnable.is(':checked')){
-		cdEnable.prop('value', "0");
-	}else{
-		cdEnable.prop('value', "1");
-	}
-		
-});
-
-$("#PdEnableSimple").change(function (){
-	pdEnable = $("#PdEnableSimple");
-	if(pdEnable.is(':checked')){
-		pdEnable.prop('value', "0");
-	}else{
-		pdEnable.prop('value', "1");
-	}
-		
-});
-
-$("#RlEnableSimple").change(function (){
-	rlEnable = $("#RlEnableSimple");
-	if(rlEnable.is(':checked')){
-		rlEnable.prop('value', "0");
-	}else{
-		rlEnable.prop('value', "1");
-	}
-		
-});
-
-$("#DwEnableSimple").change(function (){
-	dwEnable = $("#DwEnableSimple");
-	if(dwEnable.is(':checked')){
-		dwEnable.prop('value', "0");
-	}else{
-		dwEnable.prop('value', "1");
-	}
-		
-});
+setUpCheckboxToggle($("#PdEnableSimple"), $('.peel-detection-settings'));
+setUpCheckboxToggle($("#RlEnableSimple"));
+setUpCheckboxToggle($("#DwEnableSimple"));
+setUpCheckboxToggle($("#CdEnableSimple"), $('.crash-detection-settings'));
 
 $(document).ready(function() {
 
@@ -132,11 +108,12 @@ $(document).ready(function() {
 
 		if (currentUrl.includes("clone")) {
 			resinTitle = resinTitle.substring(6)
-			$("#Title").val(resinTitle)
+			$("#Title").val("")
 			$("#Title").trigger('change');
 
-			$("#TitleSimple").val(resinTitle)
+			$("#TitleSimple").val("")
 			$("#TitleSimple").trigger('change');
+			$("#TitleSimple").focus();
 		} else {
 			$("#setup-profile :input").prop("disabled", true);
 			$("#setup-profile2 :input").prop("disabled", true);
@@ -302,40 +279,13 @@ function decodeHTMLEntities(text) {
 }
 
 $(document).ready(function(){
-	cdEnable = $("#CdEnableSimple");
-	if(cdEnable.length){
-		if( cdEnable.val() !== "0"){
-			cdEnable.prop('checked', false);
-			cdEnable.prop('value', "1");
-		}else{
-			cdEnable.prop('checked', true);
-			cdEnable.prop('value', "0");
-		}
-	}
-	
-	pdEnable = $("#PdEnableSimple");
-	if(pdEnable.length){
-		if( pdEnable.val() !== "0"){
-			pdEnable.prop('checked', false);
-			pdEnable.prop('value', "1");
-		}else{
-			pdEnable.prop('checked', true);
-			pdEnable.prop('value', "0");
-		}
-	}
-	
-	rlEnable = $("#RlEnableSimple");
-	if(rlEnable.length){
-		if( rlEnable.val() !== "0"){
-			rlEnable.prop('checked', false);
-			rlEnable.prop('value', "1");
-		}else{
-			rlEnable.prop('checked', true);
-			rlEnable.prop('value', "0");
-		}
-	}
-	
-	dwEnable = $("#DwEnableSimple");
+	const cdEnable = $("#CdEnableSimple");
+	loadInitialCheckboxState(cdEnable, $('.crash-detection-settings'));
+	const pdEnable = $("#PdEnableSimple");
+	loadInitialCheckboxState(pdEnable, $('.peel-detection-settings'));
+	const rlEnable = $("#RlEnableSimple");
+	loadInitialCheckboxState(rlEnable);
+	const dwEnable = $("#DwEnableSimple");
 	if(dwEnable.length){
 		if( dwEnable.val() !== "0"){
 			dwEnable.prop('checked', false);
@@ -348,6 +298,20 @@ $(document).ready(function(){
 		}
 	}
 } );
+
+function loadInitialCheckboxState($checkboxElem, $toggleSection) {
+	if ($checkboxElem.length) {
+		if ($checkboxElem.val() !== "0") {
+			$checkboxElem.prop('checked', false);
+			$checkboxElem.prop('value', "1");
+			if ($toggleSection) $toggleSection.hide()
+		} else {
+			$checkboxElem.prop('checked', true);
+			$checkboxElem.prop('value', "0");
+			if ($toggleSection) $toggleSection.show()
+		}
+	}
+}
 
 $("#UvPwmValuePercentSimple").change(function () {
   //clamp value
