@@ -20,8 +20,12 @@
 // 	DynamicWait  17
 //
 //
-//************** Resin Profile Functions  */
 
+toastr.options = {
+	"positionClass": "toast-top-center",
+}
+
+//************** Resin Profile Functions  */
 $("#DwEnableSimple").change(function () {
   if ($(this).is(":checked")) {
     $("#WaitBeforePrintSimple").val(0).prop("disabled", true);
@@ -147,40 +151,80 @@ $(document).ready(function() {
 // Support Page Helpers
 
 $("#SupportSubmitButton").click(function(){
-	
+
+	const ticketTimestamp = Date.now();
 	data = {
-	 email: $("#SupportEmailField").val(),
-	 name: $("#SupportNameField").val(),
-	 text: $("#SupportTextField").val(),
+		email: $("#SupportEmailField").val(),
+		name: $("#SupportNameField").val(),
+		text: $("#SupportTextField").val(),
+		timestamp: ticketTimestamp
 	};
 
 	$("#SupportEmailField").val("");
 	$("#SupportNameField").val("");
 	$("#SupportTextField").val("");
 
-	let submission = window.btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+	const submission = window.btoa(unescape(encodeURIComponent(JSON.stringify(data))));
 	
 	$('#support_notification').modal({backdrop: 'static', keyboard: false})  
 	$('#support_notification').modal('show');	
 	
-	$.ajax(
-	{ 
-	url: '/gcode', 
-	headers: { 'Content-Type': 'application/x-www-form-urlencoded' } ,
-	method: 'POST',
-	data: new URLSearchParams({
-			  	'gcode':  '[[Exec  /home/pi/athena-debug-submission.sh "'+submission+'"]]'
+	$.ajax({
+		url: '/gcode',
+		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+		method: 'POST',
+		data: new URLSearchParams({
+			'gcode': `[[Exec  /home/pi/athena-debug-submission.sh "${submission}"]]`
 		}).toString(),
-	success: function( result ) {
-		setTimeout(function() { $('#support_notification').modal('hide'); }, 5000); 
-	},
-	error: function( result ){
-		$('#support_notification').modal('hide');	
-	}
-		  
+		success: function (result) {
+			setUpSupportPoller(ticketTimestamp)
+		},
+		error: function (result) {
+			ticketFailedHandler()
+		}
 	});
 });
 
+function setUpSupportPoller(ticketTimestamp) {
+	const TICKET_SUBMISSION_TIMEOUT = 30000;
+	const TICKET_SUBMISSION_POLL_RATE = 1000;
+	let duration = 0;
+	const interval = setInterval(async () => {
+		duration += TICKET_SUBMISSION_POLL_RATE;
+
+		if (duration >= TICKET_SUBMISSION_TIMEOUT) {
+			ticketFailedHandler(interval)
+		}
+
+		const success = await pollForSuccessfulTicket(ticketTimestamp)
+		if (success) {
+			toastr.success("Ticket submitted")
+			clearInterval(interval);
+			$('#support_notification').modal('hide');
+		}
+	}, TICKET_SUBMISSION_POLL_RATE);
+}
+
+async function pollForSuccessfulTicket(ticketTimestamp) {
+	try {
+		// Backend should write a file to this path on ticket submission success
+		const response = await fetch(`static/tickets/${ticketTimestamp}`);
+		if (!response.ok) {
+			throw new Error("Response unsuccessful")
+		}
+		return true;
+	} catch (e) {
+		return false;
+	}
+}
+
+function ticketFailedHandler(interval) {
+	toastr.error("Reach out to us via Discord or Email.", "Ticket failed to submit")
+	$('#support_notification').modal('hide');
+
+	if (interval)
+		clearInterval(interval);
+}
 
 $("#BtnToggleHeater").click(function(){
 	$.ajax({
