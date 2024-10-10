@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<link href='/static/css/calibration.css' rel="stylesheet">
+<script src='/static/js/calibration.js'></script>
+
+<div class="col-md-12">
+    <h2>Exposure Calibration</h2>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Job Setup</h4>
+            <div class="col-md-8 calibration-form-setup">
+                <form id="calibration-form">
+                    <div class="col-md-6">
+                        <label for="calibration-model">Choose Calibration Model:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <select id="calibration-model" class="form-control" name="calibration-model">
+                            <option value="1">J3D Exposure Calibration 1</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="start-exposure">Set Starting Exposure Time (s):</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input class="form-control" id="start-exposure" value="1.5" name="start-exposure" type="number">
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <label for="exposure-increment">Exposure Time Increment (s)</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input class="form-control" id="exposure-increment" value="0.2" name="exposure-increment" type="number">
+                    </div>
+
+                    <span id="exposure-value-preview">Test Preview Exposure here</span><br/><br>
+                    <div class="col-md-12 text-center">
+                        <button type="submit" id="calibration-form-button-submit" class="btn btn-success">Submit</button>
+                    </div>
+                </form>
+
+            </div>
+            <div class="col-md-4">
+                Job file preview img place holder
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <h4>How To Evaluate Calibration Model</h4>
+
+        <div id="model-evaluation-generic">
+            Check out <a href="https://www.J3D.com/ExposureCalibration/">https://www.J3D.com/ExposureCalibration/</a> for a guide on how to determine the best exposure time.<br><br>
+
+            Once you find the optimal exposure time, you can print another type of calibration model to verify it, or
+            create a new resin profile with the normal exposure time you determined here
+        </div>
+    </div>
+
+</div>
+{% endblock %}
