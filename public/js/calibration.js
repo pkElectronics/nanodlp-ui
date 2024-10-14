@@ -1,29 +1,71 @@
-const MODEL_LIMIT = 5;
-
+const multicureConfig = {
+    1: {
+        name: "J3D Calibration Model 1",
+        models: 6
+    }
+}
 
 $(document).ready(function () {
-    populateExposurePreview(0.2, 1.5)
-
+    setUpCalibrationSelection();
+    populateExposurePreview(0.2, 1.5, 1)
+    setUpProfiles()
     const calibrationForm = document.getElementById('calibration-form');
     calibrationForm.addEventListener('input', (e) => {
         const form = e.target.form;  // Get the form element
         const values = formDataToObject(form);
 
-        const { exposureIncrement, startExposure} = values;
-        populateExposurePreview(exposureIncrement, startExposure)
+        const {exposureIncrement, startExposure, calibrationModelId} = values;
+        populateExposurePreview(exposureIncrement, startExposure, calibrationModelId)
     })
     calibrationForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        const button = document.getElementById('calibration-form-button-submit');
+        button.disabled = true;
+        button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...`;
+
+
         // refetch the latest form reference
         const form = document.getElementById('calibration-form');
         const data = formDataToObject(form);
-        submitForm(data);
+        submitForm(data, button);
     })
 })
 
-function populateExposurePreview(increment, startTime) {
+function setUpCalibrationSelection() {
+    const $calibrationSelect = document.getElementById('calibration-model');
+
+    for (const key in multicureConfig) {
+        const option = document.createElement("option");
+        option.value = key;
+        const configItem = multicureConfig[key];
+        option.textContent = configItem.name;
+        $calibrationSelect.appendChild(option);
+    }
+}
+
+/**
+ * Hack to populate a profile dropdown as NanoDLP does not expose profiles to this endpoint yet
+ */
+async function setUpProfiles() {
+    const $profileSelect = document.getElementById('profile-id');
+
+    const profilesResponse = await fetch('/json/db/profiles.json');
+    const profiles = await profilesResponse.json();
+
+    profiles.forEach(profile => {
+        const option = document.createElement("option");
+        option.value = profile['ProfileID'];
+        option.textContent = `${profile['Title']} (${profile['Depth']}um)`;
+        $profileSelect.appendChild(option);
+    })
+    console.log(profiles);
+
+}
+
+function populateExposurePreview(increment, startTime, modelId) {
     const previewElem = document.getElementById('exposure-value-preview');
-    let secondValues = Array(MODEL_LIMIT).fill(0)
+    let secondValues = Array(multicureConfig[modelId].models).fill(0)
         .map((value, index) => (index * increment + startTime).toFixed(1));
 
     console.log(secondValues)
@@ -37,33 +79,41 @@ function formDataToObject(form) {
     return {
         startExposure: Number(object['start-exposure']),
         exposureIncrement: Number(object['exposure-increment']),
-        calibrationModelId: object['calibration-model']
+        calibrationModelId: object['calibration-model'],
+        profileID: object['profile-id'],
     }
 }
 
-async function submitForm(form) {
-    const formData = new FormData();
+async function submitForm(form, $button) {
+    const {calibrationModelId, exposureIncrement, startExposure, profileID} = form;
 
-    formData.append('ProfileID', '1');
-    const multicureValues = Array(MODEL_LIMIT).fill(0)
-        .map((value, index) => (index * form.exposureIncrement + form.startExposure).toFixed(1))
+    const multicureValues = Array(multicureConfig[calibrationModelId].models)
+        .fill(0)
+        .map((value, index) => (index * exposureIncrement + startExposure).toFixed(1))
         .join(',');
 
-    console.log(form)
 
-    formData.append('MultiCure', multicureValues); // eg. 1.0,1.2,1.4,1.6 etc, I will generate this on the fly
-    // formData.append('Path', ????);
-    // formData.append('ZipFile', ????); // Not sure how to handle these too for a file that's on the device
+    const body = {
+        curetimes: multicureValues,
+        profileID
+    }
 
-    // default stuff from the form that's not used for calibration but I assume needs to be tehre
-    formData.append('AutoCenter', 0);
-    formData.append('Offset', 0.00);
-    formData.append('LowQualityLayerNumber', 0);
-    formData.append('MaskEffect', 0.00);
-    formData.append('ImageRotate', 0);
-
-    await fetch('/plate/add', {
+    const response = await fetch(`/api/v1/athena/calibration/add/${calibrationModelId}`, {
         method: 'POST',
-        body: formData,
+        body: JSON.stringify(body),
+        headers: {}
     });
+
+
+    // Simulating network request, remove this when the api is actually present
+    setTimeout(() => {
+        if (response.ok) {
+            window.location.href = "/plates";
+        } else {
+            toastr.error("Failed to submit calibration")
+        }
+
+        $button.disabled = false;
+        $button.innerHTML = 'Submit and Print';
+    }, 2000)
 }
