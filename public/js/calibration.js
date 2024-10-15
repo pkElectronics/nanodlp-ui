@@ -104,16 +104,15 @@ async function submitForm(form, $button) {
         headers: {}
     });
 
-
-    // Simulating network request, remove this when the api is actually present
-    setTimeout(() => {
-        if (response.ok) {
+    if (response.ok) {
+        toastr.info("Calibration started...");
+        setTimeout(() => {
             window.location.href = "/plates";
-        } else {
-            toastr.error("Failed to submit calibration")
-        }
-
+        }, 5000)
+    } else {
+        toastr.error("Failed to submit calibration")
         $button.disabled = false;
         $button.innerHTML = 'Submit and Print';
-    }, 2000)
+    }
+
 }
