@@ -43,8 +43,8 @@ $(document).ready(function () {
 async function runGcode(gcode) {
     return await fetch('/gcode', {
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        method: 'POST',
-        data: new URLSearchParams({
+        method: 'post',
+        body: new URLSearchParams({
             'gcode': `${gcode}`
         }).toString(),
 
