@@ -59,7 +59,6 @@ async function setUpProfiles() {
         option.textContent = `${profile['Title']} (${profile['Depth']}um)`;
         $profileSelect.appendChild(option);
     })
-    console.log(profiles);
 
 }
 
@@ -67,8 +66,6 @@ function populateExposurePreview(increment, startTime, modelId) {
     const previewElem = document.getElementById('exposure-value-preview');
     let secondValues = Array(multicureConfig[modelId].models).fill(0)
         .map((value, index) => (index * increment + startTime).toFixed(1));
-
-    console.log(secondValues)
 
     previewElem.textContent = `Generating model exposures at: ${secondValues.map(i => i + "s").join(", ")}`
 }
@@ -98,7 +95,7 @@ async function submitForm(form, $button) {
         ProfileID: profileID
     }
 
-    const response = await fetch(`/api/v1/athena/calibration/add/${calibrationModelId}`, {
+    const response = fetch(`/api/v1/athena/calibration/add/${calibrationModelId}`, {
         method: 'POST',
         body: new URLSearchParams(body),
         headers: {
@@ -106,15 +103,26 @@ async function submitForm(form, $button) {
         }
     });
 
-    if (response.ok) {
-        toastr.info("Calibration started...");
-        setTimeout(() => {
-            window.location.href = "/";
-        }, 2000)
-    } else {
+    setUpSlicerPoller();
+
+    if (!(await response).ok) {
         toastr.error("Failed to submit calibration")
         $button.disabled = false;
         $button.innerHTML = 'Submit and Print';
     }
 
 }
+
+async function setUpSlicerPoller() {
+    const pollFunc = async () => {
+        const response = await fetch('/slicer');
+        const {percentage} = await response.json();
+
+
+        if (percentage === "100") window.location.href = "/";
+        document.getElementById('calibration-modal-progress-bar').style.width = `${percentage}%`
+    }
+
+    setInterval(pollFunc, 500)
+}
+

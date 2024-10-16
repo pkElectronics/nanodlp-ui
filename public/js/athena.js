@@ -781,7 +781,7 @@ function removeUploadProgressModal(){
 }
 
 function showUploadProgressModal(){
-	msg='<div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="false">'
+	const msg='<div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="false">'
 			+'<div class="modal-dialog">'
 				+'<div class="modal-content">'
 					+'<div class="modal-header">'

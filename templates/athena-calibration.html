@@ -33,7 +33,8 @@
                         <label for="start-exposure">Set Starting Exposure Time (s):</label>
                     </div>
                     <div class="col-md-8">
-                        <input class="form-control" id="start-exposure" value="1.5" name="start-exposure" type="number" step="0.1">
+                        <input class="form-control" id="start-exposure" value="1.5" name="start-exposure" type="number"
+                               step="0.1">
                     </div>
 
 
@@ -41,18 +42,22 @@
                         <label for="exposure-increment">Exposure Time Increment (s)</label>
                     </div>
                     <div class="col-md-8">
-                        <input class="form-control" id="exposure-increment" value="0.2" name="exposure-increment" type="number" step="0.1">
+                        <input class="form-control" id="exposure-increment" value="0.2" name="exposure-increment"
+                               type="number" step="0.1">
                     </div>
 
                     <span id="exposure-value-preview"></span><br/><br>
                     <div class="col-md-12 text-center">
-                        <button type="submit" id="calibration-form-button-submit" class="btn btn-success">Submit and Print</button>
+                        <button type="submit" id="calibration-form-button-submit" class="btn btn-success"
+                                data-toggle="modal" data-target="#calibrationModal">Submit and Print
+                        </button>
                     </div>
                 </form>
 
             </div>
             <div class="col-md-4">
-                <img src="/static/shots/calibration-images/1.png" alt="An image of the calibration piece" style="width:100%"/>
+                <img src="/static/shots/calibration-images/1.png" alt="An image of the calibration piece"
+                     style="width:100%"/>
             </div>
         </div>
     </div>
@@ -60,7 +65,9 @@
         <h4>How To Evaluate Calibration Model</h4>
 
         <div id="model-evaluation-generic">
-            Check out <a href="https://docs.google.com/document/d/1aoMSE6GBGMcoYXNGfPP9s_Jg8vr1wQmmZuvqP3suago/edit?tab=t.0#heading=h.bvm0ca3vxmwr" target="_blank">J3D's instructions</a> for a guide on how to determine the best exposure time.<br><br>
+            Check out <a
+                href="https://docs.google.com/document/d/1aoMSE6GBGMcoYXNGfPP9s_Jg8vr1wQmmZuvqP3suago/edit?tab=t.0#heading=h.bvm0ca3vxmwr"
+                target="_blank">J3D's instructions</a> for a guide on how to determine the best exposure time.<br><br>
 
             Once you find the optimal exposure time, you can print another type of calibration model to verify it, or
             create a new resin profile with the normal exposure time you determined here
@@ -68,4 +75,28 @@
     </div>
 
 </div>
+
+<div class="modal fade" id="calibrationModal" tabindex="-1" role="dialog" aria-labelledby="calibrationModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" id="modalLabel">Slicing calibration file...</h5>
+            </div>
+            <div class="modal-body">
+                <span>This could take a few moments...</span>
+                <div class="progress text-center" style="display: none">
+                    <div id="calibration-modal-progress-bar"
+                         class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar"
+                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0"></div>
+                    <span style="color: black" id="upload-modal-progress-text"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
