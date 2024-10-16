@@ -10,7 +10,7 @@
 <div id="navbar" class="navbar-collapse collapse">
     <ul class="nav navbar-nav">        
         <li><a href="/plates"><span class="glyphicon glyphicon-tasks"></span>&nbsp; <translate>Jobs</translate></a></li>
-        <li><a href="/profiles"><span class="glyphicon glyphicon-tint"></span>&nbsp; <translate>Resin Profiles</translate></a></li>
+        <li><a href="/profiles"><span class="glyphicon glyphicon-tint"></span>&nbsp; <translate>Resins</translate></a></li>
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 <span class="glyphicon glyphicon-wrench"></span>&nbsp; <translate>System</translate> <span class="caret"></span>
@@ -20,6 +20,7 @@
                 <li class="{% if viewMode == 0 %}hidden{% endif %}"><a href="/setup"><span class="glyphicon glyphicon-wrench"></span>&nbsp; <translate>Machine Settings</translate></a></li>
                 {% endif %}
                 <li><a href="/z-calibration"><span class="glyphicon glyphicon-resize-vertical"></span>&nbsp; <translate>Z Axis Control</translate></a></li>
+                <li><a href="/custom/heater"><span class="glyphicon glyphicon-fire"></span>&nbsp; <translate>Heater Control</translate></a></li>
                 <li><a href="/projector-calibration"><span class="glyphicon glyphicon-picture"></span>&nbsp; <translate>Display Calibration</translate></a></li>
                 {% if build!="athena" %}<li role="separator" class="divider"></li>{% endif %}
                 {% if !manHighLock %}
