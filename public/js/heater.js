@@ -52,7 +52,7 @@ async function runGcode(gcode) {
 }
 
 async function fetchInitialTemperature() {
-    const response = await fetch('http://192.168.4.160/analytic/value/12', {});
+    const response = await fetch('/analytic/value/12', {});
     const currentHeaterTarget = await response.text();
 
     if (currentHeaterTarget > 0) {
