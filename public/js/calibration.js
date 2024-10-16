@@ -95,19 +95,21 @@ async function submitForm(form, $button) {
 
     const body = {
         curetimes: multicureValues,
-        profileID
+        ProfileID: profileID
     }
 
     const response = await fetch(`/api/v1/athena/calibration/add/${calibrationModelId}`, {
         method: 'POST',
-        body: JSON.stringify(body),
-        headers: {}
+        body: new URLSearchParams(body),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
     });
 
     if (response.ok) {
         toastr.info("Calibration started...");
         setTimeout(() => {
-            window.location.href = "/plates";
+            window.location.href = "/";
         }, 5000)
     } else {
         toastr.error("Failed to submit calibration")
