@@ -110,7 +110,7 @@ async function submitForm(form, $button) {
         toastr.info("Calibration started...");
         setTimeout(() => {
             window.location.href = "/";
-        }, 5000)
+        }, 2000)
     } else {
         toastr.error("Failed to submit calibration")
         $button.disabled = false;
