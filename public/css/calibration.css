@@ -16,3 +16,7 @@
 a {
     color: #00acee; /* Light blue or similar */
 }
+
+label {
+    margin-top: 8px;
+}
