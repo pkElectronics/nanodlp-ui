@@ -85,17 +85,17 @@ async function fetchHeatersEnabled() {
     }
 }
 
-async function fetchHeatersActive(analyticsId) {
+async function fetchHeatersActive() {
     const chamberHeaterActive = await fetchHeaterActive(12);
-    const vatHeaterActive = await fetchHeaterActive(19);
+    if (chamberHeaterActive) {
+        document.getElementById('chamber-heater-toggle').checked = true;
+    }
 
+    const vatHeaterActive = await fetchHeaterActive(19);
     if (vatHeaterActive) {
         document.getElementById('vat-heater-toggle').checked = true;
     }
 
-    if (chamberHeaterActive) {
-        document.getElementById('chamber-heater-toggle').checked = true;
-    }
 }
 
 async function fetchHeaterActive(analyticsId) {
@@ -107,7 +107,7 @@ async function fetchHeaterActive(analyticsId) {
                 return true;
             }
         }
-    } catch (e) {
+    } catch (_e) {
     }
 
     return false;
