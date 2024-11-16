@@ -56,14 +56,20 @@
 							<div class="val last_eta"></div>
 							<br>
 
-							<span class="glyphicon glyphicon-time text-success"></span>
-							<translate class="key">Elapsed</translate>
-							<div class="val last_elapsed"></div>
-							<br>
+								<span class="glyphicon glyphicon-time text-success"></span>
+								<translate class="key">Elapsed</translate>
+								<div class="val last_elapsed"></div>
+								<br>
 
-							<span class="glyphicon glyphicon-eye-open text-success"></span>
-							<a href="/printer" class="key" translate>Action</a>
-							<div class="val last_action"></div>
+								<span class="glyphicon glyphicon-eye-open text-success"></span>
+								<a href="/printer" class="key" translate>Action</a>
+								<div class="val last_action"></div>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="video-container" id="livestream-container">
+								<!--Constructed by athena.js-->
+							</div>
 						</div>
 					</div>
 					<div class="layer-progress progress printing-obj">
@@ -139,6 +145,7 @@
 			{{ buttonsView(buttons,"/") }}
 			<a class="btn btn-success" id="camera" href="/camera/take" translate>Take Photo</a>
 		</div>
+
 	</div>
 </div>
 

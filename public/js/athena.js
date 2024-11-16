@@ -1003,4 +1003,20 @@ function display_notification_athena(){
 	});
 }
 
+function buildCameraStream() {
+	var video = document.createElement('video');
 
+	const livestreamContainer = document.getElementById('livestream-container');
+	livestreamContainer.appendChild( video );
+
+	video.id = 'livestream-video';
+	video.src = `${window.location.hostname}:8081/video.mp4`;
+	// video.src = 'http://olymp.concepts3d.eu:13194/video.mp4';
+	video.crossOrigin = 'anonymous';
+	video.muted = true
+	video.play();
+}
+
+$(document).ready(function(){
+	buildCameraStream();
+})
