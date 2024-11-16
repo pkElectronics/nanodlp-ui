@@ -46,7 +46,7 @@ const CHART_CONFIG = {
             { key: 'TemperatureMCU', id: 11 },
             { key: 'TemperatureInsideTarget', id: 12 },
             { key: 'TemperatureOutsideTarget', id: 13 },
-            { key: 'TemperatureMCETarget', id: 14 },
+            { key: 'TemperatureMCUTarget', id: 14 },
             { key: 'MCUFanRPM', id: 15 },
             { key: 'UVFanRPM', id: 16 },
         ]
