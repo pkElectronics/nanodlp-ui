@@ -1,6 +1,7 @@
 async function onPageLoad() {
     await fetchInitialTemperature();
     await fetchHeatersEnabled();
+    await fetchHeatersActive();
 
     document.getElementById('heater-form').addEventListener('input', (e) => {
         const formData = new FormData(e.target.form);
@@ -52,7 +53,7 @@ async function runGcode(gcode) {
 }
 
 async function fetchInitialTemperature() {
-    const response = await fetch('http://192.168.4.160/analytic/value/12', {});
+    const response = await fetch('/analytic/value/12', {});
     const currentHeaterTarget = await response.text();
 
     if (currentHeaterTarget > 0) {
@@ -82,4 +83,32 @@ async function fetchHeatersEnabled() {
             document.getElementById('no-heaters-found').style.display = "block"
         }
     }
+}
+
+async function fetchHeatersActive(analyticsId) {
+    const chamberHeaterActive = await fetchHeaterActive(12);
+    const vatHeaterActive = await fetchHeaterActive(19);
+
+    if (vatHeaterActive) {
+        document.getElementById('vat-heater-toggle').checked = true;
+    }
+
+    if (chamberHeaterActive) {
+        document.getElementById('chamber-heater-toggle').checked = true;
+    }
+}
+
+async function fetchHeaterActive(analyticsId) {
+    try {
+        const response = await fetch(`/analytic/value/${analyticsId}`)
+        if (response.ok) {
+            const heaterTarget = parseInt(await response.text());
+            if (heaterTarget > 1) {
+                return true;
+            }
+        }
+    } catch (e) {
+    }
+
+    return false;
 }
