@@ -1003,20 +1003,39 @@ function display_notification_athena(){
 	});
 }
 
-function buildCameraStream() {
-	var video = document.createElement('video');
-
-	const livestreamContainer = document.getElementById('livestream-container');
-	livestreamContainer.appendChild( video );
-
-	video.id = 'livestream-video';
-	video.src = `${window.location.hostname}:8081/video.mp4`;
-	// video.src = 'http://olymp.concepts3d.eu:13194/video.mp4';
-	video.crossOrigin = 'anonymous';
-	video.muted = true
-	video.play();
+async function isCameraEnabled(src) {
+    try {
+        const response = await fetch(src, {method: 'OPTIONS'});
+        return response.ok;
+    } catch (e) {
+        return false;
+    }
 }
 
-$(document).ready(function(){
-	buildCameraStream();
+async function buildCameraStream() {
+    // const src = 'http://olymp.concepts3d.eu:13194/video.mp4';
+    const src = `${window.location.hostname}:8081/video.mp4`;
+    const cameraEnabled = await isCameraEnabled(src);
+
+    if (cameraEnabled) {
+        const video = document.createElement('video');
+
+        const livestreamContainer = document.getElementById('livestream-container');
+        livestreamContainer.appendChild(video);
+
+        video.id = 'livestream-video';
+        video.src = src;
+        video.crossOrigin = 'anonymous';
+        video.muted = true
+        video.play();
+    } else {
+        document.getElementById('webcam-preview').hidden = true;
+        document.getElementById('print-preview').className = 'col-md-12';
+    }
+
+
+}
+
+$(document).ready(function () {
+    buildCameraStream();
 })
