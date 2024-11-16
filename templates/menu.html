@@ -20,7 +20,8 @@
                 <li class="{% if viewMode == 0 %}hidden{% endif %}"><a href="/setup"><span class="glyphicon glyphicon-wrench"></span>&nbsp; <translate>Machine Settings</translate></a></li>
                 {% endif %}
                 <li><a href="/z-calibration"><span class="glyphicon glyphicon-resize-vertical"></span>&nbsp; <translate>Z Axis Control</translate></a></li>
-                <li><a href="/custom/heater"><span class="glyphicon glyphicon-fire"></span>&nbsp; <translate>Heater Control</translate></a></li>
+                <li><a href="/custom/heater"><img src="/static/general/heater-settings-icon.svg" alt="Icon" width="16" height="16">&nbsp; <translate>Heater Control</translate></a></li>
+                <li><a href="/analytic"><img src="/static/general/chart-icon.svg" alt="Icon" width="16" height="16">&nbsp; <translate>Analytics Charts</translate></a></li>
                 <li><a href="/projector-calibration"><span class="glyphicon glyphicon-picture"></span>&nbsp; <translate>Display Calibration</translate></a></li>
                 {% if build!="athena" %}<li role="separator" class="divider"></li>{% endif %}
                 {% if !manHighLock %}
