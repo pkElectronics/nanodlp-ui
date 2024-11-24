@@ -1,6 +1,7 @@
 async function onPageLoad() {
     await fetchInitialTemperature();
     await fetchHeatersEnabled();
+    await fetchHeatersActive();
 
     document.getElementById('heater-form').addEventListener('input', (e) => {
         const formData = new FormData(e.target.form);
@@ -82,4 +83,32 @@ async function fetchHeatersEnabled() {
             document.getElementById('no-heaters-found').style.display = "block"
         }
     }
+}
+
+async function fetchHeatersActive() {
+    const chamberHeaterActive = await fetchHeaterActive(12);
+    if (chamberHeaterActive) {
+        document.getElementById('chamber-heater-toggle').checked = true;
+    }
+
+    const vatHeaterActive = await fetchHeaterActive(19);
+    if (vatHeaterActive) {
+        document.getElementById('vat-heater-toggle').checked = true;
+    }
+
+}
+
+async function fetchHeaterActive(analyticsId) {
+    try {
+        const response = await fetch(`/analytic/value/${analyticsId}`)
+        if (response.ok) {
+            const heaterTarget = parseInt(await response.text());
+            if (heaterTarget > 1) {
+                return true;
+            }
+        }
+    } catch (_e) {
+    }
+
+    return false;
 }
