@@ -502,21 +502,23 @@ function update_changelog(){
 	}
 }
 
-function changeUpdateChannel(channel){
-	try {     
-			const response = fetch('/gcode', {
-			  method: 'post',
-			   headers:{
-				'Content-Type': 'application/x-www-form-urlencoded'
-			  }, 
-      		  body: new URLSearchParams({
-			  	'gcode':  '[[Exec echo "'+channel+'" > /home/pi/channel]]'
-			  })
-		  });
-			console.log('Completed!', response);
-		  } catch(err) {
-			console.error('Error: ${err}');
-		  }
+async function changeUpdateChannel(channel) {
+    try {
+        const response = await fetch('/gcode', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+                'gcode': '[[Exec echo "' + channel + '" > /home/pi/channel]]'
+            })
+        });
+
+        const text = document.getElementById(`btn-${channel}`);
+        toastr.success(`Channel updated to ${text.innerText}! Please reboot your machine...`);
+    } catch (err) {
+        toastr.error('Failed to switch channels.')
+    }
 }
 
 const url_progress = window.location.origin + ":8080/athena_progress.txt";
