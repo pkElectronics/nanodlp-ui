@@ -521,8 +521,8 @@ async function changeUpdateChannel(channel) {
     }
 }
 
-const url_progress = window.location.origin + ":8080/athena_progress.txt";
-const url_message = window.location.origin + ":8080/athena_message.txt";
+const url_progress = "/athena-update/athena_progress.txt";
+const url_message = "/athena-update/athena_message.txt";
 
 function open_update_modal(){
 	var i = 1;
@@ -1016,7 +1016,7 @@ async function isCameraEnabled(src) {
 
 async function buildCameraStream() {
     // const src = 'http://olymp.concepts3d.eu:13194/video.mp4';
-    const src = `http://${window.location.hostname}:8081/video.mp4`;
+    const src = `/athena-camera//video.mp4`;
     const cameraEnabled = await isCameraEnabled(src);
 
     if (cameraEnabled) {
