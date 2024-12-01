@@ -246,7 +246,10 @@ input:checked + .switch-slider:before {
   border-radius: 50%;
 }
 
-.video-container {
+.toast {
+  opacity: 1 !important;
+}
+  .video-container {
   position: relative; /* Ensures video is positioned relative to this container */
   display: flex;
   justify-content: center;
