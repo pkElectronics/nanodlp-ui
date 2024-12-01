@@ -249,3 +249,26 @@ input:checked + .switch-slider:before {
 .toast {
   opacity: 1 !important;
 }
+  .video-container {
+  position: relative; /* Ensures video is positioned relative to this container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 225px;
+  height: 400px; /* Adjust based on your needs */
+  overflow: hidden; /* Prevents overflow caused by rotation */
+  background: #000; /* Optional: Black background for better contrast */
+}
+
+#livestream-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: auto;
+  max-width: 178%;
+  max-height: 178%;
+  transform: translate(-50%, -50%) rotate(270deg);
+  transform-origin: center center;
+  object-fit: cover; /* Ensures video fills the rotated container */
+}

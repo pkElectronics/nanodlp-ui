@@ -27,43 +27,50 @@
 
 				<div class="panel-body layer_details printing-obj" data-ratio="{{displayRatio}}">
 					<div class="row">
-						<div class="col-md-5">
-							<a class="embed-responsive embed-responsive-16by9" id="image_wrapper" href="/plate/preview">
-								<div class="image_enlarge embed-responsive-item"></div>
-								<span class="glyphicon glyphicon-refresh text-success" id="change-preview"></span>
-							</a>
+						<div id="print-preview" class="col-md-8">
+							<div class="col-md-5">
+								<a class="embed-responsive embed-responsive-16by9" id="image_wrapper" href="/plate/preview">
+									<div class="image_enlarge embed-responsive-item"></div>
+									<span class="glyphicon glyphicon-refresh text-success" id="change-preview"></span>
+								</a>
+							</div>
+							<div class="col-md-3">
+								<span class="glyphicon glyphicon-align-left text-success"></span>
+								<translate class="key">Layer</translate>
+								<div class="val last_location"></div>
+								<br>
+
+								<span class="glyphicon glyphicon-resize-vertical text-success"></span>
+								<translate class="key">Height</translate>
+								<div class="val last_height"></div>
+								<br>
+
+								<span class="glyphicon glyphicon-hourglass text-success"></span>
+								<translate class="key">Remaining</translate>
+								<div class="val last_remaining"></div>
+								<br>
+
+							</div>
+							<div class="col-md-4">
+								<span class="glyphicon glyphicon-time text-success"></span>
+								<translate class="key">ETA</translate>
+								<div class="val last_eta"></div>
+								<br>
+
+								<span class="glyphicon glyphicon-time text-success"></span>
+								<translate class="key">Elapsed</translate>
+								<div class="val last_elapsed"></div>
+								<br>
+
+								<span class="glyphicon glyphicon-eye-open text-success"></span>
+								<a href="/printer" class="key" translate>Action</a>
+								<div class="val last_action"></div>
+							</div>
 						</div>
-						<div class="col-md-3">
-							<span class="glyphicon glyphicon-align-left text-success"></span>
-							<translate class="key">Layer</translate>
-							<div class="val last_location"></div>
-							<br>
-
-							<span class="glyphicon glyphicon-resize-vertical text-success"></span>
-							<translate class="key">Height</translate>
-							<div class="val last_height"></div>
-							<br>
-
-							<span class="glyphicon glyphicon-hourglass text-success"></span>
-							<translate class="key">Remaining</translate>
-							<div class="val last_remaining"></div>
-							<br>
-
-						</div>
-						<div class="col-md-4">
-							<span class="glyphicon glyphicon-time text-success"></span>
-							<translate class="key">ETA</translate>
-							<div class="val last_eta"></div>
-							<br>
-
-							<span class="glyphicon glyphicon-time text-success"></span>
-							<translate class="key">Elapsed</translate>
-							<div class="val last_elapsed"></div>
-							<br>
-
-							<span class="glyphicon glyphicon-eye-open text-success"></span>
-							<a href="/printer" class="key" translate>Action</a>
-							<div class="val last_action"></div>
+						<div id="webcam-preview" class="col-md-4">
+							<div class="video-container" id="livestream-container">
+								<!--Constructed by athena.js-->
+							</div>
 						</div>
 					</div>
 					<div class="layer-progress progress printing-obj">
@@ -91,7 +98,7 @@
 						<span class="val last_path idle-obj"></span>
 						<span class="glyphicon glyphicon-tasks pause-obj"></span>
 						<span class="val last_path pause-obj"></span>
-						<div class="controls">	
+						<div class="controls">
 							<div class="printing-obj">
 								{% if status.Halted %}
 									<a class="ask printing-obj btn-danger btn force-stop" href="/printer/force-stop" data-ask="force-stop-confirm" translate>Force Stop</a>
@@ -113,7 +120,7 @@
 
 						</div>
 					</h3>
-				</div>				
+				</div>
 			</div>
 			<span class="printing-obj">
 				{% if autoShutdown %}
@@ -127,18 +134,19 @@
 			<span class="idle-obj">
 				{% if cast==false %}
 				<a class="btn btn-success ask" href="/printer/cast" data-ask="display-confirm" translate>Start Display</a>
-				&nbsp; 
+				&nbsp;
 				{% endif %}
 
 				{% if projectorPowerCycle==1 %}
 				<a class="ajax btn btn-warning idle-obj" href="/projector/off" name="type" data-confirm="projectoroff-confirm" translate>Projector
 					Off</a>
-				&nbsp; 
+				&nbsp;
 				{% endif %}
 			</span>
 			{{ buttonsView(buttons,"/") }}
 			<a class="btn btn-success" id="camera" href="/camera/take" translate>Take Photo</a>
 		</div>
+
 	</div>
 </div>
 
