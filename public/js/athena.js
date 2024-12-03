@@ -27,13 +27,13 @@ toastr.options = {
 
 //************** Resin Profile Functions  */
 $("#DwEnableSimple").change(function () {
-  if ($(this).is(":checked")) {
-    $("#WaitBeforePrintSimple").val(0).prop("disabled", true);
-	$("#SupportWaitBeforePrintSimple").val(0).prop("disabled", true);
-  } else {
-    $("#WaitBeforePrintSimple").prop("disabled", false);
-	$("#SupportWaitBeforePrintSimple").prop("disabled", false);
-  }
+	if ($(this).is(":checked")) {
+		$("#WaitBeforePrintSimple").val(0).prop("disabled", true);
+		$("#SupportWaitBeforePrintSimple").val(0).prop("disabled", true);
+	} else {
+		$("#WaitBeforePrintSimple").prop("disabled", false);
+		$("#SupportWaitBeforePrintSimple").prop("disabled", false);
+	}
 });
 
 $("#setup2").submit(function(){
@@ -165,10 +165,10 @@ $("#SupportSubmitButton").click(function(){
 	$("#SupportTextField").val("");
 
 	const submission = window.btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-	
-	$('#support_notification').modal({backdrop: 'static', keyboard: false})  
-	$('#support_notification').modal('show');	
-	
+
+	$('#support_notification').modal({backdrop: 'static', keyboard: false})
+	$('#support_notification').modal('show');
+
 	$.ajax({
 		url: '/gcode',
 		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -228,47 +228,47 @@ function ticketFailedHandler(interval) {
 
 $("#BtnToggleHeater").click(function(){
 	$.ajax({
-	  url: "/json/db/machine.json",
-	  success: function( result ) {
-		const obj = JSON.parse(result);
-		
-		if(obj["CustomValues"]["HeaterEnable"]){
-		
-			if(obj["CustomValues"]["HeaterEnable"] === "0"){
-				obj["CustomValues"]["HeaterEnable"] = "1";
-				$("#BtnToggleHeater").html("Enable Heater");
+		url: "/json/db/machine.json",
+		success: function( result ) {
+			const obj = JSON.parse(result);
 
+			if(obj["CustomValues"]["HeaterEnable"]){
+
+				if(obj["CustomValues"]["HeaterEnable"] === "0"){
+					obj["CustomValues"]["HeaterEnable"] = "1";
+					$("#BtnToggleHeater").html("Enable Heater");
+
+				}else{
+					obj["CustomValues"]["HeaterEnable"] = "0";
+					$("#BtnToggleHeater").html("Disable Heater");
+				}
 			}else{
 				obj["CustomValues"]["HeaterEnable"] = "0";
 				$("#BtnToggleHeater").html("Disable Heater");
 			}
-		}else{
-			obj["CustomValues"]["HeaterEnable"] = "0";
-			$("#BtnToggleHeater").html("Disable Heater");
-		}			
 
-		var formData = new FormData();
-		
-		var jsondata = JSON.stringify(obj);
+			var formData = new FormData();
 
-		const file = new Blob([jsondata]);
+			var jsondata = JSON.stringify(obj);
 
-		formData.append('JsonFile', file, "machine.json");
+			const file = new Blob([jsondata]);
+
+			formData.append('JsonFile', file, "machine.json");
 
 
-		$.ajax({
-			url: "/setup/import",
-			type: "POST",
-			data: formData,
-			processData : false,
-			contentType : false,
-		});       	
-	
-	  }
+			$.ajax({
+				url: "/setup/import",
+				type: "POST",
+				data: formData,
+				processData : false,
+				contentType : false,
+			});
+
+		}
 	});
-	
+
 	$("#BtnToggleHeater").html()
-	
+
 });
 
 /**
@@ -358,23 +358,23 @@ function loadInitialCheckboxState($checkboxElem, $toggleSection) {
 }
 
 $("#UvPwmValuePercentSimple").change(function () {
-  //clamp value
-  if (this.value > 100) this.value = 100;
-  if (this.value < 1) this.value = 1;
-  var percentValue = parseFloat(this.value);
-  if (!isNaN(percentValue)) {
-    var actualValue = percentValue / 100;
-    document.getElementById("UvPwmValueSimple").value = actualValue.toFixed(2);
-  }
+	//clamp value
+	if (this.value > 100) this.value = 100;
+	if (this.value < 1) this.value = 1;
+	var percentValue = parseFloat(this.value);
+	if (!isNaN(percentValue)) {
+		var actualValue = percentValue / 100;
+		document.getElementById("UvPwmValueSimple").value = actualValue.toFixed(2);
+	}
 });
 
 //This is used to adjust any values just for display
 document.addEventListener("DOMContentLoaded", function () {
-  var UvPwmComp = document.getElementById("UvPwmValuePercentSimple");
-  if (UvPwmComp) {
-    var scaledValue = UvPwmComp.value * 100;
-    UvPwmComp.value = scaledValue.toFixed(0);
-  }
+	var UvPwmComp = document.getElementById("UvPwmValuePercentSimple");
+	if (UvPwmComp) {
+		var scaledValue = UvPwmComp.value * 100;
+		UvPwmComp.value = scaledValue.toFixed(0);
+	}
 });
 
 //************** Calibrations Functions  */
@@ -382,57 +382,57 @@ document.addEventListener("DOMContentLoaded", function () {
 var movement = 1000; // Default movement value is 1 mm
 
 function moveZAxis(direction) {
-  console.log(`/z-axis/move/${direction}/micron/${movement}`);
-  $.ajax({ url: `/z-axis/move/${direction}/micron/${movement}`, type: "GET", dataType: "json" });
+	console.log(`/z-axis/move/${direction}/micron/${movement}`);
+	$.ajax({ url: `/z-axis/move/${direction}/micron/${movement}`, type: "GET", dataType: "json" });
 }
 
 function updateMovementButtons() {
-  $(".btn-movement").removeClass("btn-movement-active"); // Remove active class from all buttons
-  $("#btnMove" + movement).addClass("btn-movement-active"); // Add active class to the selected button
+	$(".btn-movement").removeClass("btn-movement-active"); // Remove active class from all buttons
+	$("#btnMove" + movement).addClass("btn-movement-active"); // Add active class to the selected button
 }
 
 $("#btnUp").click(function () {
-  moveZAxis("up");
+	moveZAxis("up");
 });
 
 $("#btnDown").click(function () {
-  moveZAxis("down");
+	moveZAxis("down");
 });
 
 $("#btnMove100").click(function () {
-  movement = 100;
-  updateMovementButtons();
+	movement = 100;
+	updateMovementButtons();
 });
 
 $("#btnMove1000").click(function () {
-  movement = 1000;
-  updateMovementButtons();
+	movement = 1000;
+	updateMovementButtons();
 });
 
 $("#btnMove10000").click(function () {
-  movement = 10000;
-  updateMovementButtons();
+	movement = 10000;
+	updateMovementButtons();
 });
 
 $("#btnMove100000").click(function () {
-  movement = 100000;
-  updateMovementButtons();
+	movement = 100000;
+	updateMovementButtons();
 });
 
 $("#btnStop").click(function () {
-  $.ajax({ url: `/printer/force-stop`, type: "GET", dataType: "json" });
+	$.ajax({ url: `/printer/force-stop`, type: "GET", dataType: "json" });
 });
 
 $("#btnMoveHome").click(function () {
-  $.ajax({ url: `/z-axis/calibrate`, type: "GET", dataType: "json" });
+	$.ajax({ url: `/z-axis/calibrate`, type: "GET", dataType: "json" });
 });
 
 $("#btnMovePark").click(function () {
-  $.ajax({ url: `/z-axis/top`, type: "GET", dataType: "json" });
+	$.ajax({ url: `/z-axis/top`, type: "GET", dataType: "json" });
 });
 
 $("#btnMoveBottom").click(function () {
-  $.ajax({ url: `/z-axis/bottom`, type: "GET", dataType: "json" });
+	$.ajax({ url: `/z-axis/bottom`, type: "GET", dataType: "json" });
 });
 
 
@@ -488,37 +488,37 @@ function update_changelog(){
 
 	if( printer_type !== "" && image_version !== "" && channel !== "" ){
 
-	$.ajax({
-	  url: "https://olymp.concepts3d.eu/api/changelog?printer_type="+printer_type+"&channel="+channel+"&current_version="+version_str,
-	  success: function( result ) {
-		$( "#changelog-display" ).html( result );
-	  },
-	  error: function( result){
-	  	console.error('Error: ${result}');
-	  }
-	
-	});
-	
+		$.ajax({
+			url: "https://olymp.concepts3d.eu/api/changelog?printer_type="+printer_type+"&channel="+channel+"&current_version="+version_str,
+			success: function( result ) {
+				$( "#changelog-display" ).html( result );
+			},
+			error: function( result){
+				console.error('Error: ${result}');
+			}
+
+		});
+
 	}
 }
 
 async function changeUpdateChannel(channel) {
-    try {
-        const response = await fetch('/gcode', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                'gcode': '[[Exec echo "' + channel + '" > /home/pi/channel]]'
-            })
-        });
+	try {
+		const response = await fetch('/gcode', {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			body: new URLSearchParams({
+				'gcode': '[[Exec echo "' + channel + '" > /home/pi/channel]]'
+			})
+		});
 
-        const text = document.getElementById(`btn-${channel}`);
-        toastr.success(`Channel updated to ${text.innerText}! Please reboot your machine...`);
-    } catch (err) {
-        toastr.error('Failed to switch channels.')
-    }
+		const text = document.getElementById(`btn-${channel}`);
+		toastr.success(`Channel updated to ${text.innerText}! Please reboot your machine...`);
+	} catch (err) {
+		toastr.error('Failed to switch channels.')
+	}
 }
 
 const url_progress = "/athena-update/athena_progress.txt";
@@ -596,59 +596,59 @@ $(document).ready(function() {
 
 	check_if_update_running();
 
-    $("#btn-update").click(function(){
-        try {
+	$("#btn-update").click(function(){
+		try {
 			open_update_modal();
 			const response = fetch('/gcode', {
-			  method: 'post',
-			   headers:{
-				'Content-Type': 'application/x-www-form-urlencoded'
-			  }, 
-      		  body: new URLSearchParams({
-			  	'gcode':  "[[Exec /home/pi/athena-start-update.sh]]"
-			  })
-		  });
+				method: 'post',
+				headers:{
+					'Content-Type': 'application/x-www-form-urlencoded'
+				},
+				body: new URLSearchParams({
+					'gcode':  "[[Exec /home/pi/athena-start-update.sh]]"
+				})
+			});
 			console.log('Completed!', response);
-		  } catch(err) {
+		} catch(err) {
 			console.error('Error: ${err}');
-		  }
-      }); 
-	  
-	  $("#btn-lts").click(function(){
+		}
+	});
+
+	$("#btn-lts").click(function(){
 		changeUpdateChannel("lts");
-	  });
-	  
-	  $("#btn-stable").click(function(){
+	});
+
+	$("#btn-stable").click(function(){
 		changeUpdateChannel("stable");
-	  });
-	  
-	  $("#btn-beta").click(function(){
-	  changeUpdateChannel("beta");
-	  });
-	  
-	  $("#btn-alpha").click(function(){
-	  	changeUpdateChannel("alpha");
-	  });
-	  
-	  $("#btn-master").click(function(){
+	});
+
+	$("#btn-beta").click(function(){
+		changeUpdateChannel("beta");
+	});
+
+	$("#btn-alpha").click(function(){
+		changeUpdateChannel("alpha");
+	});
+
+	$("#btn-master").click(function(){
 		changeUpdateChannel("master");
-	  });
-	  
+	});
+
 });
 
 $.ajax({
-  url: "/json/db/machine.json",
-  success: function( result ) {
-	const obj = JSON.parse(result);
+	url: "/json/db/machine.json",
+	success: function( result ) {
+		const obj = JSON.parse(result);
 
-	$("#WiFiCountryTools").val(obj["WiFiCountry"]);
-	
-	if(obj["CustomValues"]["HeaterEnable"] && obj["CustomValues"]["HeaterEnable"] == 0){
-		$("#BtnToggleHeater").html("Disable Heater")
-	}else{
-		$("#BtnToggleHeater").html("Enable Heater")
+		$("#WiFiCountryTools").val(obj["WiFiCountry"]);
+
+		if(obj["CustomValues"]["HeaterEnable"] && obj["CustomValues"]["HeaterEnable"] == 0){
+			$("#BtnToggleHeater").html("Disable Heater")
+		}else{
+			$("#BtnToggleHeater").html("Enable Heater")
+		}
 	}
-  }
 });
 
 
@@ -784,29 +784,29 @@ function removeUploadProgressModal(){
 
 function showUploadProgressModal(){
 	const msg='<div class="modal fade" id="upload-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="false">'
-			+'<div class="modal-dialog">'
-				+'<div class="modal-content">'
-					+'<div class="modal-header">'
-						+'<h5 class="modal-title" id="modalLabelSmall"><center>'
-						+'FILE UPLOAD </center></h5>'
-					+ '</div>' //end modal header
-					+ '<div class="modal-body">'
-						+'<div class="progress text-center">'
-							+'<div id="upload-modal-progress-bar" class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0">'
-							+'</div>'
-						+'<span style="color: black" id="upload-modal-progress-text"></span>'
-						+'</div>'
-		                +'</br>'
-						+'<div style="text-align: center">'
-						+'<h7 id="upload-modal-text"></h7>'
-						+'</div>'
-					+ '</div>' //end modal body
-					+ '<div class="div-modal-buttons" style="align-content: center">'
-						+ '<button type="button" id="btn-uploadmodal-cancel" class="btn-sm btn-danger btn-mod-center">Cancel</button>'
-						+'</br>'
-					+'</div>' //end modal footer
-				+'</div>' //end model content
-			+'</div>' //end modal dialog
+		+'<div class="modal-dialog">'
+		+'<div class="modal-content">'
+		+'<div class="modal-header">'
+		+'<h5 class="modal-title" id="modalLabelSmall"><center>'
+		+'FILE UPLOAD </center></h5>'
+		+ '</div>' //end modal header
+		+ '<div class="modal-body">'
+		+'<div class="progress text-center">'
+		+'<div id="upload-modal-progress-bar" class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0">'
+		+'</div>'
+		+'<span style="color: black" id="upload-modal-progress-text"></span>'
+		+'</div>'
+		+'</br>'
+		+'<div style="text-align: center">'
+		+'<h7 id="upload-modal-text"></h7>'
+		+'</div>'
+		+ '</div>' //end modal body
+		+ '<div class="div-modal-buttons" style="align-content: center">'
+		+ '<button type="button" id="btn-uploadmodal-cancel" class="btn-sm btn-danger btn-mod-center">Cancel</button>'
+		+'</br>'
+		+'</div>' //end modal footer
+		+'</div>' //end model content
+		+'</div>' //end modal dialog
 		+'</div>'; //end modal fade
 
 	$(".navbar").after(msg);
@@ -857,22 +857,22 @@ $(function() {
 });
 
 function fetch_resin_target(){
-		$.ajax({
-			url:'/analytic/value/12',
-			type: 'GET',
-			timeout: 2000
-		}).done(function(data) {
-			var msg = "";
-			if (data === null) return;
-			$('.navbar-resin-temp').show()
+	$.ajax({
+		url:'/analytic/value/12',
+		type: 'GET',
+		timeout: 2000
+	}).done(function(data) {
+		var msg = "";
+		if (data === null) return;
+		$('.navbar-resin-temp').show()
 
-			if(data == 0){
-				$("#navbar-resin-target-text").text("Heater is Off");
-			}else{
-				$("#navbar-resin-target-text").text("Target :"+data+"°C");
-			}
+		if(data == 0){
+			$("#navbar-resin-target-text").text("Heater is Off");
+		}else{
+			$("#navbar-resin-target-text").text("Target :"+data+"Â°C");
+		}
 
-		});
+	});
 }
 
 function fetch_resin_actual(){
@@ -1006,38 +1006,45 @@ function display_notification_athena(){
 }
 
 async function isCameraEnabled(src) {
-    try {
-        const response = await fetch(src, {method: 'OPTIONS'});
-        return response.ok;
-    } catch (e) {
-        return false;
-    }
+	try {
+		const response = await fetch(src, {method: 'OPTIONS'});
+		if (response.status >= 400) {
+			return false;
+		}
+		return response.ok;
+	} catch (e) {
+		return false;
+	}
 }
 
 async function buildCameraStream() {
-    // const src = 'http://olymp.concepts3d.eu:13194/video.mp4';
-    const src = `/athena-camera//video.mp4`;
-    const cameraEnabled = await isCameraEnabled(src);
+	//const src = 'http://olymp.concepts3d.eu:13194/video.mp4';
+	const src = `/athena-camera/video.mp4`;
+	const cameraEnabled = await isCameraEnabled(src);
 
-    if (cameraEnabled) {
-        const video = document.createElement('video');
+	if (cameraEnabled) {
+		const video = document.createElement('video');
 
-        const livestreamContainer = document.getElementById('livestream-container');
-        livestreamContainer.appendChild(video);
+		const livestreamContainer = document.getElementById('livestream-container');
+		livestreamContainer.appendChild(video);
 
-        video.id = 'livestream-video';
-        video.src = src;
-        video.crossOrigin = 'anonymous';
-        video.muted = true
-        video.play();
-    } else {
-        document.getElementById('webcam-preview').hidden = true;
-        document.getElementById('print-preview').className = 'col-md-12';
-    }
+		video.id = 'livestream-video';
+		video.src = src;
+		video.crossOrigin = 'anonymous';
+		video.muted = true
+		video.play();
+
+		livestreamContainer.style.display = 'flex';
+
+
+	} else {
+		document.getElementById('webcam-preview').hidden = true;
+		document.getElementById('print-preview').className = 'col-md-12';
+	}
 
 
 }
 
 $(document).ready(function () {
-    buildCameraStream();
+	buildCameraStream();
 })
