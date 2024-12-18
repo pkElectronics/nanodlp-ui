@@ -188,7 +188,7 @@ function profile_settings_open(t){
 
 function dashboard_init() {
 	$.get("/info", function (data) {
-		// $(".nanodlp-content").html("<br>"+data);
+		$(".nanodlp-content").html("<br>"+data);
 	});
 	$("html").delegate('#change-preview','click',function(e){
 		$(this).parent().toggleClass("toggle");
