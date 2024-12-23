@@ -112,6 +112,10 @@
   font-size: 14px !important;
 }
 
+.navbar-brand img{
+  height: 75% !important;
+}
+
 .force-stop{
   margin-bottom: 10% !important;
 }
