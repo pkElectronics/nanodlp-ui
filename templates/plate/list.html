@@ -4,6 +4,7 @@
 {% endmacro %}
 {% macro printHistory(PrintResult) %}
 {% if PrintResult.Path %}
+
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-{{ PrintResult.StatusTag }}">
@@ -86,15 +87,15 @@
 			</div>
 			{% endif %}
 			{% else %}
-			<div class="label label-danger"><span class="glyphicon glyphicon-alert"></span> &nbsp; 
+			<div class="label label-danger"><span class="glyphicon glyphicon-alert"></span> &nbsp;
 				<translate>Profile not found.</translate>
 			</div>
 			{% endif %}
 			{% if row.IsFaulty %}
 			<div class="notice">
-				<span class="glyphicon glyphicon-alert"></span> &nbsp; 
+				<span class="glyphicon glyphicon-alert"></span> &nbsp;
 				<a href="/plate/preview/{{ row.PlateID }}" translate>Source file contains faulty structure.</a>
-					{% if !row.Repaired %} &nbsp; 
+					{% if !row.Repaired %} &nbsp;
 					<a class="ask req-no-slicing btn btn-default repair svg tip" href="/plate/repair-regenerate/{{ row.PlateID }}"
 					data-ask="regenerate-confirm">{{ icon(repair_icon) }}<translate class="hide">Repair and re-slice</translate></a>
 					{% endif %}
@@ -106,14 +107,14 @@
 			{% endif %}
 			<br>
 			{% if row.Corrupted==true %}
-			<div class="alert alert-danger"><span class="glyphicon glyphicon-alert"></span> &nbsp; 
+			<div class="alert alert-danger"><span class="glyphicon glyphicon-alert"></span> &nbsp;
 				<translate>This job is corrupt.</translate>
 				<a class="ask req-no-slicing btn btn-default" href="/plate/regenerate/{{ row.PlateID }}"
 				data-ask="regenerate-confirm"><span class="glyphicon glyphicon-refresh"></span> &nbsp; <translate>Re-slice</translate>
 				</a>
 			</div>
 			{% endif %}
-			<div class="alert alert-danger req-not-processed"><span class="glyphicon glyphicon-exclamation-sign"></span> &nbsp; 
+			<div class="alert alert-danger req-not-processed"><span class="glyphicon glyphicon-exclamation-sign"></span> &nbsp;
 				<translate>The job is not sliced yet.</translate>
 			</div>
 			<div class="plate" data-plate="{{row.PlateID}}" data-total="{{row.LayersCount}}">
@@ -132,7 +133,7 @@
 			<img src="static/plates/{{row.PlateID}}/3d.png?{{row.Updated}}" loading="lazy"
 				class="threed {% if !row.Preview %}hide retry{% endif %}">
 		</td>
-		<td>	
+		<td>
 			<dl class="small">
 				<dt><span class="glyphicon glyphicon-tint"></span>&nbsp;
 					<translate>Resin Usage</translate>
@@ -141,7 +142,7 @@
 				<dt><span class="glyphicon glyphicon-usd"></span>&nbsp;
 					<translate>Resin Cost</translate>
 				</dt>
-				<dd>{{row.Price}}</dd>				
+				<dd>{{row.Price}}</dd>
 				{% if row.StopLayers %}
 				<dt><span class="glyphicon glyphicon-stop"></span>&nbsp;
 					<translate>Stop Layers</translate>
@@ -150,7 +151,7 @@
 				{% endif %}
 			</dl>
 		</td>
-		<td>	
+		<td>
 			<dl class="small">
 				<dt><span class="glyphicon glyphicon-print"></span>&nbsp;
 					<translate>Last Print</translate>
@@ -177,7 +178,7 @@
 			</dl>
 			<div class="hide sort">{{row.LastPrint}}</div>
 		</td>
-		<td>			
+		<td>
 		{% if status.Printing == false %}
 			<form action="/printer/start/{{ row.PlateID }}" method="post">
 				<span class="input-append input-group">
@@ -212,20 +213,20 @@
 						<span class="glyphicon glyphicon-stop"></span>
 						<translate class="hide">Stop the job</translate>
 					</a>
-				{% endif %}				
+				{% endif %}
 				<span class="add-on"><span translate>Layer</span> {{ status.ResumeID }} <span translate>of</span>
 					{{row.LayersCount}}</span>
 			</div>
 			{% endif %}
 			{% endif %}
 			<a class="btn btn-default tip" href="/plate/preview/{{ row.PlateID }}"><span
-					class="glyphicon glyphicon-eye-open"><translate class="hide">Preview</translate></span></a>		
+					class="glyphicon glyphicon-eye-open"><translate class="hide">Preview</translate></span></a>
 			{% if row.Type=="stl" && !row.Repaired %}
 			<a class="btn btn-default repair tip svg" href="/plate/repair/{{ row.PlateID }}">{{ icon(repair_icon) }}<translate class="hide">Repair</translate></a>
 			{% endif %}
 			<div class="btn-group">
-				<button type="button" class="btn btn-default tip dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					<span class="glyphicon glyphicon-option-vertical"></span> <translate class="hide">More</translate></a>
+				<button id="show-more-{{ row.PlateID }}" type="button" class="btn btn-default tip dropdown-toggle list-more-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<span class="glyphicon glyphicon-option-vertical" style="pointer-events: none"></span> <translate class="hide">More</translate></a>
 				</button>
 				<ul class="dropdown-menu">					
 					<li><a href="/plate/edit/{{ row.PlateID }}"><span
@@ -234,6 +235,11 @@
 					<li><a target="_blank" href="/static/editor/?ApplicationMode=embedded&src=/static/plates/{{ row.PlateID }}/plate.stl"><span class="glyphicon glyphicon-pencil"></span> &nbsp; <translate>3D Edit</translate>
 					</a></li>
 					{% endif %}
+					<li id="show-more-timelapse-{{ row.PlateID }}" style="display: none">
+						<a target="_blank" href="/static/plates/{{ row.PlateID }}/out.mp4">
+							<span class="glyphicon glyphicon-camera"></span> &nbsp; <translate>Timelapse</translate>
+						</a>
+					</li>
 					{% if (row.Processed==true && row.Type && (( row.PlateID != status.PlateID or status.Printing == false))) or (row.Type && !autoSlice) %}
 					<li><a class="ask req-no-slicing" href="/plate/regenerate/{{ row.PlateID }}"
 						data-ask="regenerate-confirm"><span class="glyphicon glyphicon-align-justify"></span> &nbsp; <translate>Re-slice</translate>
@@ -250,7 +256,7 @@
 				  <a class="ask" href="/plate/delete/{{ row.PlateID }}" data-ask="delete-confirm"><span class="glyphicon glyphicon-trash"></span> &nbsp; <translate>Delete</translate>
 				  </a>
 				  </li>
-				  {% endif %}				  
+				  {% endif %}
 				  <li class="req-processed"><a href="/analytic/plate/{{ row.PlateID }}"><span class="glyphicon glyphicon-stats"></span> &nbsp; <translate>Analytic</translate></a></li>
 				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/nanodlp"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download NanoDLP</translate></a></li>
 				  <!-- <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/cbddlp"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download CBDDLP</translate></a></li>
