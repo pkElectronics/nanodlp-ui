@@ -1038,8 +1038,12 @@ async function buildCameraStream() {
 
 
 	} else {
-		document.getElementById('webcam-preview').hidden = true;
-		document.getElementById('print-preview').className = 'col-md-12';
+		const $webcamPreview = document.getElementById('webcam-preview');
+		if ($webcamPreview)
+			$webcamPreview.hidden = true;
+		const $printPreview = document.getElementById('print-preview');
+		if ($printPreview)
+			$printPreview.className = 'col-md-12';
 	}
 
 
