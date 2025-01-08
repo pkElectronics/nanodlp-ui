@@ -1042,8 +1042,16 @@ async function buildCameraStream() {
 		document.getElementById('print-preview').className = 'col-md-12';
 	}
 
-
 }
+
+$(document).on('click', '.list-more-button',async (event) => {
+	let plateId = event.target.id.split("show-more-")[1];
+	let response = await fetch(`/static/plates/${plateId}/out.mp4`, {method: 'HEAD'});
+	if (response.status >= 200 && response.status < 300) {
+		let elementId = `show-more-timelapse-${plateId}`;
+		document.getElementById(elementId).style.display = 'block';
+	}
+})
 
 $(document).ready(function () {
 	buildCameraStream();
