@@ -1,5 +1,7 @@
 {% extends "../base.html" %}
 {% block content %}
+<script src='/static/js/support.js'></script>
+
 <div class="modal fade" id="support_notification" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="false">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -76,10 +78,70 @@
 					
 			<br>
 		</div>
-        </div>
-    </div>
+	</div>
+
+	<div class="row" id="iot-control" style="display: none">
+		<div class="col-md-12">
+			<h4>IOT Control</h4>
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="col-md-6 center-block">
+						<div class="row" id="iot-control-toggle-row">
+							<div class="col-md-6 center-block" >
+							<label for="iot-control-toggle">Enable Athena IOT Service</label>
+						</div>
+						<div class="col-md-6 center-block">
+							<label class="switch">
+								<input type="checkbox" id="iot-control-toggle" name="iotControlToggle">
+								<span class="switch-slider round"></span>
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12 center-block" >
+			<h5>By enabling the Athena IOT Service you agree that anonymous ussage statistics are collected and processed by Concepts3D and it's affiliates</h5>
+			<p> This includes information about completed prints, number of layers printed and duration of prints among others</p>
+			<p> The IOT Service is a necessary requirement to use the printer in the Athena Mobile App</p>
+			<p> Therefore data is transmitted to servers operated in Europe or the United States of America</p>
+			<p> To make the data available in the app, following pieces of information are transmitted</p>
+			<ul>
+				<li>Machine identifier and Serial Number</li>
+				<li>Machine status including resin profiles and usage statistics</li>
+				<li>Camera feed (if available)</li>
+				<li>Print jobs available on the machine (but no preview images or stl files)</li>
+				<li>Print progress and associated status messages</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="row" id="iot-control-qr" >
+		</br>
+		</br>
+		<div class="col-md-12">
+		<img src="/athena-iot/mqtt/qrcode">
+		</br>
+		<span>Scan the QR Code in the App to connect your printer</span>
+	</div>
+	</div>
+
+	<div class="row" id="iot-control-text">
+		<div class="col-md-12">
+		<h4>Printer Data for manual connection</h4>
+		<p id="iot-control-printername">Empty</p>
+			</br>
+		<p id="iot-control-printerserial">Empty</p>
+	</div>
+	</div>
 </div>
-<br>           
+	</div>
+</div>
+
+<br>
 <br>           
 <br>           
 {% endblock %}

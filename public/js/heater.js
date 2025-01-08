@@ -59,7 +59,6 @@ async function fetchInitialTemperature() {
     if (currentHeaterTarget > 0) {
         document.getElementById('temperature').value = Number(currentHeaterTarget);
         document.getElementById('heater-value').innerText = `${currentHeaterTarget.trim()}°C`;
-
     }
 }
 
