@@ -37,15 +37,44 @@
                             <label for="temperature">Temperature</label>
                         </div>
                         <div class="col-md-6">
-                            <input type="range" min="20" max="40" value="25" class="slider" id="temperature" name="targetTemperature">
+                            <input type="range" min="20" max="40" value="25" class="slider" id="temperature"
+                                   name="targetTemperature">
                             <span id="heater-value" style="text-align: center">25°C</span>
                         </div>
                     </div>
                 </form>
+
+                <div class="btn btn-info"
+                     data-toggle="modal" data-target="#preheatModal">Preheat and mix
+                </div>
             </div>
         </div>
     </div>
 
+</div>
+
+<div class="modal fade" id="preheatModal" tabindex="-1" role="dialog" aria-labelledby="preheatModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 class="modal-title" id="modalLabel">Confirm preheat and mix</h5>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to start Resin Mixing? Ensure the build plate is installed, and there are no obstructions on the plate or vat.
+                    <br/>
+                    <br/>
+
+Pressing Continue will cause the plate to begin mixing the resin while heater is warming. The plate will move quickly in the resin at various heights</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal" id="btn-mix-resin">Continue</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
