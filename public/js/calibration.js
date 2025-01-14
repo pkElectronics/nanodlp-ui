@@ -30,6 +30,14 @@ $(document).ready(function () {
         const data = formDataToObject(form);
         submitForm(data, button);
     })
+
+    document.getElementById("calibration-form-confirm").addEventListener('click', (e) => {
+        // Calibration started workflow
+        document.querySelector('#calibration-confirm').style.display = 'none';
+        document.querySelector('#calibration-progress').style.display = 'block';
+        document.querySelector('.modal-footer').style.display = 'none';
+        document.querySelector('#modalLabel').textContent = "Slicing calibration file..."
+    })
 })
 
 function setUpCalibrationSelection() {
