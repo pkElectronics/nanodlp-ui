@@ -493,7 +493,7 @@ function update_changelog(){
 			success: function( result ) {
 				$( "#changelog-display" ).html( result );
 				// force reload cached page
-				location.reload(true);
+				//location.reload(true);
 			},
 			error: function( result){
 				console.error('Error: ${result}');
