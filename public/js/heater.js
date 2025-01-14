@@ -118,7 +118,31 @@ async function fetchHeaterActive(analyticsId) {
 }
 
 async function mixResin() {
-    await runGcode(MIX_GCODE)}
+    const mixConfig = await getMachineMixGcodeConfig();
+
+    const mixGcode = MIX_GCODE
+        .replaceAll("$POSITION", mixConfig.toString())
+        .replaceAll("$POSITIONDOWN", (mixConfig - 5).toString())
+
+    await runGcode(mixGcode)
+
+}
+
+async function getMachineMixGcodeConfig() {
+    const response = await fetch("/static/printer_type", { method: 'GET' });
+    const machineType = await response.text();
+
+    if (machineType.startsWith("AthenaPro")) {
+        return 235;
+    } else if (machineType.startsWith("Athena2")) {
+        return 235;
+    } else if (machineType.startsWith("Athena-")) {
+        return 245;
+    } else {
+        throw new Error("Unknown machine type for mixing gcode")
+    }
+
+}
 
 const MIX_GCODE = `
 [[StatusUpdate Resin Mixing Started]]
@@ -130,11 +154,11 @@ HOME_AXIS ;Home Z
 [[MoveWait 1]]
 [[StatusUpdate Resin Mixing Started]]
 [[PressureWrite 1]]
-[[PositionSet 245]]
+[[PositionSet $POSITION]]
 G90 ;Absolute Positioning
 [[GPIOHigh 10]]
 [[CrashDetectionStart]]
-ATHENA_PROBE_DOWNWARDS Z=230 F=480
+ATHENA_PROBE_DOWNWARDS Z=$POSITIONDOWN F=480
 ATHENA_PROBE_DOWNWARDS Z=4 F=10
 [[MoveWait 3]]
 DWELL P=2000
