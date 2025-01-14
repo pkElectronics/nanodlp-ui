@@ -492,6 +492,8 @@ function update_changelog(){
 			url: "https://olymp.concepts3d.eu/api/changelog?printer_type="+printer_type+"&channel="+channel+"&current_version="+version_str,
 			success: function( result ) {
 				$( "#changelog-display" ).html( result );
+				// force reload cached page
+				location.reload(true);
 			},
 			error: function( result){
 				console.error('Error: ${result}');
@@ -504,7 +506,7 @@ function update_changelog(){
 
 async function changeUpdateChannel(channel) {
 	try {
-		const response = await fetch('/gcode', {
+		 await fetch('/gcode', {
 			method: 'post',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded'
