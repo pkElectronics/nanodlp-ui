@@ -121,7 +121,7 @@ async function mixResin() {
 
     const mixGcode = MIX_GCODE
         .replaceAll("$POSITION", mixConfig.toString())
-        .replaceAll("$POSITIONDOWN", (mixConfig - 5).toString())
+        .replaceAll("$DOWNPOSITION", (mixConfig - 5).toString())
 
     await runGcode(mixGcode)
 
@@ -157,7 +157,7 @@ HOME_AXIS ;Home Z
 G90 ;Absolute Positioning
 [[GPIOHigh 10]]
 [[CrashDetectionStart]]
-ATHENA_PROBE_DOWNWARDS Z=$POSITIONDOWN F=480
+ATHENA_PROBE_DOWNWARDS Z=$DOWNPOSITION F=480
 ATHENA_PROBE_DOWNWARDS Z=4 F=10
 [[MoveWait 3]]
 DWELL P=2000
