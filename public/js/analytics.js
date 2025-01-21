@@ -31,7 +31,7 @@ const CHART_CONFIG = {
             { key: 'LargestArea', id: 3 },
             { key: 'Speed', id: 4 },
             { key: 'Cure', id: 5 },
-            { key: 'Pressure', id: 6 },
+            { key: 'Pressure', id: 6, overrideLabel: 'Force', overrideAxisLabel: 'Force', overrideUnit: 'g' },
             { key: 'LayerTime', id: 9 },
             { key: 'LiftHeight', id: 10 },
             { key: 'DynamicWait', id: 17 },
@@ -52,6 +52,8 @@ const CHART_CONFIG = {
         ]
     },
 }
+
+const ALL_CHART_CONFIG = Object.keys(CHART_CONFIG).flatMap(key => CHART_CONFIG[key].fields);
 
 function isNotAllNull(subArray) {
     return subArray.some(element => element !== null);
@@ -149,21 +151,24 @@ function addSaveLegendHandler() {
 function prepareAxis(series) {
     let axes = [{}];
     for (let seriesIdx = 1; seriesIdx < series.length; seriesIdx++) {
-        let scale = series[seriesIdx].scale;
+        const serie = series[seriesIdx];
+        let scale = serie.scale;
 
         const found = axes.some(axis => axis.scale === scale);
 
         const decimalPlaces = determineDecimalPlaces(scale);
 
         if (!found && decimalPlaces !== null) {
+            const config = ALL_CHART_CONFIG.find(config => config.key === serie.key);
+            const label = config?.overrideAxisLabel ?? scale;
             axes.push({
                     labelSize: 15,
                     gap: 0,
                     size: 40,
                     side: 3,
                     grid: {show: false},
-                    label: scale,
-                    scale: scale,
+                    label,
+                    scale,
                     values: (self, ticks) => ticks.map(rawValue => rawValue.toFixed(decimalPlaces)),
                 }
             )
@@ -202,14 +207,19 @@ function aggregateFunc(v, aggregate) {
 function getSeries(axes) {
     let fmt = uPlot.fmtDate("{HH}:{mm}:{ss}");
     let series = [{value: (self, ts) => ts !== null ? fmt(new Date(ts * 1000)) : '--'}];
+
+
     axes.forEach((element, key) => {
+        const config = ALL_CHART_CONFIG.find(config => config.key === element.Key);
+        const label = config?.overrideLabel ?? element.Name;
+        const unit = config?.overrideUnit ?? element.Type;
         series.push({
             key: element.Key,
             show: true,
             spanGaps: true,
-            label: element.Name,
+            label,
             scale: element.Type,
-            value: (self, rawValue) => (rawValue != null ? rawValue.toFixed(element.Decimal) + element.Type : ""),
+            value: (self, rawValue) => (rawValue != null ? rawValue.toFixed(element.Decimal) + unit : ""),
             stroke: "#" + ColourValues[key] + "88",
             width: 1,
         });
