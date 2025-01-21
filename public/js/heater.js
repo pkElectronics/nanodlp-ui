@@ -26,13 +26,7 @@ async function onPageLoad() {
         }
 
         if (e.target.id === 'temperature') {
-            if (object.chamberHeaterToggle) {
-                runGcode(`SET_CHAMBER_HEATER TARGET=${object.targetTemperature}`)
-            }
-
-            if (object.vatHeaterToggle) {
-                runGcode(`SET_VAT_HEATER TARGET=${object.targetTemperature}`)
-            }
+            setTemperature(object);
         }
     })
 
@@ -44,6 +38,21 @@ async function onPageLoad() {
 $(document).ready(function () {
     onPageLoad();
 })
+
+async function setTemperature(object) {
+    const heaterTemperature = object.targetTemperature;
+    if (object.chamberHeaterToggle) {
+        runGcode(`SET_CHAMBER_HEATER TARGET=${heaterTemperature}`)
+    }
+
+    if (object.vatHeaterToggle) {
+        runGcode(`SET_VAT_HEATER TARGET=${heaterTemperature}`)
+    }
+
+    await updateMachineCustomValues((customValues) => {
+        return { ...customValues, HeaterTemperature: heaterTemperature }
+    })
+}
 
 async function runGcode(gcode) {
     return await fetch('/gcode', {
@@ -63,6 +72,16 @@ async function fetchInitialTemperature() {
     if (currentHeaterTarget > 0) {
         document.getElementById('temperature').value = Number(currentHeaterTarget);
         document.getElementById('heater-value').innerText = `${currentHeaterTarget.trim()}°C`;
+    } else {
+        const machineJsonResponse = await fetch('/json/db/machine.json');
+        const machineJsonHeater = await machineJsonResponse.json();
+        const temp = machineJsonHeater?.CustomValues?.HeaterTemperature;
+
+        if (temp) {
+            document.getElementById('temperature').value = Number(temp);
+            document.getElementById('heater-value').innerText = `${temp}°C`;
+        }
+
     }
 }
 
