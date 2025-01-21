@@ -10,6 +10,16 @@
             <span id="no-heaters-found" style="display:none">No heaters detected</span>
             <div class="col-md-6 center-block">
                 <form id="heater-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="temperature">Temperature</label>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="range" min="20" max="40" value="25" class="slider" id="temperature"
+                                   name="targetTemperature">
+                            <span id="heater-value" style="text-align: center">25°C</span>
+                        </div>
+                    </div>
                     <div class="row" id="chamber-heater-row" style="display: none">
                         <div class="col-md-6">
                             <label for="chamber-heater-toggle">Chamber Heater Manual Control</label>
@@ -30,16 +40,6 @@
                                 <input type="checkbox" id="vat-heater-toggle" name="vatHeaterToggle">
                                 <span class="switch-slider round"></span>
                             </label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label for="temperature">Temperature</label>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="range" min="20" max="40" value="25" class="slider" id="temperature"
-                                   name="targetTemperature">
-                            <span id="heater-value" style="text-align: center">25°C</span>
                         </div>
                     </div>
                 </form>
