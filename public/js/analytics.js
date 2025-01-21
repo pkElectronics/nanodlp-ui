@@ -31,7 +31,7 @@ const CHART_CONFIG = {
             { key: 'LargestArea', id: 3 },
             { key: 'Speed', id: 4 },
             { key: 'Cure', id: 5 },
-            { key: 'Pressure', id: 6, overrideLabel: 'Force', overrideAxisLabel: 'Force', overrideUnit: 'g' },
+            { key: 'Pressure', id: 6, overrideLabel: 'Force', overrideAxisLabel: 'Force', overrideUnit: 'gf' },
             { key: 'LayerTime', id: 9 },
             { key: 'LiftHeight', id: 10 },
             { key: 'DynamicWait', id: 17 },
