@@ -127,8 +127,14 @@ async function setUpSlicerPoller() {
         const {percentage} = await response.json();
 
 
-        if (percentage === "100") window.location.href = "/";
         document.getElementById('calibration-modal-progress-bar').style.width = `${percentage}%`
+
+        // Calibration prints don't report back percentage correctly in the /slicer endpoint so we need to hack to
+        // access the plates db directly and check plate 0 Processed value to know for sure
+        const platesResponse = await fetch('/json/db/plates.json');
+        const plates = await platesResponse.json();
+        const calibrationPlate = plates?.find(plate => plate.PlateID === 0)
+        if (calibrationPlate?.Processed === true) window.location.href = "/";
     }
 
     setInterval(pollFunc, 500)
