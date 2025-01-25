@@ -1,26 +1,3 @@
-// Analytics api data endpoints
-//
-//	LayerHeight = 0
-// 	SolidArea = 1
-// 	AreaCount =2
-// 	LargestArea 3
-// 	Speed 4
-// 	Cure 5
-// 	Pressure 6
-// 	TemperatureInside 7
-// 	TemperatureOutside 8
-// 	LayerTime 9
-// 	LiftHeight 10
-// 	TemperatureMCU 11
-// 	TemperatureInsideTarget 12
-// 	TemperatureOutsideTarget 13
-// 	TemperatureMCUTarget 14
-// 	MCUFanRPM 15
-// 	UVFanRPM 16
-// 	DynamicWait  17
-//
-//
-
 toastr.options = {
 	"positionClass": "toast-top-center",
 }
