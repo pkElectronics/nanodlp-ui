@@ -226,50 +226,40 @@ function ticketFailedHandler(interval) {
 		clearInterval(interval);
 }
 
-$("#BtnToggleHeater").click(function(){
-	$.ajax({
-		url: "/json/db/machine.json",
-		success: function( result ) {
-			const obj = JSON.parse(result);
+$("#BtnToggleHeater").click(async function(){
+	await updateMachineCustomValues((customValues) => {
+		const heaterEnable = customValues['HeaterEnable'];
 
-			if(obj["CustomValues"]["HeaterEnable"]){
-
-				if(obj["CustomValues"]["HeaterEnable"] === "0"){
-					obj["CustomValues"]["HeaterEnable"] = "1";
-					$("#BtnToggleHeater").html("Enable Heater");
-
-				}else{
-					obj["CustomValues"]["HeaterEnable"] = "0";
-					$("#BtnToggleHeater").html("Disable Heater");
-				}
-			}else{
-				obj["CustomValues"]["HeaterEnable"] = "0";
-				$("#BtnToggleHeater").html("Disable Heater");
-			}
-
-			var formData = new FormData();
-
-			var jsondata = JSON.stringify(obj);
-
-			const file = new Blob([jsondata]);
-
-			formData.append('JsonFile', file, "machine.json");
-
-
-			$.ajax({
-				url: "/setup/import",
-				type: "POST",
-				data: formData,
-				processData : false,
-				contentType : false,
-			});
+		if (heaterEnable && heaterEnable === "0") {
+			$("#BtnToggleHeater").html("Enable Heater");
+			return { ...customValues, HeaterEnable: "1" }
+		} else {
+			$("#BtnToggleHeater").html("Disable Heater");
+			return { ...customValues, HeaterEnable: "0" }
 
 		}
-	});
+	})
 
 	$("#BtnToggleHeater").html()
 
 });
+
+async function updateMachineCustomValues(callback) {
+	const response = await fetch('/json/db/machine.json');
+	const machineJson = await response.json();
+	const customValues = machineJson['CustomValues'];
+	machineJson.CustomValues = callback(customValues);
+
+	const formData = new FormData();
+	const jsondata = JSON.stringify(machineJson);
+	const file = new Blob([jsondata]);
+	formData.append('JsonFile', file, "machine.json");
+	await fetch('/setup/import', {
+		method: 'POST',
+		body: formData,
+		contentType : false,
+	})
+}
 
 /**
  * Conversion layer for the dynamic speed code blocks
