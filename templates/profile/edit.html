@@ -4,7 +4,7 @@
 	<div class="alert alert-danger" role="alert">{{msg}}</div>
 	{% endif %}
 	<input type="hidden" id="scategory" value="">
-	<div id="setup-profile"> 
+	<div id="setup-profile">
 	<form action="" method="post" class="edit-page {% if viewMode == 0 %}hidden{% endif %}" id="setup">
 		<br>
 		<div class="row">
@@ -17,7 +17,7 @@
 				{{ setting_cat("<translate>After Layer</translate>","<translate>Lift after print, wait after lift, sending code</translate>",axis_icon,"i_moveafterprint") }}
 				{{ setting_cat("<translate>Override Machine Settings</translate>","<translate>Resolution, codes, mask</translate>",pen_icon,"i_override") }}
 			</div>
-			<div class="col-md-12 selected-cat">	
+			<div class="col-md-12 selected-cat">
 			</div>
 		</div>
 		<div class="row flex-row" id="options">
@@ -28,7 +28,7 @@
 					{% for p in resins %}
 						<option value="{{p.ID}}" {% if profile.ResinID == p.ID %}selected{% endif %}>{{p.Brand}} {{p.Model}}</option>
 					{% endfor %}
-				</select>				
+				</select>
 			</div>
 			<div class="col-md-4 i_basic i_option {{isHidden(basic.Title)}}">
 				<label for="Title" translate>Name</label>
@@ -61,7 +61,7 @@
 				</label>
 				<textarea class="form-control" name="ShieldAfterLayer"
 					id="ShieldAfterLayer">{{profile.ShieldAfterLayer}}</textarea>
-			</div>	
+			</div>
 			<div class="col-md-4 i_burnin i_option {{isHidden(basic.SupportLayerNumber)}}">
 				<label for="SupportLayerNumber">
 					<translate>Number of Burn-in Layers</translate>{{regenerateRequired()}}
@@ -292,7 +292,7 @@
 				</label>
 				<input class="form-control" value="{{profile.TopWait|floatformat}}" name="TopWait" id="TopWait" step="0.01"
 					type="number" required>
-			</div>			
+			</div>
 			<div class="col-md-4 i_movetolayer i_moveafterprint i_option {{isHidden(basic.ZStepWait)}}">
 				<label for="ZStepWait">
 					<translate>Max Speed</translate>
@@ -319,7 +319,7 @@
 				<input class="form-control"
 					value="{% if profile.RetractSpeed==0 %}1{% else %}{{profile.RetractSpeed}}{% endif %}" name="RetractSpeed"
 					id="RetractSpeed" type="number" min="1">
-			</div>			
+			</div>
 			<div class="col-md-4 i_movetolayer i_option conditional {{isHidden(basic.SlowSectionHeight)}}" data-condition="#DirectControl>0">
 				<label for="SlowSectionHeight">
 					<translate>Slow Section Height</translate>
@@ -450,7 +450,7 @@
 					<option value="0" {% if profile.HatchingType==0 %}selected{% endif %} translate>Off</option>
 					<option value="1" {% if profile.HatchingType==1 %}selected{% endif %} translate>Hexagonal</option>
 					<option value="2" {% if profile.HatchingType==2 %}selected{% endif %} translate>Hollowing</option>
-				</select>				
+				</select>
 			</div>
 			<div class="col-md-4 i_slicing i_option conditional {{isHidden(basic.HatchingTop)}}"
 				data-condition="#HatchingType > 0 && ['i_slicing'].includes(#scategory)">
@@ -577,7 +577,7 @@
 			</div>
 			<div class="col-md-4 i_override i_option {{isHidden(basic.YRes)}}">
 				<label for="YRes">
-					<translate>Override Y Resolution</translate> 
+					<translate>Override Y Resolution</translate>
 					<span class="label label-default" translate>Micron</span> {{calcModal("resolution")}} {{regenerateRequired()}}
 				</label>
 				<input class="form-control" value="{{profile.YRes|floatformat}}" name="YRes" id="YRes" step="0.001" type="number">
@@ -615,15 +615,15 @@
 		<input type="hidden" id="DirectControl" value="{{config.ZAxisPin}}">
 		<input type="hidden" id="MYRes" value="{{config.YRes}}">
 		<input type="hidden" id="MXRes" value="{{config.XYRes}}">
-		<input type="hidden" value="{{profile.JumpHeight}}" name="JumpHeight">			
+		<input type="hidden" value="{{profile.JumpHeight}}" name="JumpHeight">
 		<input type="hidden" value="{{profile.JumpPerLayer}}" name="JumpPerLayer">
 		<input type="hidden" value="{{profile.XYResPerc}}" name="XYResPerc" id="XYResPerc">
 		<input type="hidden" name="UpdateCustomInput" value="true">
 		<input type="hidden" name="Type" value="{{profile.Type}}">
 		<input type="hidden" name="ManufacturerLock" value="{{profile.ManufacturerLock}}">
 		{{ customInputs(inputs,profile.CustomValues,1)}}
-		<button type="submit" class="btn btn-success" translate>Save</button> &nbsp; 
-	</form>	
+		<button type="submit" class="btn btn-success" translate>Save</button> &nbsp;
+	</form>
 </div>
 	<!-- ************************** ATHENA SIMPLE RESIN PAGE -->
 	<div id="setup-profile2">
@@ -666,8 +666,23 @@
 				<textarea class="form-control" name="Desc" id="Desc">{{profile.Desc}}</textarea>
 			</div>
 			<div class="col-md-4 i_basic i_option" style="padding-top:5px;">
-				<label for="ResinPreheatTemperature"><translate>Resin Preheat Temperature (<b>C</b>)</translate></label>
-				<input class="form-control" value="{{profile.CustomValues.ResinPreheatTemperature}}" name="ResinPreheatTemperature" id="ResinPreheatTemperature" step="1" min="0" max="50" type="number">
+				<div class="row row-marginless">
+					<label for="ResinPreheatTemperature">
+						<translate>Resin Preheat Temperature (<b>C</b>)</translate>
+					</label>
+					<input class="form-control" value="{{profile.CustomValues.ResinPreheatTemperature}}"
+						   name="ResinPreheatTemperature" id="ResinPreheatTemperature" step="1" min="0" max="50"
+						   type="number">
+				</div>
+				<div class="row">
+					<div class="col-md-4 i_burnin i_option">
+						<label for="PreheatMixSimple">Mix Before Print</label>
+					</div>
+					<div class="col-md-4 i_burnin i_option text-nowrap checkbox-sm">
+						<input type="checkbox" id="PreheatMixSimple" value="{{profile.CustomValues.PreheatMixEnable}}"
+							   name="PreheatMixEnable" style="margin-top: -10px; width:16px; accent-color: #f0ad4e;">
+					</div>
+				</div>
 			</div>
 
 			<!-- Layer Details -->
@@ -1026,7 +1041,7 @@
 		<input type="hidden" id="DirectControl" value="{{config.ZAxisPin}}">
 		<input type="hidden" id="MYRes" value="{{config.YRes}}">
 		<input type="hidden" id="MXRes" value="{{config.XYRes}}">
-		<input type="hidden" value="{{profile.JumpHeight}}" name="JumpHeight">			
+		<input type="hidden" value="{{profile.JumpHeight}}" name="JumpHeight">
 		<input type="hidden" value="{{profile.JumpPerLayer}}" name="JumpPerLayer">
 		<input type="hidden" value="{{profile.XYResPerc}}" name="XYResPerc" id="XYResPerc">
 		<input type="hidden" name="UpdateCustomInput" value="true">
