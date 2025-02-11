@@ -276,3 +276,8 @@ input:checked + .switch-slider:before {
   transform-origin: center center;
   object-fit: cover; /* Ensures video fills the rotated container */
 }
+
+.row-marginless {
+  margin-left: 0;
+  margin-right: 0;
+}

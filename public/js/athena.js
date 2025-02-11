@@ -18,6 +18,7 @@ $("#setup2").submit(function(){
 	$("#PdEnableSimple").prop("checked", true);
 	$("#RlEnableSimple").prop("checked", true);
 	$("#DwEnableSimple").prop("checked", true);
+	$("#PreheatMixSimple").prop("checked", true);
 
 	const slowLiftSpeed = document.getElementById('SimpleSlowLiftSpeed').value;
 	const liftSpeed = document.getElementById('SimpleLiftSpeed').value;
@@ -63,6 +64,7 @@ setUpCheckboxToggle($("#PdEnableSimple"), $('.peel-detection-settings'));
 setUpCheckboxToggle($("#RlEnableSimple"));
 setUpCheckboxToggle($("#DwEnableSimple"));
 setUpCheckboxToggle($("#CdEnableSimple"), $('.crash-detection-settings'));
+setUpCheckboxToggle($("#PreheatMixSimple"));
 
 $(document).ready(function() {
 
@@ -308,6 +310,8 @@ $(document).ready(function(){
 			$("#SupportWaitBeforePrintSimple").val(0).prop("disabled", true);
 		}
 	}
+	const preheatMixEnable = $("#PreheatMixSimple");
+	loadInitialCheckboxState(preheatMixEnable);
 } );
 
 function loadInitialCheckboxState($checkboxElem, $toggleSection) {
