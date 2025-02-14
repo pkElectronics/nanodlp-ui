@@ -992,7 +992,7 @@ async function buildCameraStream() {
 	const cameraEnabled = await isCameraEnabled(src);
 
 	if (cameraEnabled) {
-		const video = document.createElement('video');
+		const video = document.createElement``('video');
 
 		const livestreamContainer = document.getElementById('livestream-container');
 		livestreamContainer.appendChild(video);
@@ -1006,7 +1006,7 @@ async function buildCameraStream() {
 		livestreamContainer.style.display = 'flex';
 
 
-	} else {
+	} else {``
 		const $webcamPreview = document.getElementById('webcam-preview');
 		if ($webcamPreview)
 			$webcamPreview.hidden = true;
@@ -1029,3 +1029,14 @@ $(document).on('click', '.list-more-button',async (event) => {
 $(document).ready(function () {
 	buildCameraStream();
 })
+
+async function runGcode(gcode) {
+	return await fetch('/gcode', {
+		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+		method: 'post',
+		body: new URLSearchParams({
+			'gcode': `${gcode}`
+		}).toString(),
+
+	});
+}
