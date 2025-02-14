@@ -992,7 +992,7 @@ async function buildCameraStream() {
 	const cameraEnabled = await isCameraEnabled(src);
 
 	if (cameraEnabled) {
-		const video = document.createElement``('video');
+		const video = document.createElement('video');
 
 		const livestreamContainer = document.getElementById('livestream-container');
 		livestreamContainer.appendChild(video);
@@ -1006,7 +1006,7 @@ async function buildCameraStream() {
 		livestreamContainer.style.display = 'flex';
 
 
-	} else {``
+	} else {
 		const $webcamPreview = document.getElementById('webcam-preview');
 		if ($webcamPreview)
 			$webcamPreview.hidden = true;
