@@ -1033,3 +1033,14 @@ $(document).on('click', '.list-more-button',async (event) => {
 $(document).ready(function () {
 	buildCameraStream();
 })
+
+async function runGcode(gcode) {
+	return await fetch('/gcode', {
+		headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+		method: 'post',
+		body: new URLSearchParams({
+			'gcode': `${gcode}`
+		}).toString(),
+
+	});
+}
