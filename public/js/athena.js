@@ -417,6 +417,7 @@ var version_str = "";
 function update_channel() {
 	$.ajax({
 		url: "/static/channel",
+		cache: false,
 		success: function (result) {
 			channel = result;
 			$("#channel").html("Current Software Channel: " + result);
@@ -432,6 +433,7 @@ function update_channel() {
 function update_printertype() {
 	$.ajax({
 		url: "/static/printer_type",
+		cache: false,
 		success: function (result) {
 			printer_type = result;
 			$("#printer_type").html("Printer Type: " + result);
@@ -443,6 +445,7 @@ function update_printertype() {
 function update_image_version() {
 	$.ajax({
 		url: "/static/image_version",
+		cache: false,
 		success: function (result) {
 			image_version = result;
 			$("#image_version").html("Image Version: " + result);
@@ -463,8 +466,6 @@ function update_changelog(){
 			url: "https://olymp.concepts3d.eu/api/changelog?printer_type="+printer_type+"&channel="+channel+"&current_version="+version_str,
 			success: function( result ) {
 				$( "#changelog-display" ).html( result );
-				// force reload cached page
-				//location.reload(true);
 			},
 			error: function( result){
 				console.error('Error: ${result}');
@@ -498,8 +499,6 @@ const url_progress = "/athena-update/athena_progress.txt";
 const url_message = "/athena-update/athena_message.txt";
 
 function open_update_modal(){
-	var i = 1;
-
 	let update_status_helper = "";
 
 	let ajax_error_cnt = 0;
