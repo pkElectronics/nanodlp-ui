@@ -1021,10 +1021,17 @@ async function buildCameraStream() {
 
 }
 
+const fetchWithFallback = async (plateId) =>
+	fetch(`/static/plates/${plateId}/out.mp4`, { method: "HEAD" })
+		.then(res => res.ok ? res : fetch(`/static/plates/${plateId}/out.mp4`, { method: "OPTIONS" }))
+		.catch(() => fetch(`/static/plates/${plateId}/out.mp4`, { method: "OPTIONS" }));
+
+
 $(document).on('click', '.list-more-button',async (event) => {
 	let plateId = event.target.id.split("show-more-")[1];
-	let response = await fetch(`/static/plates/${plateId}/out.mp4`, {method: 'HEAD'});
-	if (response.status >= 200 && response.status < 300) {
+	const response = await fetchWithFallback(plateId);
+
+	if ((response.status >= 200 && response.status < 300) ) {
 		let elementId = `show-more-timelapse-${plateId}`;
 		document.getElementById(elementId).style.display = 'block';
 	}
