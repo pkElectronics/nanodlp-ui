@@ -281,3 +281,34 @@ input:checked + .switch-slider:before {
   margin-left: 0;
   margin-right: 0;
 }
+
+.placeholder-box {
+  /*border: 1px solid #ddd;*/
+}
+
+.dashboard-panel {
+  margin: 8px;
+  border-color: #2c2c2c;
+}
+
+.dashboard-panel > .panel-heading {
+  color: white;
+  background-color: #3c4044;
+}
+
+.dashboard-panel > .panel-body {
+  color: white;
+  background-color: #303237;
+}
+
+.no-padding {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (min-width: 768px) {
+  .row.equal {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
