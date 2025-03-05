@@ -58,21 +58,21 @@
                     </div>
                 </div>
             </div>
-            <div class="row stats-row row-marginless">
-                <div class="panel panel-default dashboard-panel">
-                    <div class="panel-heading">Stats</div>
-                    <div class="panel-body">
-                        <div class="col-md-12 placeholder-box no-padding" style="min-height: 200px">Stats Section</div>
-                    </div>
-                </div>
-            </div>
             <div class="row chart-row row-marginless">
                 <div class="col-md-12 placeholder-box no-padding">
                     <div class="panel panel-default dashboard-panel">
                         <div class="panel-heading">Pressure Sensor</div>
                         <div class="panel-body">
-                            <div style="min-height: 150px"></div>
+                            {% include "dashboard-widgets/pressure-chart.html" %}
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row stats-row row-marginless">
+                <div class="panel panel-default dashboard-panel">
+                    <div class="panel-heading">Stats</div>
+                    <div class="panel-body">
+                        <div class="col-md-12 placeholder-box no-padding" style="min-height: 200px">Stats Section</div>
                     </div>
                 </div>
             </div>
