@@ -1,10 +1,9 @@
 .btn-movement {
-  background-color: #f0ad4e;
+  /*background-color: #f0ad4e;*/
 }
 
 .btn-movement-active {
-  background-color: transparent;
-  color: #fff;
+  color: #f0ad4e !important;
 }
 
 .btn-axis-move.focus, .btn-axis-move:focus {
@@ -121,7 +120,7 @@
 }
 
 .btn-default {
-  border-color: #F5F5F5 !important;
+  border-color: #818181 !important;
 }
 
 /* Athena Gold on hover */
@@ -312,3 +311,14 @@ input:checked + .switch-slider:before {
     flex-wrap: wrap;
   }
 }
+
+/*.dashboard-printer-control {*/
+/*  margin: 8px 8px 8px 8px;*/
+/*  border: 1px #3c4044 solid;*/
+/*  padding: 16px;*/
+/*  border-radius: 4px;*/
+/*}*/
+
+/*.dashboard-printer-control:hover {*/
+/*  border: 1px #6d777c solid;*/
+/*}*/
