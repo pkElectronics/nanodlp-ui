@@ -1020,17 +1020,21 @@ async function buildCameraStream() {
 
 }
 
-const fetchWithFallback = async (plateId) =>
-	fetch(`/static/plates/${plateId}/out.mp4`, { method: "HEAD" })
-		.then(res => res.ok ? res : fetch(`/static/plates/${plateId}/out.mp4`, { method: "OPTIONS" }))
-		.catch(() => fetch(`/static/plates/${plateId}/out.mp4`, { method: "OPTIONS" }));
-
 
 $(document).on('click', '.list-more-button',async (event) => {
 	let plateId = event.target.id.split("show-more-")[1];
-	const response = await fetchWithFallback(plateId);
+	const response = await fetch(`/athena-iot/console/timelapse_processing_status?plateid=${plateId}`, { method: "HEAD" });
 
-	if ((response.status >= 200 && response.status < 300) ) {
+	const timelapseStatus = await response.json();
+
+	if (timelapseStatus.state === "invalidrequest") return;
+
+	if (timelapseStatus.state === "processing") {
+		let elementId = `show-more-timelapse-pending-${plateId}`;
+		document.getElementById(elementId).style.display = 'block';
+	}
+
+	if (timelapseStatus.state === "fileexists") {
 		let elementId = `show-more-timelapse-${plateId}`;
 		document.getElementById(elementId).style.display = 'block';
 	}

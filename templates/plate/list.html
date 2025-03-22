@@ -241,6 +241,9 @@
 							<span class="glyphicon glyphicon-camera"></span> &nbsp; <translate>Timelapse</translate>
 						</a>
 					</li>
+					<li id="show-more-timelapse-pending-{{ row.PlateID }}" class="disabled" style="display: none">
+						<span class="glyphicon glyphicon-camera"></span> &nbsp; <translate>Timelapse Processing...</translate>
+					</li>
 					{% if (row.Processed==true && row.Type && (( row.PlateID != status.PlateID or status.Printing == false))) or (row.Type && !autoSlice) %}
 					<li><a class="ask req-no-slicing" href="/plate/regenerate/{{ row.PlateID }}"
 						data-ask="regenerate-confirm"><span class="glyphicon glyphicon-align-justify"></span> &nbsp; <translate>Re-slice</translate>
