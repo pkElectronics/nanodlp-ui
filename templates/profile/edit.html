@@ -839,29 +839,53 @@
 				<div class="col-md-12 i_basic i_option" style="padding-top:5px;">
 					<div class="row">
 						<div class="col-md-3 i_basic i_option" style="padding-left: 0px;">
-							<label for="SimpleSlowLiftLayers">Slow Lift Layers</label>
+							<label for="SimpleSlowLiftLayers">
+								Slow Lift Layers
+								<a class="help" data-toggle="tooltip" data-placement="top"
+								   title="Number of layers using slow lift speed. Lower speeds help prevent detachment, especially for base layers, thick, or flexible resins.">i</a>
+							</label>
 							<input class="form-control" name="SimpleSlowLiftLayers" id="SimpleSlowLiftLayers" type="number" required min="1">
 						</div>
 						<div class="col-md-3 i_basic i_option" style="padding-left: 0px;">
-							<label for="SimpleSlowLiftSpeed">Slow Lift Speed (mm/m)</label>
+							<label for="SimpleSlowLiftSpeed">
+								Slow Lift Speed (mm/m)
+								<a class="help" data-toggle="tooltip" data-placement="top"
+								   title="Lift speed (mm/min) for slow lift layers. Default: 40mm/min. Adjust to 20-30mm/min for thick or flexible resins.">i</a>
+							</label>
 							<input class="form-control" name="SimpleSlowLiftSpeed" id="SimpleSlowLiftSpeed" type="number" required min="10" max="100">
 						</div>
 						<div class="col-md-3 i_basic i_option" style="padding-left: 0px;">
-							<label for="SimpleLiftSpeed">Lift Speed (mm/m)</label>
+							<label for="SimpleLiftSpeed">
+								Lift Speed (mm/m)
+								<a class="help" data-toggle="tooltip" data-placement="top"
+								   title="Lift speed (mm/min) for normal layers. Default: 100mm/min. Reduce to 60mm/min or less if models detach from base. Thick or flexible resins need slower speeds. For thinner resins, this can be increased to 150-200mm/min.">i</a>
+							</label>
 							<input class="form-control" name="SimpleLiftSpeed" id="SimpleLiftSpeed" type="number" required min="10" max="250">
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-3 i_basic i_option" style="padding-left: 0px;">
-							<label for="SimpleSlowRetractLayers">Slow Retract Layers</label>
+							<label for="SimpleSlowRetractLayers">
+								Slow Retract Layers
+								<a class="help" data-toggle="tooltip" data-placement="top"
+								   title="Number of layers using slow retract speed. Increase for layers thinner than 50μm.">i</a>
+							</label>
 							<input class="form-control" name="SimpleSlowRetractLayers" id="SimpleSlowRetractLayers" type="number" required min="1">
 						</div>
 						<div class="col-md-3 i_basic i_option" style="padding-left: 0px;">
-							<label for="SimpleSlowRetractSpeed">Slow Retract Speed (mm/m)</label>
+							<label for="SimpleSlowRetractSpeed">
+								Slow Retract Speed (mm/m)
+								<a class="help" data-toggle="tooltip" data-placement="top"
+								   title="Speed (mm/min) for slow retract layers. Default: 150mm/min. This setting is suitable for most resins.">i</a>
+							</label>
 							<input class="form-control" name="SimpleSlowRetractSpeed" id="SimpleSlowRetractSpeed" type="number" required min="10" max="600">
 						</div>
 						<div class="col-md-3 i_basic i_option" style="padding-left: 0px;">
-							<label for="SimpleRetractSpeed">Retract Speed (mm/m)</label>
+							<label for="SimpleRetractSpeed">
+								Retract Speed (mm/m)
+								<a class="help" data-toggle="tooltip" data-placement="top"
+								   title="Retract speed (mm/min) for normal layers. Default: 600mm/min. Reduce below 300mm/min for thick resins or large models.">i</a>
+							</label>
 							<input class="form-control" name="SimpleRetractSpeed" id="SimpleRetractSpeed" type="number" required min="10" max="600">
 						</div>
 					</div>
