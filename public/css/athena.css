@@ -258,7 +258,6 @@ input:checked + .switch-slider:before {
   justify-content: center;
   align-items: center;
   width: 225px;
-  height: 400px; /* Adjust based on your needs */
   overflow: hidden; /* Prevents overflow caused by rotation */
   background: #000; /* Optional: Black background for better contrast */
 }
@@ -288,6 +287,11 @@ input:checked + .switch-slider:before {
 .dashboard-panel {
   margin: 8px;
   border-color: #2c2c2c;
+
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .dashboard-panel > .panel-heading {
@@ -298,6 +302,8 @@ input:checked + .switch-slider:before {
 .dashboard-panel > .panel-body {
   color: white;
   background-color: #303237;
+  flex: 1;
+  overflow-y: auto; /* Optional, for scrolling if content overflows */
 }
 
 .no-padding {
@@ -322,3 +328,19 @@ input:checked + .switch-slider:before {
 /*.dashboard-printer-control:hover {*/
 /*  border: 1px #6d777c solid;*/
 /*}*/
+
+.row.display-flex {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.row.display-flex > [class*='col-'] {
+  flex-grow: 1;
+}
+
+.row.display-flex > [class*='panel-'] {
+  flex-grow: 1;
+}
+
+

@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-
 <div class="idle-obj">
     <div class="row row-marginless">
         <div class="panel panel-default dashboard-panel">
@@ -15,9 +14,9 @@
     </div>
 
     <div class="row row-marginless">
-        <div class="col-md-8 placeholder-box control-column no-padding" style="min-height: 600px">
-            <div class="row control-row row-marginless equal">
-                <div class="col-md-8 placeholder-box no-padding" style="min-height: 300px">
+        <div class="col-md-8 placeholder-box control-column no-padding">
+            <div class="row control-row row-marginless display-flex">
+                <div class="col-md-8 placeholder-box no-padding">
                     <div class="panel panel-default dashboard-panel">
                         <div class="panel-heading">Heater</div>
                         <div class="panel-body">
@@ -25,7 +24,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 placeholder-box no-padding" style="min-height: 300px">
+                <div class="col-md-4 placeholder-box no-padding">
                     <div class="panel panel-default dashboard-panel">
                         <div class="panel-heading">Printer Control</div>
                         <div class="panel-body">
@@ -80,7 +79,7 @@
         <div class="col-md-4 placeholder-box webcam-column no-padding">
             <div class="panel panel-default dashboard-panel">
                 <div class="panel-heading">Webcam</div>
-                <div class="panel-body" style="min-height: 800px">
+                <div class="panel-body">
                     {% include "dashboard-widgets/camera.html" %}
                 </div>
             </div>
