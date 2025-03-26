@@ -280,10 +280,6 @@ input:checked + .switch-slider:before {
   margin-right: 0;
 }
 
-.placeholder-box {
-  /*border: 1px solid #ddd;*/
-}
-
 .dashboard-panel {
   margin: 8px;
   border-color: #2c2c2c;

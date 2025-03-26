@@ -991,8 +991,8 @@ async function isCameraEnabled(src) {
 }
 
 async function buildCameraStream() {
-	const src = 'http://olymp.concepts3d.eu:13194/video.mp4';
-	// const src = `/athena-camera/video.mp4`;
+	// const src = 'http://olymp.concepts3d.eu:13194/video.mp4';
+	const src = `/athena-camera/video.mp4`;
 	const cameraEnabled = await isCameraEnabled(src);
 
 	if (cameraEnabled) {
@@ -1011,14 +1011,35 @@ async function buildCameraStream() {
 
 
 	} else {
-		const $webcamPreview = document.getElementById('webcam-preview');
-		if ($webcamPreview)
-			$webcamPreview.hidden = true;
-		const $printPreview = document.getElementById('print-preview');
-		if ($printPreview)
-			$printPreview.className = 'col-md-12';
-	}
+		hideElemIfPresent('webcam-preview')
+		setBootstrapElemSizeIfPresent('print-preview', 12)
 
+		// Dashboard views
+		hideElemIfPresent('webcam-column')
+		setBootstrapElemSizeIfPresent('control-column', 12)
+		setBootstrapElemSizeIfPresent('heater-column', 6)
+		setBootstrapElemSizeIfPresent('printer-control-column', 6)
+	}
+}
+
+const hideElemIfPresent = (id) => {
+	const $elem = document.getElementById(id);
+	if ($elem)
+		$elem.hidden = true;
+}
+
+const setBootstrapElemSizeIfPresent = (id, size) => {
+	const element = document.getElementById(id);
+	if (element) {
+
+		element.classList.forEach(className => {
+			if (className.startsWith('col-md-')) {
+				element.classList.remove(className);
+			}
+		});
+
+		element.classList.add(`col-md-${size}`);
+	}
 }
 
 const fetchWithFallback = async (plateId) =>

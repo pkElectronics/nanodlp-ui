@@ -14,9 +14,9 @@
     </div>
 
     <div class="row row-marginless">
-        <div class="col-md-8 placeholder-box control-column no-padding">
+        <div id="control-column" class="col-md-8 no-padding">
             <div class="row control-row row-marginless display-flex">
-                <div class="col-md-8 placeholder-box no-padding">
+                <div id="heater-column" class="col-md-8 no-padding">
                     <div class="panel panel-default dashboard-panel">
                         <div class="panel-heading">Heater</div>
                         <div class="panel-body">
@@ -24,19 +24,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 placeholder-box no-padding">
+                <div id="printer-control-column" class="col-md-4 no-padding">
                     <div class="panel panel-default dashboard-panel">
                         <div class="panel-heading">Printer Control</div>
                         <div class="panel-body">
 
-                            <div class="col-md-12 placeholder-box no-padding">
+                            <div class="col-md-12 no-padding">
                                 <div class="dashboard-button-panel" style="margin-top: 10px">
 <!--                                    todo: confirmation-->
                                     <a class="btn btn-default" href="/printer/off"><span class="glyphicon glyphicon-off text-danger"></span></a>
                                     <a class="btn btn-default" href="/printer/restart"><span class="glyphicon glyphicon-repeat text-warning"></span></a>
                                 </div>
                             </div>
-                            <div class="col-md-12 placeholder-box no-padding"><br/>
+                            <div class="col-md-12 no-padding"><br/>
                                 <h5>Move Plate</h5>
 
                                 <div class="btn-group-vertical" style="padding-right: 10px">
@@ -58,7 +58,7 @@
                 </div>
             </div>
             <div class="row chart-row row-marginless">
-                <div class="col-md-12 placeholder-box no-padding">
+                <div class="col-md-12 no-padding">
                     <div class="panel panel-default dashboard-panel">
                         <div class="panel-heading">Pressure Sensor</div>
                         <div class="panel-body">
@@ -71,12 +71,12 @@
                 <div class="panel panel-default dashboard-panel">
                     <div class="panel-heading">Stats</div>
                     <div class="panel-body">
-                        <div class="col-md-12 placeholder-box no-padding" style="min-height: 200px">Stats Section</div>
+                        <div class="col-md-12 no-padding" style="min-height: 200px">Stats Section</div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4 placeholder-box webcam-column no-padding">
+        <div id="webcam-column" class="col-md-4 no-padding">
             <div class="panel panel-default dashboard-panel">
                 <div class="panel-heading">Webcam</div>
                 <div class="panel-body">
@@ -87,7 +87,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-12 placeholder-box" style="min-height: 600px">News Section</div>
+        <div class="col-md-12" style="min-height: 600px">News Section</div>
         {% if !manHighLock %}
         <div class="nanodlp-content"></div>
         {% endif %}
