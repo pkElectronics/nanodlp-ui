@@ -1,7 +1,6 @@
 toastr.options = {
 	"positionClass": "toast-top-center",
 }
-
 //************** Resin Profile Functions  */
 $("#DwEnableSimple").change(function () {
 	if ($(this).is(":checked")) {
@@ -991,8 +990,8 @@ async function isCameraEnabled(src) {
 }
 
 async function buildCameraStream() {
-	// const src = 'http://olymp.concepts3d.eu:13194/video.mp4';
-	const src = `/athena-camera/video.mp4`;
+	const src = 'http://olymp.concepts3d.eu:13194/video.mp4';
+	// const src = `/athena-camera/video.mp4`;
 	const cameraEnabled = await isCameraEnabled(src);
 
 	if (cameraEnabled) {

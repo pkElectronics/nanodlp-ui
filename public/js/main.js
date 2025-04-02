@@ -1,5 +1,9 @@
+const DEV_MODE = true;
+const BASE_URL = DEV_MODE ? 'http://localhost:3000' : '';
+
 var favicon;
 var percentage;
+
 
 $(function(){
 	// Run for index page
@@ -12,11 +16,11 @@ $(function(){
 		$(window).focus(function() {
 			update_status();
 		});
-		dashboard_init();
 	} else {
 		update_status();
 		setInterval(function () { update_status(); }, 4000);
 	}
+		dashboard_init();
 	// /printer route for logger
 	if($('#console').length>0){
 		display_console_log();
@@ -187,7 +191,8 @@ function profile_settings_open(t){
 
 
 function dashboard_init() {
-	$.get("/info", function (data) {
+	console.log('hi')
+	$.get(`https://www.concepts3d.ca/pages/athenadashboard`, function (data) {
 		$(".nanodlp-content").html("<br>"+data);
 	});
 	$("html").delegate('#change-preview','click',function(e){
@@ -539,9 +544,10 @@ function blackout_table_render(){
 update_status.running = 0;
 update_status.problem = 0;
 update_status.once = false;
+
 function update_status(){
 	$.ajax({
-		url:'/status',
+		url: BASE_URL + '/status',
 		dataType: 'json',
 		type: 'GET',
 		timeout: 1200
@@ -592,8 +598,10 @@ function update_status(){
 		if ($("#stat").length>0){
 			change_stats(data,['proc','disk','mem','uptime','proc_numb','temp', 'resin']);
 		}
-		var log=$.parseJSON(data["log"]);
-		last_value('msg',log['msg']);
+		if (data["log"]) {
+			var log=$.parseJSON(data["log"]);
+			last_value('msg',log['msg']);
+		}
 		update_timeline();
 		current_status_display();
 
@@ -678,32 +686,6 @@ function display_notification(){
 		$('.modal-notification').modal('show')
 	});
 }
-
-/*
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#smallShoes">
-Click Me
-</button>
-
-<!-- The modal -->
-<div class="modal fade" id="smallShoes" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall" aria-hidden="true">
-<div class="modal-dialog modal-sm">
-<div class="modal-content">
-
-<div class="modal-header">
-<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-<span aria-hidden="true">&times;</span>
-</button>
-<h4 class="modal-title" id="modalLabelSmall">Modal Title</h4>
-</div>
-
-<div class="modal-body">
-Modal content...
-</div>
-
-</div>
-</div>
-</div>
-*/
 
 function notification_close(){
 	$("body").delegate('.notification-service button','click', function (e) {
@@ -840,12 +822,12 @@ var last_frame_key='';
 function image_display(path,layer_id,blackout){
 	if (last_frame_key != layer_id) {
 		last_frame_key = layer_id;
-		var frame_src='/static/plates/' + path + '/' + layer_id + '.png?' + Math.floor(Date.now() / 1000);
-		var preview_src='/plate/preview/'+path+'/'+layer_id;
+		var frame_src= BASE_URL + '/static/plates/' + path + '/' + layer_id + '.png?' + Math.floor(Date.now() / 1000);
+		var preview_src= BASE_URL + '/plate/preview/'+path+'/'+layer_id;
 		if ($("#image_wrapper div").html()=='') {
 			var d = ' style="aspect-ratio: calc(('+$(".layer_details").data("ratio")+'));" ';
 			$("#image_wrapper div").html('<img src="'+frame_src+'" class="two"'+d+'loading=lazy>');			;
-			$.get('/static/plates/' + path + '/3d.png',function(){
+			$.get(BASE_URL + '/static/plates/' + path + '/3d.png',function(){
 				$("#image_wrapper div").html($("#image_wrapper div").html()+'<img src="'+preview_src+'" class="three" loading=lazy>');
 			}).fail(function() {
 				$("#image_wrapper #change-preview").remove();

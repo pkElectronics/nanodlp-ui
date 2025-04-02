@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="idle-obj">
+<div>
     <div class="row row-marginless">
         <div class="panel panel-default dashboard-panel">
             <div class="panel-heading">
                 Print Progress
             </div>
             <div class="panel-body">
-                <div class="col-md-12 no-padding" style="min-height: 250px">Progress Section</div>
+                <div class="col-md-12 no-padding" style="min-height: 250px">
+                    {% include "dashboard-widgets/print-progress.html" %}
+                </div>
             </div>
         </div>
     </div>
@@ -31,9 +33,8 @@
 
                             <div class="col-md-12 no-padding">
                                 <div class="dashboard-button-panel" style="margin-top: 10px">
-<!--                                    todo: confirmation-->
-                                    <a class="btn btn-default" href="/printer/off"><span class="glyphicon glyphicon-off text-danger"></span></a>
-                                    <a class="btn btn-default" href="/printer/restart"><span class="glyphicon glyphicon-repeat text-warning"></span></a>
+                                    <a class="ask btn btn-default" href="/printer/off" data-ask="poweroff-confirm"><span class="glyphicon glyphicon-off text-danger"></span></a>
+                                    <a class="ask btn btn-default" href="/printer/restart" data-ask="restart-confirm"><span class="glyphicon glyphicon-repeat text-warning"></span></a>
                                 </div>
                             </div>
                             <div class="col-md-12 no-padding"><br/>
@@ -57,24 +58,6 @@
                     </div>
                 </div>
             </div>
-            <div class="row chart-row row-marginless">
-                <div class="col-md-12 no-padding">
-                    <div class="panel panel-default dashboard-panel">
-                        <div class="panel-heading">Pressure Sensor</div>
-                        <div class="panel-body">
-                            {% include "dashboard-widgets/pressure-chart.html" %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row stats-row row-marginless">
-                <div class="panel panel-default dashboard-panel">
-                    <div class="panel-heading">Stats</div>
-                    <div class="panel-body">
-                        <div class="col-md-12 no-padding" style="min-height: 200px">Stats Section</div>
-                    </div>
-                </div>
-            </div>
         </div>
         <div id="webcam-column" class="col-md-4 no-padding">
             <div class="panel panel-default dashboard-panel">
@@ -85,12 +68,30 @@
             </div>
         </div>
     </div>
+            <div class="row row-marginless">
+                <div id="pressure-chart-column" class="col-md-12 no-padding">
+                    <div class="panel panel-default dashboard-panel">
+                        <div class="panel-heading">Pressure Sensor</div>
+                        <div class="panel-body">
+                            {% include "dashboard-widgets/pressure-chart.html" %}
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="col-md-12" style="min-height: 600px">News Section</div>
-        {% if !manHighLock %}
-        <div class="nanodlp-content"></div>
-        {% endif %}
+    <div class="row chart-row row-marginless">
+        <div class="col-md-12 no-padding">
+            <div class="panel panel-default dashboard-panel">
+                <div class="panel-heading">Latest Updates</div>
+                <div class="panel-body">
+                    <div class="nanodlp-content"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<translate class="hide" id="restart-confirm">Are you sure you want to restart the printer?</translate>
+<translate class="hide" id="poweroff-confirm">Are you sure you want to power off the printer?</translate>
+
 {% endblock %}
