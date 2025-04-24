@@ -1023,7 +1023,7 @@ async function buildCameraStream() {
 
 $(document).on('click', '.list-more-button',async (event) => {
 	let plateId = event.target.id.split("show-more-")[1];
-	const response = await fetch(`/athena-iot/console/timelapse_processing_status?plateid=${plateId}`, { method: "HEAD" });
+	const response = await fetch(`/athena-iot/control/timelapse_processing_status?plateid=${plateId}`, { method: "GET" });
 
 	const timelapseStatus = await response.json();
 
