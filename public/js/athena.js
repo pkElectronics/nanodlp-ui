@@ -466,6 +466,9 @@ function update_changelog(){
 			url: "https://olymp.concepts3d.eu/api/changelog?printer_type="+printer_type+"&channel="+channel+"&current_version="+version_str,
 			success: function( result ) {
 				$( "#changelog-display" ).html( result );
+				if(!result.includes("No Update available")){
+					$("#btn-update-container").className = "";
+				}
 			},
 			error: function( result){
 				console.error('Error: ${result}');
