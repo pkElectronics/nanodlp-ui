@@ -1111,14 +1111,12 @@ function setup_diskspace(json){
 
 
 $(document).ready(function () {
-	//let result = fetch("/athena-iot/status/disk_storage",{ method: "GET" })
-	//result.then(async value => {
-	//	if (value.ok) {
-	//		let diskspace_data = await value.json();
-	//
-	//	}
-	//})
-	const obj = JSON.parse(testdata);
-	setup_diskspace(obj);
+	let result = fetch("/athena-iot/status/disk_storage",{ method: "GET" })
+	result.then(async value => {
+		if (value.ok) {
+			let diskspace_data = await value.json();
+			setup_diskspace(diskspace_data);
+		}
+	})
 
 })

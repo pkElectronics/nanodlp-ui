@@ -136,6 +136,10 @@ select:focus {
 	font-size: medium;
 }
 
+.layer_details .append {
+	font-size: medium;
+}
+
 .printing-obj,
 .idle-obj,
 .hide,
