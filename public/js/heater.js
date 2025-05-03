@@ -140,5 +140,5 @@ async function mixResin() {
     const machineJsonHeater = await machineJsonResponse.json();
     const temperature = machineJsonHeater?.CustomValues?.HeaterTemperature;
 
-    await fetch('/athena-iot/control/preheat_and_mix', {method: 'POST', body: JSON.stringify({temperature})});
+    await fetch('/athena-iot/control/preheat_and_mix_standalone', {method: 'POST', body: JSON.stringify({temperature})});
 }
