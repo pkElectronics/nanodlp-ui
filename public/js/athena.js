@@ -452,7 +452,6 @@ function update_image_version() {
 			parts = image_version.split('+');
 			version_str = parts[1];
 			$("#version_str").html("Upgrade from Version: " + parts[1]);
-			$("#athena-version-str").html(parts[1]);
 			update_changelog();
 		}
 	});
@@ -465,9 +464,17 @@ function update_changelog(){
 		$.ajax({
 			url: "https://olymp.concepts3d.eu/api/changelog?printer_type="+printer_type+"&channel="+channel+"&current_version="+version_str,
 			success: function( result ) {
+				let version_str = $("#athena-version-str");
+
 				$( "#changelog-display" ).html( result );
 				if(!result.includes("No Update available")){
 					$("#btn-update-container").className = "";
+					version_str.html("Update Available");
+					version_str.addClass("label");
+					version_str.addClass("label-success");
+				}
+				else{
+					version_str.html("Build: "+parts[1]);
 				}
 			},
 			error: function( result){
@@ -805,11 +812,13 @@ $('.upload-disable').submit(function(e) {
 		var formData = new FormData( document.getElementById("plate-upload-form") );
 
 		upload_xhr = new XMLHttpRequest();
+		upload_xhr.open("POST", "/plate/add");
+
+
 		upload_xhr.upload.addEventListener("progress", progressHandler, false);
 		//upload_xhr.addEventListener("loadend", completeHandler, false);
 		upload_xhr.addEventListener("error", errorHandler, false);
 		upload_xhr.addEventListener("abort", abortHandler, false);
-		upload_xhr.open("POST", "/plate/add");
 		showUploadProgressModal();
 		upload_xhr.send(formData);
 
@@ -1057,3 +1066,59 @@ async function runGcode(gcode) {
 
 	});
 }
+
+
+// NVME Disk Space on Athena 2
+
+var testdata= "\n" +
+	"{\n" +
+	"  \"mmcblk0p2\": {\n" +
+	"    \"Size\": \"31G\",\n" +
+	"    \"Used\": \"8.0G\",\n" +
+	"    \"Avail\": \"21G\",\n" +
+	"    \"Use%\": \"28%\"\n" +
+	"  },\n" +
+	"  \"nvme0n1p1\": {\n" +
+	"    \"Size\": \"251G\",\n" +
+	"    \"Used\": \"1.6G\",\n" +
+	"    \"Avail\": \"237G\",\n" +
+	"    \"Use%\": \"1%\"\n" +
+	"  }\n" +
+	"}\n"
+
+function setup_diskspace(json){
+	if(json.hasOwnProperty("nvme0n1p1")){
+		console.log("Printer has SSD installed");
+
+
+		let emmc_storage_text = $("#emmc-freespace-text");
+		let emmc_storage_value = $("#emmc-freespace-value");
+		let ssd_storage_container = $("#ssd-freespace-container");
+		let ssd_storage_text = $("#ssd-freespace-text");
+		let ssd_storage_value = $("#ssd-freespace-value");
+
+		emmc_storage_text.html("Free Disk Space (System)");
+		emmc_storage_value.html(json.mmcblk0p2.Used + " of "+json.mmcblk0p2.Size);
+
+		ssd_storage_container.removeClass("hidden");
+		ssd_storage_text.html("Free Disk Space (Jobs)");
+		ssd_storage_value.html(json.nvme0n1p1.Used + " of "+json.nvme0n1p1.Size);
+
+	}else{
+		console.log("No SSD Installed, skipping");
+	}
+}
+
+
+$(document).ready(function () {
+	//let result = fetch("/athena-iot/status/disk_storage",{ method: "GET" })
+	//result.then(async value => {
+	//	if (value.ok) {
+	//		let diskspace_data = await value.json();
+	//
+	//	}
+	//})
+	const obj = JSON.parse(testdata);
+	setup_diskspace(obj);
+
+})

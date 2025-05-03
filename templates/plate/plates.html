@@ -55,11 +55,21 @@
 <div><span class="glyphicon glyphicon-resize-small"></span>
 	<translate>Plate Size</translate>: {{width|floatformat}}x{{height|floatformat}}<translate>mm</translate>
 </div>
-{% if freeSpace > 0 %}
+
+
+<div>
 <span class="glyphicon glyphicon-hdd"></span>
-<translate>Free Disk Space</translate>: {{freeSpace}}MB
+<span id="emmc-freespace-text"><translate>Free Disk Space</translate></span>: <span id="emmc-freespace-value">{{freeSpace}}MB</span>
+</div>
+
+
+<div id="ssd-freespace-container" class="hidden">
+	<span class="glyphicon glyphicon-hdd"></span>
+	<span id="ssd-freespace-text"><translate>Free Disk Space</translate></span>: <span id="ssd-freespace-value">{{freeSpace}}MB</span>
+</div>
 <br>
 <br>
 <br>
-{% endif %}
+
+
 {% endblock %}
