@@ -17,7 +17,7 @@ $(document).ready(function () {
         if (streamer == null) {
             streamer = new Mjpegstreamer();
         }
-        url = "http://192.168.178.147/athena-camera/stream";
+        url = "http://olymp.concepts3d.eu:13194/stream";
         streamer.url = url;
 
         buildCameraStream(url);
@@ -37,13 +37,7 @@ async function isCameraEnabled(src) {
 }
 
 async function buildCameraStream(url = null) {
-    //const src = 'http://olymp.concepts3d.eu:13194/video.mp4';
-    let src;
-    if (url == null) {
-        src = `/athena-camera/video.mp4`;
-    } else {
-        src = url;
-    }
+    let src = url ?? `/athena-camera/video.mp4`;
     const cameraEnabled = await isCameraEnabled(src);
 
     let style;

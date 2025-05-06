@@ -5,7 +5,7 @@
 
 <script>
     // Used for testing only
-    const hardCodeAnalytics = true;
+    const hardCodeAnalytics = false;
     const HARDCODED_ANALYTICS = [
         {
             "ID": 1723200296791816000,
@@ -32,9 +32,15 @@
     $(document).ready(function () {
         const axes = [{Key: "Pressure", Type: "Pressure", "Decimal": 2}]
         setTimeout(async function () {
-            const data = !hardCodeAnalytics ? await fetch(`${BASE_URL}/analytic/data/start`) : HARDCODED_ANALYTICS;
+            const data = !hardCodeAnalytics ? await fetchData() : HARDCODED_ANALYTICS;
             buildChartFromData("test", data, false, axes, {height: 250})
         }, 1000)
     });
+
+    const fetchData = async () => {
+        const response = await fetch(`${BASE_URL}/analytic/data/start`);
+        const data = await response.json();
+        return data.filter(i => i["T"] === 6).map(i => { i["T"] = 0; return i;});
+    }
 </script>
 <div id="uplot-1" class="uplot uplot-container"></div>

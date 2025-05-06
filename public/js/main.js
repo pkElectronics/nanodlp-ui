@@ -1,5 +1,5 @@
-const DEV_MODE = true;
-const BASE_URL = DEV_MODE ? 'http://localhost:3000' : '';
+const DEV_MODE = false;
+const BASE_URL = DEV_MODE ? 'http://192.168.4.160' : '';
 
 var favicon;
 var percentage;
