@@ -270,7 +270,7 @@ input:checked + .switch-slider:before {
   height: auto;
   max-width: 178%;
   max-height: 178%;
-  transform: translate(-50%, -50%) rotate(270deg);
+  transform: translate(-50%, -50%) rotate(90deg);
   transform-origin: center center;
   object-fit: cover; /* Ensures video fills the rotated container */
 }

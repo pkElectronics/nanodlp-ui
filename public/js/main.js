@@ -812,6 +812,11 @@ function current_status_display(){
 	$(".last_time").html(last_value('time'));
 	$(".last_plate").html(last_value('plate'));
 	$(".last_path").html(last_value('path'));
+
+	let level = last_value('ResinLevelMm');
+	$(".last_level").html(level);
+	$(".last_amount").html((level*240*160)/1000);
+
 }
 
 function title_update(title){

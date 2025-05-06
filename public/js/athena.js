@@ -416,6 +416,7 @@ var version_str = "";
 function update_channel() {
 	$.ajax({
 		url: "/static/channel",
+		cache: false,
 		success: function (result) {
 			channel = result;
 			$("#channel").html("Current Software Channel: " + result);
@@ -431,6 +432,7 @@ function update_channel() {
 function update_printertype() {
 	$.ajax({
 		url: "/static/printer_type",
+		cache: false,
 		success: function (result) {
 			printer_type = result;
 			$("#printer_type").html("Printer Type: " + result);
@@ -442,13 +444,13 @@ function update_printertype() {
 function update_image_version() {
 	$.ajax({
 		url: "/static/image_version",
+		cache: false,
 		success: function (result) {
 			image_version = result;
 			$("#image_version").html("Image Version: " + result);
 			parts = image_version.split('+');
 			version_str = parts[1];
 			$("#version_str").html("Upgrade from Version: " + parts[1]);
-			$("#athena-version-str").html(parts[1]);
 			update_changelog();
 		}
 	});
@@ -461,9 +463,18 @@ function update_changelog(){
 		$.ajax({
 			url: "https://olymp.concepts3d.eu/api/changelog?printer_type="+printer_type+"&channel="+channel+"&current_version="+version_str,
 			success: function( result ) {
+				let version_str = $("#athena-version-str");
+
 				$( "#changelog-display" ).html( result );
-				// force reload cached page
-				//location.reload(true);
+				if(!result.includes("No Update available")){
+					$("#btn-update-container").className = "";
+					version_str.html("Update Available");
+					version_str.addClass("label");
+					version_str.addClass("label-success");
+				}
+				else{
+					version_str.html("Build: "+parts[1]);
+				}
 			},
 			error: function( result){
 				console.error('Error: ${result}');
@@ -497,8 +508,6 @@ const url_progress = "/athena-update/athena_progress.txt";
 const url_message = "/athena-update/athena_message.txt";
 
 function open_update_modal(){
-	var i = 1;
-
 	let update_status_helper = "";
 
 	let ajax_error_cnt = 0;
@@ -802,11 +811,13 @@ $('.upload-disable').submit(function(e) {
 		var formData = new FormData( document.getElementById("plate-upload-form") );
 
 		upload_xhr = new XMLHttpRequest();
+		upload_xhr.open("POST", "/plate/add");
+
+
 		upload_xhr.upload.addEventListener("progress", progressHandler, false);
 		//upload_xhr.addEventListener("loadend", completeHandler, false);
 		upload_xhr.addEventListener("error", errorHandler, false);
 		upload_xhr.addEventListener("abort", abortHandler, false);
-		upload_xhr.open("POST", "/plate/add");
 		showUploadProgressModal();
 		upload_xhr.send(formData);
 
@@ -977,89 +988,26 @@ function display_notification_athena(){
 	});
 }
 
-async function isCameraEnabled(src) {
-	try {
-		const response = await fetch(src, {method: 'OPTIONS'});
-		if (response.status >= 400) {
-			return false;
-		}
-		return response.ok;
-	} catch (e) {
-		return false;
-	}
-}
-
-async function buildCameraStream() {
-	const src = 'http://olymp.concepts3d.eu:13194/video.mp4';
-	// const src = `/athena-camera/video.mp4`;
-	const cameraEnabled = await isCameraEnabled(src);
-
-	if (cameraEnabled) {
-		const video = document.createElement('video');
-
-		const livestreamContainer = document.getElementById('livestream-container');
-		livestreamContainer.appendChild(video);
-
-		video.id = 'livestream-video';
-		video.src = src;
-		video.crossOrigin = 'anonymous';
-		video.muted = true
-		video.play();
-
-		livestreamContainer.style.display = 'flex';
-
-
-	} else {
-		hideElemIfPresent('webcam-preview')
-		setBootstrapElemSizeIfPresent('print-preview', 12)
-
-		// Dashboard views
-		hideElemIfPresent('webcam-column')
-		setBootstrapElemSizeIfPresent('control-column', 12)
-		setBootstrapElemSizeIfPresent('heater-column', 6)
-		setBootstrapElemSizeIfPresent('printer-control-column', 6)
-	}
-}
-
-const hideElemIfPresent = (id) => {
-	const $elem = document.getElementById(id);
-	if ($elem)
-		$elem.hidden = true;
-}
-
-const setBootstrapElemSizeIfPresent = (id, size) => {
-	const element = document.getElementById(id);
-	if (element) {
-
-		element.classList.forEach(className => {
-			if (className.startsWith('col-md-')) {
-				element.classList.remove(className);
-			}
-		});
-
-		element.classList.add(`col-md-${size}`);
-	}
-}
-
-const fetchWithFallback = async (plateId) =>
-	fetch(`/static/plates/${plateId}/out.mp4`, { method: "HEAD" })
-		.then(res => res.ok ? res : fetch(`/static/plates/${plateId}/out.mp4`, { method: "OPTIONS" }))
-		.catch(() => fetch(`/static/plates/${plateId}/out.mp4`, { method: "OPTIONS" }));
-
 
 $(document).on('click', '.list-more-button',async (event) => {
 	let plateId = event.target.id.split("show-more-")[1];
-	const response = await fetchWithFallback(plateId);
+	const response = await fetch(`/athena-iot/control/timelapse_processing_status?plateid=${plateId}`, { method: "GET" });
 
-	if ((response.status >= 200 && response.status < 300) ) {
+	const timelapseStatus = await response.json();
+
+	if (timelapseStatus.state === "invalidrequest") return;
+	if (timelapseStatus.state === "processing") {
+		let elementId = `show-more-timelapse-pending-${plateId}`;
+		document.getElementById(elementId).style.display = 'block';
+	}
+
+	if (timelapseStatus.state === "fileexists") {
 		let elementId = `show-more-timelapse-${plateId}`;
 		document.getElementById(elementId).style.display = 'block';
 	}
 })
 
-$(document).ready(function () {
-	buildCameraStream();
-})
+
 
 async function runGcode(gcode) {
 	return await fetch('/gcode', {
@@ -1071,3 +1019,57 @@ async function runGcode(gcode) {
 
 	});
 }
+
+
+// NVME Disk Space on Athena 2
+
+var testdata= "\n" +
+	"{\n" +
+	"  \"mmcblk0p2\": {\n" +
+	"    \"Size\": \"31G\",\n" +
+	"    \"Used\": \"8.0G\",\n" +
+	"    \"Avail\": \"21G\",\n" +
+	"    \"Use%\": \"28%\"\n" +
+	"  },\n" +
+	"  \"nvme0n1p1\": {\n" +
+	"    \"Size\": \"251G\",\n" +
+	"    \"Used\": \"1.6G\",\n" +
+	"    \"Avail\": \"237G\",\n" +
+	"    \"Use%\": \"1%\"\n" +
+	"  }\n" +
+	"}\n"
+
+function setup_diskspace(json){
+	if(json.hasOwnProperty("nvme0n1p1")){
+		console.log("Printer has SSD installed");
+
+
+		let emmc_storage_text = $("#emmc-freespace-text");
+		let emmc_storage_value = $("#emmc-freespace-value");
+		let ssd_storage_container = $("#ssd-freespace-container");
+		let ssd_storage_text = $("#ssd-freespace-text");
+		let ssd_storage_value = $("#ssd-freespace-value");
+
+		emmc_storage_text.html("Free Disk Space (System)");
+		emmc_storage_value.html(json.mmcblk0p2.Used + " of "+json.mmcblk0p2.Size);
+
+		ssd_storage_container.removeClass("hidden");
+		ssd_storage_text.html("Free Disk Space (Jobs)");
+		ssd_storage_value.html(json.nvme0n1p1.Used + " of "+json.nvme0n1p1.Size);
+
+	}else{
+		console.log("No SSD Installed, skipping");
+	}
+}
+
+
+$(document).ready(function () {
+	let result = fetch("/athena-iot/status/disk_storage",{ method: "GET" })
+	result.then(async value => {
+		if (value.ok) {
+			let diskspace_data = await value.json();
+			setup_diskspace(diskspace_data);
+		}
+	})
+
+})
