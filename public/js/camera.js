@@ -17,7 +17,7 @@ $(document).ready(function () {
         if (streamer == null) {
             streamer = new Mjpegstreamer();
         }
-        url = "http://192.168.178.147/athena-camera/stream";
+        const url = (DEV_MODE ? BASE_URL : "") + `/athena-camera/stream`;
         streamer.url = url;
 
         buildCameraStream(url);
@@ -36,9 +36,8 @@ async function isCameraEnabled(src) {
     }
 }
 
-async function buildCameraStream(url = null) {
-    let src = url ?? `/athena-camera/video.mp4`;
-    const cameraEnabled = await isCameraEnabled(src);
+async function buildCameraStream(url) {
+    const cameraEnabled = await isCameraEnabled(url);
 
     let style;
     if (cameraEnabled) {
