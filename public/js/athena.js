@@ -1020,25 +1020,6 @@ async function runGcode(gcode) {
 	});
 }
 
-
-// NVME Disk Space on Athena 2
-
-var testdata= "\n" +
-	"{\n" +
-	"  \"mmcblk0p2\": {\n" +
-	"    \"Size\": \"31G\",\n" +
-	"    \"Used\": \"8.0G\",\n" +
-	"    \"Avail\": \"21G\",\n" +
-	"    \"Use%\": \"28%\"\n" +
-	"  },\n" +
-	"  \"nvme0n1p1\": {\n" +
-	"    \"Size\": \"251G\",\n" +
-	"    \"Used\": \"1.6G\",\n" +
-	"    \"Avail\": \"237G\",\n" +
-	"    \"Use%\": \"1%\"\n" +
-	"  }\n" +
-	"}\n"
-
 function setup_diskspace(json){
 	if(json.hasOwnProperty("nvme0n1p1")){
 		console.log("Printer has SSD installed");
@@ -1051,7 +1032,13 @@ function setup_diskspace(json){
 		let ssd_storage_value = $("#ssd-freespace-value");
 
 		emmc_storage_text.html("Free Disk Space (System)");
-		emmc_storage_value.html(json.mmcblk0p2.Used + " of "+json.mmcblk0p2.Size);
+
+		if("root" in json){
+			emmc_storage_value.html(json.root.Used + " of "+json.root.Size);
+		}else{
+			emmc_storage_value.html(json.mmcblk0p2.Used + " of "+json.mmcblk0p2.Size);
+		}
+
 
 		ssd_storage_container.removeClass("hidden");
 		ssd_storage_text.html("Free Disk Space (Jobs)");
