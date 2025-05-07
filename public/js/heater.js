@@ -103,6 +103,15 @@ async function fetchHeatersEnabled() {
         if (vatHeaterPresent !== "0" && chamberHeaterPresent !== "0") {
             document.getElementById('heater-form').style.display = "none";
             document.getElementById('no-heaters-found').style.display = "block"
+
+            // dashboard layout triggers
+            hideElemIfPresent('heater-column')
+            if (!document.getElementById('webcam-column')?.offsetParent) {
+                setBootstrapElemSizeIfPresent('printer-control-column', 6)
+                setBootstrapElemSizeIfPresent('pressure-chart-column', 6)
+
+                console.log('both heater and webcam are gone')
+            }
         }
     }
 }

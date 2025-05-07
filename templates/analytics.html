@@ -32,7 +32,7 @@
         reqRunning = true;
         const range = $("#range").val();
 
-        $.getJSON("/analytic/data/" + range, function (response) {
+        $.getJSON("/analytic/data/"  + range, function (response) {
             if (response==null) return;
 
             const axes = JSON.parse(decodeHTMLEntities(`{{axes|safe}}`));

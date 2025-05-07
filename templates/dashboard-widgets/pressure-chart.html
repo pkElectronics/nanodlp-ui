@@ -1,0 +1,46 @@
+<link rel="stylesheet" href="/static/dependencies/uPlot/uPlot.min.css">
+<script src="/static/dependencies/uPlot/uPlot.iife.min.js"></script>
+<script src='/static/js/analytics.js'></script>
+<link href='/static/css/analytics.css' rel="stylesheet">
+
+<script>
+    // Used for testing only
+    const hardCodeAnalytics = false;
+    const HARDCODED_ANALYTICS = [
+        {
+            "ID": 1723200296791816000,
+            "T": 0,
+            "V": 668.8699951171875
+        },
+        {
+            "ID": 1723200296839004000,
+            "T": 0,
+            "V": 668.8699951171875
+        },
+        {
+            "ID": 1723200296890853400,
+            "T": 0,
+            "V": 675.9199829101562
+        },
+        {
+            "ID": 1723200296935928600,
+            "T": 0,
+            "V": 678.22998046875
+        }
+    ];
+
+    $(document).ready(function () {
+        const axes = [{Key: "Pressure", Type: "Pressure", "Decimal": 2}]
+        setTimeout(async function () {
+            const data = !hardCodeAnalytics ? await fetchData() : HARDCODED_ANALYTICS;
+            buildChartFromData("test", data, false, axes, {height: 250})
+        }, 1000)
+    });
+
+    const fetchData = async () => {
+        const response = await fetch(`${BASE_URL}/analytic/data/start`);
+        const data = await response.json();
+        return data.filter(i => i["T"] === 6).map(i => { i["T"] = 0; return i;});
+    }
+</script>
+<div id="uplot-1" class="uplot uplot-container"></div>

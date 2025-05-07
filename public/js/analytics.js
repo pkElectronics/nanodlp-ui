@@ -59,17 +59,17 @@ function isNotAllNull(subArray) {
     return subArray.some(element => element !== null);
 }
 
-function renderChart(name, dataRows, series, uplotId) {
+function renderChart(name, dataRows, series, uplotId, chartStyle) {
     const $uplot = $(`#${uplotId}`);
 
     if (dataRows.length <= 1) return;
 
-    let plotHeight = 400
+    let plotHeight = chartStyle?.height ?? 400;
     const axes = prepareAxis(series);
     let opts = {
         title: name,
         class: "my-chart",
-        width: $uplot.innerWidth(),
+        width: $uplot.width(),
         height: plotHeight,
         series: series,
         axes: axes,
@@ -306,7 +306,7 @@ const backFillData = (data) => {
 }
 
 
-function buildChartFromData(name, dataResponse, exp, axes) {
+function buildChartFromData(name, dataResponse, exp, axes, chartStyle) {
     if (dataResponse.length === 0) {
         return;
     }
@@ -322,18 +322,18 @@ function buildChartFromData(name, dataResponse, exp, axes) {
     cachedData = dataResponse;
 
     if (exp) return downloadCSV(series, backFilledData);
-    renderSplitChart(series, backFilledData, CHART_CONFIG.chart1, "uplot-1");
-    renderSplitChart(series, backFilledData, CHART_CONFIG.chart2, "uplot-2");
+    renderSplitChart(series, backFilledData, CHART_CONFIG.chart1, "uplot-1", chartStyle);
+    renderSplitChart(series, backFilledData, CHART_CONFIG.chart2, "uplot-2", chartStyle);
 
     addSaveLegendHandler()
 }
 
-function renderSplitChart(series, backFilledData, chartConfig, uplotId) {
+function renderSplitChart(series, backFilledData, chartConfig, uplotId, chartStyle) {
     const backFilledDataForChart = backFilledData.filter((dataSeries, idx) => idx === 0 || chartConfig.fields.some(conf => conf.id + 1 === idx))
     const dataWithoutNulls = backFilledDataForChart.filter(isNotAllNull);
 
     const seriesForChart = series.filter((i, idx) => idx === 0 || chartConfig.fields.some((conf) => conf.key === i.key) )
     const seriesWithoutNulls = seriesForChart.filter((_, index) => isNotAllNull(backFilledDataForChart[index]));
 
-    renderChart(name, dataWithoutNulls, seriesWithoutNulls, uplotId);
+    renderChart(name, dataWithoutNulls, seriesWithoutNulls, uplotId, chartStyle);
 }

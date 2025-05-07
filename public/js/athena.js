@@ -1,7 +1,6 @@
 toastr.options = {
 	"positionClass": "toast-top-center",
 }
-
 //************** Resin Profile Functions  */
 $("#DwEnableSimple").change(function () {
 	if ($(this).is(":checked")) {
@@ -989,49 +988,6 @@ function display_notification_athena(){
 	});
 }
 
-async function isCameraEnabled(src) {
-	try {
-		const response = await fetch(src, {method: 'OPTIONS'});
-		if (response.status >= 400) {
-			return false;
-		}
-		return response.ok;
-	} catch (e) {
-		return false;
-	}
-}
-
-async function buildCameraStream() {
-	//const src = 'http://olymp.concepts3d.eu:13194/video.mp4';
-	const src = `/athena-camera/video.mp4`;
-	const cameraEnabled = await isCameraEnabled(src);
-
-	if (cameraEnabled) {
-		const video = document.createElement('video');
-
-		const livestreamContainer = document.getElementById('livestream-container');
-		livestreamContainer.appendChild(video);
-
-		video.id = 'livestream-video';
-		video.src = src;
-		video.crossOrigin = 'anonymous';
-		video.muted = true
-		video.play();
-
-		livestreamContainer.style.display = 'flex';
-
-
-	} else {
-		const $webcamPreview = document.getElementById('webcam-preview');
-		if ($webcamPreview)
-			$webcamPreview.hidden = true;
-		const $printPreview = document.getElementById('print-preview');
-		if ($printPreview)
-			$printPreview.className = 'col-md-12';
-	}
-
-}
-
 
 $(document).on('click', '.list-more-button',async (event) => {
 	let plateId = event.target.id.split("show-more-")[1];
@@ -1040,7 +996,6 @@ $(document).on('click', '.list-more-button',async (event) => {
 	const timelapseStatus = await response.json();
 
 	if (timelapseStatus.state === "invalidrequest") return;
-
 	if (timelapseStatus.state === "processing") {
 		let elementId = `show-more-timelapse-pending-${plateId}`;
 		document.getElementById(elementId).style.display = 'block';
@@ -1052,9 +1007,7 @@ $(document).on('click', '.list-more-button',async (event) => {
 	}
 })
 
-$(document).ready(function () {
-	buildCameraStream();
-})
+
 
 async function runGcode(gcode) {
 	return await fetch('/gcode', {

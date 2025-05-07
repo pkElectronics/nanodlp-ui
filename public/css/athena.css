@@ -1,10 +1,9 @@
 .btn-movement {
-  background-color: #f0ad4e;
+  /*background-color: #f0ad4e;*/
 }
 
 .btn-movement-active {
-  background-color: transparent;
-  color: #fff;
+  color: #f0ad4e !important;
 }
 
 .btn-axis-move.focus, .btn-axis-move:focus {
@@ -121,7 +120,7 @@
 }
 
 .btn-default {
-  border-color: #F5F5F5 !important;
+  border-color: #818181 !important;
 }
 
 /* Athena Gold on hover */
@@ -259,7 +258,6 @@ input:checked + .switch-slider:before {
   justify-content: center;
   align-items: center;
   width: 225px;
-  height: 400px; /* Adjust based on your needs */
   overflow: hidden; /* Prevents overflow caused by rotation */
   background: #000; /* Optional: Black background for better contrast */
 }
@@ -281,3 +279,64 @@ input:checked + .switch-slider:before {
   margin-left: 0;
   margin-right: 0;
 }
+
+.dashboard-panel {
+  margin: 8px;
+  border-color: #2c2c2c;
+
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-panel > .panel-heading {
+  color: white;
+  background-color: #3c4044;
+}
+
+.dashboard-panel > .panel-body {
+  color: white;
+  background-color: #303237;
+  flex: 1;
+  overflow-y: auto; /* Optional, for scrolling if content overflows */
+}
+
+.no-padding {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (min-width: 768px) {
+  .row.equal {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+/*.dashboard-printer-control {*/
+/*  margin: 8px 8px 8px 8px;*/
+/*  border: 1px #3c4044 solid;*/
+/*  padding: 16px;*/
+/*  border-radius: 4px;*/
+/*}*/
+
+/*.dashboard-printer-control:hover {*/
+/*  border: 1px #6d777c solid;*/
+/*}*/
+
+.row.display-flex {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.row.display-flex > [class*='col-'] {
+  flex-grow: 1;
+}
+
+.row.display-flex > [class*='panel-'] {
+  flex-grow: 1;
+}
+
+
