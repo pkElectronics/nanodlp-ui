@@ -577,6 +577,7 @@ function update_status(){
 			last_value('plate_height',data['PlateHeight']);
 			last_value('plate',data['PlateID']);
 			last_value('layer_time',data['LayerTime']/1000000000);
+			last_value('ResinLevelMm',data['ResinLevelMm']);
 			$(".idle-obj").slideUp();
 			image_display(data['PlateID'],data['LayerID'],data['Covered']);
 			if (data['Paused']) {
