@@ -18,7 +18,7 @@ $(document).ready(function () {
             streamer = new Mjpegstreamer();
         }
         //url = "http://192.168.178.147/athena-camera/stream";
-        url = "/athena-camera/stream";
+        url = document.location.origin+"/athena-camera/stream";
         streamer.url = url;
 
         buildCameraStream(url);
@@ -57,7 +57,7 @@ async function buildCameraStream(url = null) {
         style = streamer.webcamStyle;
 
         img.style.aspectRatio = style.aspectRatio;
-        img.style.maxHeight = livestreamContainer.style.maxHeight;
+        img.style.maxHeight = livestreamContainer.style.height;
         img.style.transform = style.transform;
         img.style.maxWidth = style.maxWidth;
 
