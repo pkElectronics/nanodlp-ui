@@ -17,7 +17,7 @@ $(document).ready(function () {
         if (streamer == null) {
             streamer = new Mjpegstreamer();
         }
-        url = "http://olymp.concepts3d.eu:13194/stream";
+        url = "http://192.168.178.147/athena-camera/stream";
         streamer.url = url;
 
         buildCameraStream(url);
