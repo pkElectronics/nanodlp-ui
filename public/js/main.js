@@ -572,12 +572,13 @@ function update_status(){
 			last_value('last_height','-');
 			last_value('last_eta','-');
 			last_value('last_elapsed','-');
-			$(".pause-obj,.printing-obj").slideUp();
-			$(".idle-obj").slideDown();
-			$('.resume-obj').hide();
+			$(".pause-obj,.printing-obj").css('display','none');
+			$(".idle-obj").css('display','inline-block');
+			$('.resume-obj').css('display','none');
 			if (data['PlateID'] && data['LayerID']>1 && data['LayersCount'] > 1 + data['LayerID']) {
-				$('.resume-obj').show();
+				$('.resume-obj').css('display','inline-block');
 			}
+			hideElemIfPresent('machine-status')
 		} else {
 			last_value('layer',data['LayerID']);
 			last_value('started',data['started']);
@@ -588,12 +589,13 @@ function update_status(){
 			$(".idle-obj").slideUp();
 			image_display(data['PlateID'],data['LayerID'],data['Covered']);
 			if (data['Paused']) {
-				$(".pause-obj").slideDown();
-				$(".printing-obj").slideUp();
+				$(".pause-obj").css('display','inline-block');
+				$(".printing-obj").css('display','none');
 			}else{
-				$(".pause-obj").slideUp();
-				$(".printing-obj").slideDown();
+				$(".pause-obj").hide();
+				$(".printing-obj").css('display','inline-block');
 			}
+			showElemIfPresent('machine-status')
 			layer_progress(data['PrevLayerTime'],data['LayerStartTime']);
 			update_stat();
 		}

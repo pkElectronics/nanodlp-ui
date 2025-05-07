@@ -338,6 +338,12 @@ const hideElemIfPresent = (id) => {
         $elem.hidden = true;
 }
 
+const showElemIfPresent = (id) => {
+    const $elem = document.getElementById(id);
+    if ($elem)
+        $elem.hidden = false;
+}
+
 const setBootstrapElemSizeIfPresent = (id, size) => {
     const element = document.getElementById(id);
     if (element) {

@@ -1,6 +1,6 @@
 <div class="row">
     <div id="print-preview" class="col-md-12">
-        <div class="col-md-5">
+        <div id="print-preview-img" class="col-md-5">
             <a class="embed-responsive embed-responsive-16by9" id="image_wrapper" href="/plate/preview">
                 <div class="image_enlarge embed-responsive-item"></div>
                 <span class="glyphicon glyphicon-refresh text-success" id="change-preview"></span>
@@ -50,6 +50,8 @@
 </div>
 
 <div class="button-group pull-right">
+    <a class="ask btn btn-success print-btn pause-obj" href="/printer/unpause"><span class="glyphicon glyphicon-play"></span> Resume</a>
+    <a class="ask btn btn-warning print-btn printing-obj" href="/printer/pause"><span class="glyphicon glyphicon-pause"></span> Pause</a>
     <a class="ask btn btn-danger print-btn" href="/printer/stop" data-ask="stop-confirm" translate><span class="glyphicon glyphicon-stop"></span> Stop</a>
     <a class="ask btn btn-danger print-btn" href="/printer/force-stop" data-ask="force-stop-confirm" translate><span class="glyphicon glyphicon-exclamation-sign"></span> Force Stop</a>
 </div>
