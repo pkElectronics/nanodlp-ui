@@ -96,6 +96,7 @@ class Mjpegstreamer {
     url = "";
     reader = null;
     image = null;
+    connectedAtLeastOnce = false;
 
     constructor() {
         this.reader = null;
@@ -194,6 +195,9 @@ class Mjpegstreamer {
             if (!response.ok) {
                 this.log(`${response.status}: ${response.statusText}`)
                 await this.stopStream()
+                if(response.status === 502 && this.connectedAtLeastOnce){
+                    throw new Error("Temporary stream failure");
+                }
                 return
             }
 
@@ -276,6 +280,7 @@ class Mjpegstreamer {
                         // update status to 'connected' if the first frame is received
                         if (this.status !== 'connected') {
                             this.status = 'connected'
+                            this.connectedAtLeastOnce = true;
                             this.statusMessage = ''
                         }
 
