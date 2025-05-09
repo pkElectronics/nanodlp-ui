@@ -18,6 +18,8 @@ const ColourValues = [
     "E00000", "00E000", "0000E0", "E0E000", "E000E0", "00E0E0", "E0E0E0",
 ];
 
+
+
 /**
  * When adding new values to the chart on the backend, add the ID from the data endpoint and the key from the NanoDLP axes into this
  */
@@ -49,6 +51,16 @@ const CHART_CONFIG = {
             { key: 'TemperatureMCUTarget', id: 14 },
             { key: 'MCUFanRPM', id: 15 },
             { key: 'UVFanRPM', id: 16 },
+            { key: 'TemperatureVat', id: 18 },
+            { key: 'TemperatureVatTarget', id: 19 },
+            { key: 'PTCFanRPM', id: 20 },
+            { key: 'AEGISFanRPM', id: 21 },
+            { key: 'TemperatureChamber', id: 22 },
+            { key: 'TemperatureChamberTarget', id: 23 },
+            { key: 'TemperaturePTC', id: 24 },
+            { key: 'TemperaturePTCTarget', id: 25 },
+            { key: 'VOCInlet', id: 26 },
+            { key: 'VOCOutlet', id: 27 },
         ]
     },
 }
