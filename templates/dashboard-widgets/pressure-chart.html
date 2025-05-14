@@ -31,7 +31,7 @@
 
     $(document).ready(function () {
         const axes = [{Key: "Pressure", Type: "Pressure", "Decimal": 2}]
-        setTimeout(async function () {
+        setInterval(async function () {
             const data = !hardCodeAnalytics ? await fetchData() : HARDCODED_ANALYTICS;
             buildChartFromData("test", data, false, axes, {height: 250})
         }, 1000)
