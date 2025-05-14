@@ -841,7 +841,7 @@ $(function() {
 
 function fetch_resin_target(){
 	$.ajax({
-		url:'/analytic/value/12',
+		url:`${BASE_URL}/analytic/value/12`,
 		type: 'GET',
 		timeout: 2000
 	}).done(function(data) {
