@@ -17,7 +17,7 @@
             getData(false);
             setInterval(function () {
                 if ($("#range").val() != "0") getData(false);
-            }, 1000);
+            }, ANALYTICS_UPDATE_INTERVAL);
             $("#download-csv").click(function () {
                 getData(true);
             });
