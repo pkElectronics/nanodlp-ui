@@ -1,10 +1,10 @@
 const multicureConfig = {
     1: {
-        name: "J3D Calibration Boxes of Calibration",
+        name: "J3D Calibration RERF",
         models: 6
     },
     2: {
-        name: "J3D Calibration RERF",
+        name: "J3D Calibration Boxes of Calibration",
         models: 6
     }
 }
