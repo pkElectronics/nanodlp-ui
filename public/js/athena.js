@@ -217,10 +217,8 @@ $("#BtnToggleHeater").click(async function(){
 
 		}
 	})
-
-	$("#BtnToggleHeater").html()
-
 });
+
 
 async function updateMachineCustomValues(callback) {
 	const response = await fetch('/json/db/machine.json');
@@ -617,6 +615,38 @@ $(document).ready(function() {
 
 });
 
+
+$(document).ready(function() {
+	element = $("#aegis-available-toggle");
+	container = $("#aegis-control-div");
+
+	if (printer_type.startsWith("Athena2") || printer_type.startsWith("AthenaPro")) {
+
+		element.addEventListener('change', e => {
+
+			if (e.target.checked) {
+				fetch("/athena-iot/aegis/enable");
+			} else {
+				fetch("/athena-iot/aegis/disable");
+			}
+
+		});
+
+		fetch("/athena-iot/aegis/available").then(
+			async value => {
+				data = await value.json();
+				if (data.available) {
+					element.checked = true;
+				} else {
+					element.checked = true;
+				}
+			}
+
+		)
+		container.show();
+	}
+});
+
 $.ajax({
 	url: "/json/db/machine.json",
 	success: function( result ) {
@@ -919,7 +949,9 @@ function display_notification_athena(){
 						+'</br>'
 						+'</div>' //end modal body
 						+'<div class="div-modal-buttons">';
-					if(v["Type"] !== "error") {
+					if(v["Type"] !== "aegis-info" || v["Type"] !== "aegis-error") {
+						msg += '<button type="button" id="btn-modal-approve" class="btn btn-info btn-mod-center"> Close</button>';
+					}else if(v["Type"] !== "error") {
 						msg += '<button type="button" id="btn-modal-continue" class="btn btn-info btn-mod-l"> Continue Anyways</button>';
 						msg += '<button type="button" id="btn-modal-cancel" class="btn btn-danger btn-mod-r"> Cancel Print</button>'
 					}else{
@@ -945,7 +977,6 @@ function display_notification_athena(){
 			$(".navbar").after(msg);
 
 
-
 			$('#btn-modal-continue').click(function(){
 				try {
 					const response = fetch('/notification/disable/'+display_notification_athena.prev_data["Timestamp"], {
@@ -967,6 +998,18 @@ function display_notification_athena(){
 						method: 'get'
 					});
 					const response2 = fetch('/api/v1/printer/printer/stop', {
+						method: 'get'
+					});
+					console.log('Completed!', response);
+				} catch(err) {
+					console.error('Error: ${err}');
+				}
+				$('#notificationModal').modal('hide');
+			});
+
+			$('#btn-modal-approve').click(function(){
+				try {
+					const response = fetch('/notification/disable/'+display_notification_athena.prev_data["Timestamp"], {
 						method: 'get'
 					});
 					console.log('Completed!', response);
