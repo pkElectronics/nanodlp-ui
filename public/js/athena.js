@@ -435,6 +435,7 @@ function update_printertype() {
 			printer_type = result;
 			$("#printer_type").html("Printer Type: " + result);
 			update_changelog();
+			aegis_checkbox_init();
 		}
 	});
 }
@@ -616,9 +617,9 @@ $(document).ready(function() {
 });
 
 
-$(document).ready(function() {
-	element = $("#aegis-available-toggle");
-	container = $("#aegis-control-div");
+function aegis_checkbox_init() {
+	element = $("#aegis-available-toggle")[0];
+	container = $("#aegis-control-div")[0];
 
 	if (printer_type.startsWith("Athena2") || printer_type.startsWith("AthenaPro")) {
 
@@ -644,8 +645,10 @@ $(document).ready(function() {
 
 		)
 		container.show();
+	}else{
+		container.hide();
 	}
-});
+}
 
 $.ajax({
 	url: "/json/db/machine.json",
