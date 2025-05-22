@@ -619,16 +619,18 @@ $(document).ready(function() {
 
 function aegis_checkbox_init() {
 	element = $("#aegis-available-toggle")[0];
-	container = $("#aegis-control-div")[0];
+	container = $("#aegis-control-div");
 
 	if (printer_type.startsWith("Athena2") || printer_type.startsWith("AthenaPro")) {
 
 		element.addEventListener('change', e => {
 
 			if (e.target.checked) {
-				fetch("/athena-iot/aegis/enable");
+				fetch("/athena-iot/aegis/enable",{
+					method: "POST"});
 			} else {
-				fetch("/athena-iot/aegis/disable");
+				fetch("/athena-iot/aegis/disable",{
+					method: "POST"});
 			}
 
 		});
