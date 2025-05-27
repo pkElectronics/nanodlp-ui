@@ -32,7 +32,7 @@
         reqRunning = true;
         const range = $("#range").val();
 
-        $.getJSON("/analytic/data/"  + range, function (response) {
+        $.getJSON(`${BASE_URL}/analytic/data/${range}`, function (response) {
             if (response==null) return;
 
             const axes = JSON.parse(decodeHTMLEntities(`{{axes|safe}}`));
@@ -43,6 +43,7 @@
     }
 </script>
 
+{% include "components/print-progress.html" %}
 <div id="uplot-1" class="uplot uplot-container"></div>
 <div id="uplot-2" class="uplot uplot-container"></div>
 <div class="row">
@@ -65,6 +66,5 @@
 </select>
 <br>
 <button class="btn btn-default" id="download-csv" href="#" translate>Download CSV</button>
-{% include "index-progress.html" %}
 <br>
 {% endblock %}

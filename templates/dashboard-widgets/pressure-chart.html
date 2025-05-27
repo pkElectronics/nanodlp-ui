@@ -33,7 +33,7 @@
         const axes = [{Key: "Pressure", Type: "Pressure", "Decimal": 2}]
         setInterval(async function () {
             const data = !hardCodeAnalytics ? await fetchData() : HARDCODED_ANALYTICS;
-            buildChartFromData("test", data, false, axes, {height: 250})
+            buildChartFromData(null, data, false, axes, {height: 250})
         }, ANALYTICS_UPDATE_INTERVAL)
     });
 
@@ -44,3 +44,6 @@
     }
 </script>
 <div id="uplot-1" class="uplot uplot-container"></div>
+<div style="text-align: center">
+<a class="pull-center" href="/analytic">See full analytics</a>
+</div>
