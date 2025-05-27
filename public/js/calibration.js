@@ -1,6 +1,10 @@
 const multicureConfig = {
     1: {
-        name: "J3D Calibration Model 1",
+        name: "J3D Calibration RERF",
+        models: 6
+    },
+    2: {
+        name: "J3D Calibration Boxes of Calibration",
         models: 6
     }
 }
@@ -14,8 +18,11 @@ $(document).ready(function () {
         const form = e.target.form;  // Get the form element
         const values = formDataToObject(form);
 
+
         const {exposureIncrement, startExposure, calibrationModelId} = values;
         populateExposurePreview(exposureIncrement, startExposure, calibrationModelId)
+
+        onCalibrationModelChange(calibrationModelId);
     })
     calibrationForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -39,6 +46,19 @@ $(document).ready(function () {
         document.querySelector('#modalLabel').textContent = "Slicing calibration file..."
     })
 })
+
+function onCalibrationModelChange(calibrationModelId) {
+    document.querySelectorAll('.evaluation-text').forEach(el => el.style.display = 'none');
+    const target = document.getElementById(`model-evaluation-${calibrationModelId}`);
+    if (target) {
+        target.style.display = 'block';
+    }
+
+    const img = document.getElementById('calibration-model-image');
+    if (img) {
+        img.src = `/static/shots/calibration-images/${calibrationModelId}.png`;
+    }
+}
 
 function setUpCalibrationSelection() {
     const $calibrationSelect = document.getElementById('calibration-model');
