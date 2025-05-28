@@ -20,65 +20,48 @@ const ColourValues = [
     "E00000", "00E000", "0000E0", "E0E000", "E000E0", "00E0E0", "E0E0E0",
 ];
 
-
-
-/**
- * When adding new values to the chart on the backend, add the ID from the data endpoint and the key from the NanoDLP axes into this
- */
-const CHART_CONFIG = {
-    chart1: {
-        uplotId: '#uplot-1',
-        fields: [
-            { key: 'LayerHeight', id: 0 },
-            { key: 'SolidArea', id: 1 },
-            { key: 'AreaCount', id: 2 },
-            { key: 'LargestArea', id: 3 },
-            { key: 'Speed', id: 4 },
-            { key: 'Cure', id: 5 },
-            { key: 'Pressure', id: 6, overrideLabel: 'Force', overrideAxisLabel: 'Force', overrideUnit: 'g' },
-            { key: 'LayerTime', id: 9 },
-            { key: 'LiftHeight', id: 10 },
-            { key: 'DynamicWait', id: 17 },
-
-        ]
-    },
-    chart2: {
-        uplotId: '#uplot-2',
-        fields: [
-            { key: 'TemperatureInside', id: 7 },
-            { key: 'TemperatureOutside', id: 8 },
-            { key: 'TemperatureMCU', id: 11 },
-            { key: 'TemperatureInsideTarget', id: 12 },
-            { key: 'TemperatureOutsideTarget', id: 13 },
-            { key: 'TemperatureMCUTarget', id: 14 },
-            { key: 'MCUFanRPM', id: 15 },
-            { key: 'UVFanRPM', id: 16 },
-            { key: 'TemperatureVat', id: 18 },
-            { key: 'TemperatureVatTarget', id: 19 },
-            { key: 'PTCFanRPM', id: 20 },
-            { key: 'AEGISFanRPM', id: 21 },
-            { key: 'TemperatureChamber', id: 22 },
-            { key: 'TemperatureChamberTarget', id: 23 },
-            { key: 'TemperaturePTC', id: 24 },
-            { key: 'TemperaturePTCTarget', id: 25 },
-            { key: 'VOCInlet', id: 26 },
-            { key: 'VOCOutlet', id: 27 },
-        ]
-    },
-}
-
-const ALL_CHART_CONFIG = Object.keys(CHART_CONFIG).flatMap(key => CHART_CONFIG[key].fields);
+const ALL_CHART_CONFIG = [
+    { key: 'LayerHeight', id: 0 },
+    { key: 'SolidArea', id: 1 },
+    { key: 'AreaCount', id: 2 },
+    { key: 'LargestArea', id: 3 },
+    { key: 'Speed', id: 4 },
+    { key: 'Cure', id: 5 },
+    { key: 'Pressure', id: 6, overrideLabel: 'Force', overrideAxisLabel: 'Force', overrideUnit: 'g' },
+    { key: 'TemperatureInside', id: 7 },
+    { key: 'TemperatureOutside', id: 8 },
+    { key: 'LayerTime', id: 9 },
+    { key: 'LiftHeight', id: 10 },
+    { key: 'TemperatureMCU', id: 11 },
+    { key: 'TemperatureInsideTarget', id: 12 },
+    { key: 'TemperatureOutsideTarget', id: 13 },
+    { key: 'TemperatureMCUTarget', id: 14 },
+    { key: 'MCUFanRPM', id: 15 },
+    { key: 'UVFanRPM', id: 16 },
+    { key: 'DynamicWait', id: 17 },
+    { key: 'TemperatureVat', id: 18 },
+    { key: 'TemperatureVatTarget', id: 19 },
+    { key: 'PTCFanRPM', id: 20 },
+    { key: 'AEGISFanRPM', id: 21 },
+    { key: 'TemperatureChamber', id: 22 },
+    { key: 'TemperatureChamberTarget', id: 23 },
+    { key: 'TemperaturePTC', id: 24 },
+    { key: 'TemperaturePTCTarget', id: 25 },
+    { key: 'VOCInlet', id: 26 },
+    { key: 'VOCOutlet', id: 27 },
+];
 
 function isNotAllNull(subArray) {
     return subArray.some(element => element !== null);
 }
 
-function renderChart(name, dataRows, series, uplotId, chartStyle) {
-    const $uplot = $(`#${uplotId}`);
+function renderChart(name, dataRows, series, chartConfig) {
+    const uplotId = `${chartConfig.uplotId}`;
+    const $uplot = $(`${uplotId}`);
 
     if (dataRows.length <= 1) return;
 
-    let plotHeight = chartStyle?.height ?? 400;
+    let plotHeight = chartConfig?.height ?? 400;
     const axes = prepareAxis(series);
     let opts = {
         title: name,
@@ -147,7 +130,7 @@ function applyLegend(opts, uplotId) {
     const storedString = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!storedString) return opts;
     const series = JSON.parse(storedString);
-    series[uplotId].forEach((element,index) => {
+    series[uplotId.replaceAll("#", "")].forEach((element,index) => {
         if (element.show === false && opts.series[index] !== undefined) opts.series[index].show = false;
     });
     return opts
@@ -320,7 +303,7 @@ const backFillData = (data) => {
 }
 
 
-function buildChartFromData(name, dataResponse, exp, axes, chartStyle) {
+function buildChartFromData(name, dataResponse, exp, axes, chartConfigs) {
     if (dataResponse.length === 0) {
         return;
     }
@@ -336,18 +319,20 @@ function buildChartFromData(name, dataResponse, exp, axes, chartStyle) {
     cachedData = dataResponse;
 
     if (exp) return downloadCSV(series, backFilledData);
-    renderSplitChart(series, backFilledData, CHART_CONFIG.chart1, "uplot-1", chartStyle, name);
-    renderSplitChart(series, backFilledData, CHART_CONFIG.chart2, "uplot-2", chartStyle, name);
+
+    chartConfigs.forEach(chartConfig => {
+        renderSplitChart(series, backFilledData, chartConfig, name);
+    })
 
     addSaveLegendHandler()
 }
 
-function renderSplitChart(series, backFilledData, chartConfig, uplotId, chartStyle, name) {
+function renderSplitChart(series, backFilledData, chartConfig, name) {
     const backFilledDataForChart = backFilledData.filter((dataSeries, idx) => idx === 0 || chartConfig.fields.some(conf => conf.id + 1 === idx))
     const dataWithoutNulls = backFilledDataForChart.filter(isNotAllNull);
 
     const seriesForChart = series.filter((i, idx) => idx === 0 || chartConfig.fields.some((conf) => conf.key === i.key) )
     const seriesWithoutNulls = seriesForChart.filter((_, index) => isNotAllNull(backFilledDataForChart[index]));
 
-    renderChart(name, dataWithoutNulls, seriesWithoutNulls, uplotId, chartStyle);
+    renderChart(name, dataWithoutNulls, seriesWithoutNulls, chartConfig);
 }
