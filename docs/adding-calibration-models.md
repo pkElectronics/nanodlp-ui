@@ -10,17 +10,17 @@ You should add your new item in the following format:
 
 ```json5
   {
-  "id": 2,
   // A new numerical ID that is unique to this model. ie. increment from the previous model in the list 
-  "name": "Calibration Model Name",
+  "id": 2,
   // A name that represents this piece, this will be displayed on the webui and HMI
-  "models": 6,
+  "name": "Calibration Model Name",
   // A count of how many models are included in this calibration. For most models this will be 6.
+  "models": 6,
   "info": {
-    "resinRequired": 140,
     // An estimate of how much resin is required for this print. This is shown to the user on the HMI.
-    "height": 40000
+    "resinRequired": 140,
     // The height of the model in microns, this is used to show the user the estimated layer count.
+    "height": 40000
   }
 }
 
