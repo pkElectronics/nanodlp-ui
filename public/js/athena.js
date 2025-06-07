@@ -1049,6 +1049,22 @@ function setup_diskspace(json){
 	}
 }
 
+async function updateIdWithAnalytic(elemId, analyticId) {
+	const elementById = document.getElementById(elemId);
+	const analyticValue = await getAnalytic(analyticId);
+
+	if (elementById) {
+		elementById.innerHTML = analyticValue;
+	}
+	return analyticValue;
+}
+
+async function getAnalytic(analyticId) {
+	if (DEV_MODE) return Math.floor(Math.random() * 100)
+
+	const response = await fetch(`/analytic/value/${analyticId}`, {});
+	return await response.text();
+}
 
 $(document).ready(function () {
 	let result = fetch("/athena-iot/status/disk_storage",{ method: "GET" })
