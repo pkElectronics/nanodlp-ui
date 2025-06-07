@@ -336,13 +336,13 @@ function buildChartFromData(name, dataResponse, exp, axes, chartStyle) {
     cachedData = dataResponse;
 
     if (exp) return downloadCSV(series, backFilledData);
-    renderSplitChart(series, backFilledData, CHART_CONFIG.chart1, "uplot-1", chartStyle);
-    renderSplitChart(series, backFilledData, CHART_CONFIG.chart2, "uplot-2", chartStyle);
+    renderSplitChart(series, backFilledData, CHART_CONFIG.chart1, "uplot-1", chartStyle, name);
+    renderSplitChart(series, backFilledData, CHART_CONFIG.chart2, "uplot-2", chartStyle, name);
 
     addSaveLegendHandler()
 }
 
-function renderSplitChart(series, backFilledData, chartConfig, uplotId, chartStyle) {
+function renderSplitChart(series, backFilledData, chartConfig, uplotId, chartStyle, name) {
     const backFilledDataForChart = backFilledData.filter((dataSeries, idx) => idx === 0 || chartConfig.fields.some(conf => conf.id + 1 === idx))
     const dataWithoutNulls = backFilledDataForChart.filter(isNotAllNull);
 
