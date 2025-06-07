@@ -33,6 +33,8 @@ async function onPageLoad() {
     document.getElementById('btn-mix-resin').addEventListener('click', (e) => {
         mixResin();
     })
+
+    aegisSetup()
 }
 
 $(document).ready(function () {
@@ -149,5 +151,85 @@ async function mixResin() {
     const machineJsonHeater = await machineJsonResponse.json();
     const temperature = machineJsonHeater?.CustomValues?.HeaterTemperature;
 
-    await fetch('/athena-iot/control/preheat_and_mix_standalone', {method: 'POST', body: JSON.stringify({temperature})});
+    await fetch('/athena-iot/control/preheat_and_mix_standalone', {
+        method: 'POST',
+        body: JSON.stringify({temperature})
+    });
+}
+
+// AEGIS CODE
+
+const VOC_CRITICAL_THRESHOLD = 40;
+const VOC_WARNING_THRESHOLD = 80;
+
+async function setupAegisPolling() {
+    setInterval(async () => {
+        await getAegisValues();
+    }, 1000)
+    await getAegisValues();
+}
+
+async function getAegisValues() {
+    const fanRpm = await updateIdWithAnalytic('aegis-fan-rpm', 21);
+    const outletValue = await updateIdWithAnalytic('aegis-fan-voc-outlet', 27);
+    const inletValue = await updateIdWithAnalytic('aegis-fan-voc-inlet', 26);
+
+    await setAegisStatus(inletValue);
+    await setAegisIndicator(inletValue, 'aegis-fan-voc-inlet-status')
+    await setAegisIndicator(outletValue, 'aegis-fan-voc-outlet-status')
+
+    return {
+        fanRpm, outletValue, inletValue
+    }
+}
+
+async function setAegisStatus(inletValue) {
+    const isVocCritical = inletValue <= VOC_CRITICAL_THRESHOLD;
+
+    if (isVocCritical) {
+        document.getElementById('aegis-status').innerText = 'VOC Level Critical';
+        return;
+    }
+
+    const replaceFilter = await doesFilterNeedReplacement();
+    if (replaceFilter) {
+        if (replaceFilter['filter_needs_replacement']) {
+            document.getElementById('aegis-status').innerText = 'Filter needs replacement';
+            return;
+        }
+    }
+
+    document.getElementById('aegis-status').innerText = 'VOC Level Ok';
+}
+
+function setAegisIndicator(value, elemId) {
+    const element = document.getElementById(elemId);
+    if (!element) return;
+
+    element.classList.remove('label-success', 'label-warning', 'label-danger');
+
+    if (value > VOC_CRITICAL_THRESHOLD) {
+        element.classList.add('label-danger');
+    } else if (value > VOC_WARNING_THRESHOLD) {
+        element.classList.add('label-warning');
+    } else {
+        element.classList.add('label-success');
+    }
+}
+
+async function aegisSetup() {
+    const checkbox = document.getElementById('aegis-toggle');
+    await setupAegisPolling();
+
+    const { fanRpm } = await getAegisValues();
+
+    checkbox.checked = fanRpm > 0;
+
+    checkbox.addEventListener('change', async () => {
+        const endpoint = '/athena-iot/aegis/' + (checkbox.checked ? 'activate' : 'deactivate');
+
+        await fetch(endpoint, {
+            method: 'POST',
+        });
+    });
 }

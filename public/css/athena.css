@@ -212,12 +212,13 @@ a.list-group-item {
   background-color: #ccc;
   -webkit-transition: .4s;
   transition: .4s;
+  height: 24px;
 }
 
 .switch-slider:before {
   position: absolute;
   content: "";
-  height: 26px;
+  height: 16px;
   width: 26px;
   left: 4px;
   bottom: 4px;
@@ -242,11 +243,11 @@ input:checked + .switch-slider:before {
 
 /* Rounded sliders */
 .switch-slider.round {
-  border-radius: 34px;
+  border-radius: 4px;
 }
 
 .switch-slider.round:before {
-  border-radius: 50%;
+  border-radius: 20%;
 }
 
 .toast {
