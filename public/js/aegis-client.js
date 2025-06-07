@@ -11,23 +11,7 @@ const request = async (path, method = 'GET') => {
     return response.json();
 };
 
-const isAegisAvailable = async () => {
-    if (DEV_MODE) return true
-
-    return request('available');
-};
-
-
 const doesFilterNeedReplacement = async () => {
     if (DEV_MODE) return { 'filter_needs_replacement': false}
     return request('filter_needs_replacement');
 };
-
-const getFiltrationMode = async () => request('filtration_mode');
-
-const activateAegis = async () => request('activate', 'POST');
-
-const deactivateAegis = async () => request('deactivate', 'POST');
-
-const performFiltering = async() => request('perform_filtering', 'POST');
-
