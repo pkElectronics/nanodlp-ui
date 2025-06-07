@@ -4,7 +4,7 @@
     "name": "J3D Calibration RERF",
     "models": 6,
     "info": {
-      "resinRequired": 140,
+      "resinRequired": 21,
       "height": 3700
     }
   },
@@ -13,7 +13,7 @@
     "name": "J3D Calibration Boxes of Calibration",
     "models": 6,
     "info": {
-      "resinRequired": 140,
+      "resinRequired": 9,
       "height": 10100
     }
   }
