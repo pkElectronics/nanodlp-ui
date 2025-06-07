@@ -10,8 +10,13 @@ const multicureConfig = {
 }
 
 $(document).ready(function () {
-    setUpCalibrationSelection();
-    populateExposurePreview(0.2, 1.5, 1)
+    onPageLoad()
+});
+
+async function onPageLoad() {
+    const calibrationOptions = await getCalibrationOptions();
+    setUpCalibrationSelection(calibrationOptions);
+    populateExposurePreview(0.2, 1.5, calibrationOptions[0])
     setUpProfiles()
     const calibrationForm = document.getElementById('calibration-form');
     calibrationForm.addEventListener('input', (e) => {
@@ -20,7 +25,9 @@ $(document).ready(function () {
 
 
         const {exposureIncrement, startExposure, calibrationModelId} = values;
-        populateExposurePreview(exposureIncrement, startExposure, calibrationModelId)
+
+        const selectedCalibration = calibrationOptions.find(calibrationOption => calibrationOption.id === +calibrationModelId);
+        populateExposurePreview(exposureIncrement, startExposure, selectedCalibration);
 
         onCalibrationModelChange(calibrationModelId);
     })
@@ -35,7 +42,8 @@ $(document).ready(function () {
         // refetch the latest form reference
         const form = document.getElementById('calibration-form');
         const data = formDataToObject(form);
-        submitForm(data, button);
+        const selectedCalibration = calibrationOptions.find(calibrationOption => calibrationOption.id === +data.calibrationModelId);
+        submitForm(data, button, selectedCalibration);
     })
 
     document.getElementById("calibration-form-confirm").addEventListener('click', (e) => {
@@ -45,7 +53,7 @@ $(document).ready(function () {
         document.querySelector('.modal-footer').style.display = 'none';
         document.querySelector('#modalLabel').textContent = "Slicing calibration file..."
     })
-})
+}
 
 function onCalibrationModelChange(calibrationModelId) {
     document.querySelectorAll('.evaluation-text').forEach(el => el.style.display = 'none');
@@ -60,16 +68,15 @@ function onCalibrationModelChange(calibrationModelId) {
     }
 }
 
-function setUpCalibrationSelection() {
+async function setUpCalibrationSelection(calibrationOptions) {
     const $calibrationSelect = document.getElementById('calibration-model');
 
-    for (const key in multicureConfig) {
+    calibrationOptions.forEach(calibrationOption => {
         const option = document.createElement("option");
-        option.value = key;
-        const configItem = multicureConfig[key];
-        option.textContent = configItem.name;
+        option.value = calibrationOption.id;
+        option.textContent = calibrationOption.name;
         $calibrationSelect.appendChild(option);
-    }
+    });
 }
 
 /**
@@ -90,9 +97,9 @@ async function setUpProfiles() {
 
 }
 
-function populateExposurePreview(increment, startTime, modelId) {
+function populateExposurePreview(increment, startTime, selectedCalibration) {
     const previewElem = document.getElementById('exposure-value-preview');
-    let secondValues = Array(multicureConfig[modelId].models).fill(0)
+    let secondValues = Array(selectedCalibration.models).fill(0)
         .map((value, index) => (index * increment + startTime).toFixed(1));
 
     previewElem.textContent = `Generating model exposures at: ${secondValues.map(i => i + "s").join(", ")}`
@@ -109,10 +116,10 @@ function formDataToObject(form) {
     }
 }
 
-async function submitForm(form, $button) {
+async function submitForm(form, $button, selectedCalibration) {
     const {calibrationModelId, exposureIncrement, startExposure, profileID} = form;
 
-    const multicureValues = Array(multicureConfig[calibrationModelId].models)
+    const multicureValues = Array(selectedCalibration.models)
         .fill(0)
         .map((value, index) => (index * exposureIncrement + startExposure).toFixed(1))
         .join(',');
@@ -160,3 +167,7 @@ async function setUpSlicerPoller() {
     setInterval(pollFunc, 500)
 }
 
+async function getCalibrationOptions() {
+    const response = await fetch("/static/config/calibrationConfig.json");
+    return await response.json();
+}

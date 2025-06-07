@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "name": "J3D Calibration RERF",
+    "models": 6,
+    "info": {
+      "resinRequired": 21,
+      "height": 3700
+    }
+  },
+  {
+    "id": 2,
+    "name": "J3D Calibration Boxes of Calibration",
+    "models": 6,
+    "info": {
+      "resinRequired": 9,
+      "height": 10100
+    }
+  }
+]
