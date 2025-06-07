@@ -668,10 +668,10 @@ $.ajax({
 });
 
 
-var upload_xhr;
-var last_progress_ts;
-var last_progress_loaded;
-var upload_started_ts;
+let last_progress_ts;
+let last_progress_loaded;
+let upload_started_ts;
+let upload_xhr = null;
 
 function bytesToStringRep(bytes){
 	let loaded_unit = "b";
@@ -771,6 +771,7 @@ function processingHandler() {
 function completeHandler(){
 	setTimeout(() => {
 		removeUploadProgressModal();
+		upload_xhr = null;
 		window.location.replace("/plates");
 	}, 1000);
 }
@@ -790,7 +791,7 @@ function abortHandler(){
 	removeUploadProgressModal();
 }
 
-function abortUpload(){
+function abortUpload(upload_xhr){
 	upload_xhr.abort();
 }
 
@@ -832,18 +833,15 @@ function showUploadProgressModal(){
 
 	upload_started_ts = Date.now();
 
-	$("#btn-uploadmodal-cancel").click(function (){
-		abortUpload();
-	})
 }
 
 $('.upload-disable').submit(function(e) {
 	let currentUrl = window.location.href
 
-	if( currentUrl.includes("plate/add")){
+	if( upload_xhr == null && currentUrl.includes("plate/add")){
 		e.preventDefault();
 
-		var formData = new FormData( document.getElementById("plate-upload-form") );
+		const formData = new FormData(document.getElementById("plate-upload-form"));
 
 		upload_xhr = new XMLHttpRequest();
 		upload_xhr.open("POST", "/plate/add");
@@ -854,9 +852,16 @@ $('.upload-disable').submit(function(e) {
 		upload_xhr.addEventListener("error", errorHandler, false);
 		upload_xhr.addEventListener("abort", abortHandler, false);
 		showUploadProgressModal();
+
+		$("#btn-uploadmodal-cancel").click(function (){
+			abortUpload(upload_xhr);
+		})
+
 		upload_xhr.send(formData);
 
-	}else{
+	}else if(upload_xhr != null){
+		console.error("Upload Submit triggered multiple times");
+	}else {
 		var form = $(this);
 		var submitButton = form.find('button[type="submit"]');
 		submitButton.prop('disabled', true);
