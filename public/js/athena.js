@@ -621,7 +621,7 @@ function aegis_checkbox_init() {
 	element = $("#aegis-available-toggle")[0];
 	container = $("#aegis-control-div");
 
-	if (printer_type.startsWith("Athena2") || printer_type.startsWith("AthenaPro")) {
+	if (element && (printer_type.startsWith("Athena2") || printer_type.startsWith("AthenaPro"))) {
 
 		element.addEventListener('change', e => {
 
