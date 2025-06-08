@@ -637,12 +637,8 @@ function aegis_checkbox_init() {
 
 		fetch("/athena-iot/aegis/available").then(
 			async value => {
-				data = await value.json();
-				if (data.available) {
-					element.checked = true;
-				} else {
-					element.checked = true;
-				}
+				let data = await value.json();
+				element.checked = !!data.available;
 			}
 
 		)
