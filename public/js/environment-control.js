@@ -184,6 +184,15 @@ async function getAegisValues() {
 }
 
 async function setAegisStatus(inletValue) {
+
+    const automaticMode = await isAutomaticFilteringActive();
+    if (automaticMode) {
+        if (automaticMode['automatic']) {
+            document.getElementById('aegis-status').innerText = 'Filtration Cycle Running';
+            return;
+        }
+    }
+    
     const isVocCritical = inletValue <= VOC_CRITICAL_THRESHOLD;
 
     if (isVocCritical) {
