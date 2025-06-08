@@ -235,7 +235,7 @@ async function aegisSetup() {
         const result = await response.json();
 
         if(result.available) {
-            container.show();
+            container.style.display = 'block';
 
             const checkbox = document.getElementById('aegis-toggle');
             await setupAegisPolling();
