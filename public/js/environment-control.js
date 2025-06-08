@@ -208,9 +208,9 @@ function setAegisIndicator(value, elemId) {
 
     element.classList.remove('label-success', 'label-warning', 'label-danger');
 
-    if (value > VOC_CRITICAL_THRESHOLD) {
+    if (value <= VOC_CRITICAL_THRESHOLD) {
         element.classList.add('label-danger');
-    } else if (value > VOC_WARNING_THRESHOLD) {
+    } else if (value <= VOC_WARNING_THRESHOLD) {
         element.classList.add('label-warning');
     } else {
         element.classList.add('label-success');
