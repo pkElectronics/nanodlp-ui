@@ -192,7 +192,7 @@ async function setAegisStatus(inletValue) {
             return;
         }
     }
-    
+
     const isVocCritical = inletValue <= VOC_CRITICAL_THRESHOLD;
 
     if (isVocCritical) {
@@ -227,18 +227,31 @@ function setAegisIndicator(value, elemId) {
 }
 
 async function aegisSetup() {
-    const checkbox = document.getElementById('aegis-toggle');
-    await setupAegisPolling();
 
-    const { fanRpm } = await getAegisValues();
+    const container = document.getElementById('aegis-dashboard-container');
 
-    checkbox.checked = fanRpm > 0;
+    fetch("/athena-iot/aegis/available").then(async (response) => {
 
-    checkbox.addEventListener('change', async () => {
-        const endpoint = '/athena-iot/aegis/' + (checkbox.checked ? 'activate' : 'deactivate');
+        const result = await response.json();
 
-        await fetch(endpoint, {
-            method: 'POST',
-        });
+        if(result.available) {
+            container.show();
+
+            const checkbox = document.getElementById('aegis-toggle');
+            await setupAegisPolling();
+
+            const {fanRpm} = await getAegisValues();
+
+            checkbox.checked = fanRpm > 0;
+
+            checkbox.addEventListener('change', async () => {
+                const endpoint = '/athena-iot/aegis/' + (checkbox.checked ? 'activate' : 'deactivate');
+
+                await fetch(endpoint, {
+                    method: 'POST',
+                });
+            });
+        }
+
     });
 }
