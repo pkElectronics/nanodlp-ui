@@ -153,7 +153,7 @@ async function mixResin() {
 
     await fetch('/athena-iot/control/preheat_and_mix_standalone', {
         method: 'POST',
-        'Content-Type': 'application/json',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({temperature})
     });
 }
