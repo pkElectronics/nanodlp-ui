@@ -955,7 +955,7 @@ function display_notification_athena(){
 						+'</br>'
 						+'</div>' //end modal body
 						+'<div class="div-modal-buttons">';
-					if(v["Type"] !== "aegis-info" || v["Type"] !== "aegis-error") {
+					if(v["Type"] === "aegis-info" || v["Type"] === "aegis-error" || v["Type"] === "klipper-error") {
 						msg += '<button type="button" id="btn-modal-approve" class="btn btn-info btn-mod-center"> Close</button>';
 					}else if(v["Type"] !== "error") {
 						msg += '<button type="button" id="btn-modal-continue" class="btn btn-info btn-mod-l"> Continue Anyways</button>';
