@@ -330,7 +330,20 @@
 					{{formulaModal()}}
 				</label>
 				<textarea class="form-control" name="ShieldResume" id="ShieldResume">{{ShieldResume}}</textarea>
-
+			</div>
+			<div class="col-md-11 i_code i_axis i_option i_lock">
+				<label for="ShieldPause">
+					<translate>Pause Print Code</translate> {{helpPage("https://docs.nano3dtech.com/manual/code/")}}
+					{{formulaModal()}}
+				</label>
+				<textarea class="form-control" name="ShieldPause" id="ShieldPause">{{ShieldPause}}</textarea>
+			</div>
+			<div class="col-md-11 i_code i_axis i_option i_lock">
+				<label for="ShieldUnpause">
+					<translate>Unpause Print Code</translate> {{helpPage("https://docs.nano3dtech.com/manual/code/")}}
+					{{formulaModal()}}
+				</label>
+				<textarea class="form-control" name="ShieldUnpause" id="ShieldUnpause">{{ShieldUnpause}}</textarea>
 			</div>
 			<div class="col-md-11 i_code i_axis i_option i_lock">
 				<label for="PrinterCheck">
@@ -797,8 +810,6 @@
 		<input type="hidden" value="{{ConfigSlicerOptions.PreviewWidth}}" name="PreviewWidth">
 		<input type="hidden" value="{{VatHeight}}" name="VatHeight">
 		<input type="hidden" value="{{VatWidth}}" name="VatWidth">
-		<input type="hidden" value="{{ShieldPause}}" name="ShieldPause">
-		<input type="hidden" value="{{ShieldUnpause}}" name="ShieldUnpause">
 		<input type="hidden" name="ReverseDirectionPin" value="{{ReverseDirectionPin}}">
 		<input type="hidden" name="ShieldForceStop" value="{{ShieldForceStop}}">
 		<input type="hidden" name="FanOnGcode" value="{{FanOnGcode}}">
