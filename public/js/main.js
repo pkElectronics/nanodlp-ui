@@ -193,7 +193,6 @@ function profile_settings_open(t){
 
 
 function dashboard_init() {
-	console.log('hi')
 	$.get(`https://www.concepts3d.ca/pages/athenadashboard`, function (data) {
 		$(".nanodlp-content").html("<br>"+data);
 	});

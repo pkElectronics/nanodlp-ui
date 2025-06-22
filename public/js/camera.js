@@ -18,7 +18,7 @@ $(document).ready(function () {
             streamer = new Mjpegstreamer();
         }
         //url = "http://192.168.178.147/athena-camera/stream";
-        url = document.location.origin+"/athena-camera/stream";
+        const url = (DEV_MODE ? BASE_URL : document.location.origin) + "/athena-camera/stream";
         streamer.url = url;
 
         buildCameraStream(url);
