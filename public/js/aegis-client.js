@@ -15,3 +15,8 @@ const doesFilterNeedReplacement = async () => {
     if (DEV_MODE) return { 'filter_needs_replacement': false}
     return request('filter_needs_replacement');
 };
+
+const isAutomaticFilteringActive = async () => {
+    if (DEV_MODE) return { 'automatic': false, 'state': "DISABLED"};
+    return request('filtration_mode');
+};

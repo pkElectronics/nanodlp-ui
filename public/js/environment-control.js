@@ -153,6 +153,7 @@ async function mixResin() {
 
     await fetch('/athena-iot/control/preheat_and_mix_standalone', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({temperature})
     });
 }
@@ -184,6 +185,15 @@ async function getAegisValues() {
 }
 
 async function setAegisStatus(inletValue) {
+
+    const automaticMode = await isAutomaticFilteringActive();
+    if (automaticMode) {
+        if (automaticMode['automatic']) {
+            document.getElementById('aegis-status').innerText = 'Filtration Cycle Running';
+            return;
+        }
+    }
+
     const isVocCritical = inletValue <= VOC_CRITICAL_THRESHOLD;
 
     if (isVocCritical) {
@@ -208,9 +218,9 @@ function setAegisIndicator(value, elemId) {
 
     element.classList.remove('label-success', 'label-warning', 'label-danger');
 
-    if (value > VOC_CRITICAL_THRESHOLD) {
+    if (value <= VOC_CRITICAL_THRESHOLD) {
         element.classList.add('label-danger');
-    } else if (value > VOC_WARNING_THRESHOLD) {
+    } else if (value <= VOC_WARNING_THRESHOLD) {
         element.classList.add('label-warning');
     } else {
         element.classList.add('label-success');
@@ -218,18 +228,31 @@ function setAegisIndicator(value, elemId) {
 }
 
 async function aegisSetup() {
-    const checkbox = document.getElementById('aegis-toggle');
-    await setupAegisPolling();
 
-    const { fanRpm } = await getAegisValues();
+    const container = document.getElementById('aegis-dashboard-container');
 
-    checkbox.checked = fanRpm > 0;
+    fetch("/athena-iot/aegis/available").then(async (response) => {
 
-    checkbox.addEventListener('change', async () => {
-        const endpoint = '/athena-iot/aegis/' + (checkbox.checked ? 'activate' : 'deactivate');
+        const result = await response.json();
 
-        await fetch(endpoint, {
-            method: 'POST',
-        });
+        if(result.available) {
+            container.style.display = 'block';
+
+            const checkbox = document.getElementById('aegis-toggle');
+            await setupAegisPolling();
+
+            const {fanRpm} = await getAegisValues();
+
+            checkbox.checked = fanRpm > 0;
+
+            checkbox.addEventListener('change', async () => {
+                const endpoint = '/athena-iot/aegis/' + (checkbox.checked ? 'activate' : 'deactivate');
+
+                await fetch(endpoint, {
+                    method: 'POST',
+                });
+            });
+        }
+
     });
 }

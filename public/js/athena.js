@@ -621,7 +621,7 @@ function aegis_checkbox_init() {
 	element = $("#aegis-available-toggle")[0];
 	container = $("#aegis-control-div");
 
-	if (printer_type.startsWith("Athena2") || printer_type.startsWith("AthenaPro")) {
+	if (element && (printer_type.startsWith("Athena2") || printer_type.startsWith("AthenaPro"))) {
 
 		element.addEventListener('change', e => {
 
@@ -637,12 +637,8 @@ function aegis_checkbox_init() {
 
 		fetch("/athena-iot/aegis/available").then(
 			async value => {
-				data = await value.json();
-				if (data.available) {
-					element.checked = true;
-				} else {
-					element.checked = true;
-				}
+				let data = await value.json();
+				element.checked = !!data.available;
 			}
 
 		)
@@ -959,7 +955,7 @@ function display_notification_athena(){
 						+'</br>'
 						+'</div>' //end modal body
 						+'<div class="div-modal-buttons">';
-					if(v["Type"] !== "aegis-info" || v["Type"] !== "aegis-error") {
+					if(v["Type"] === "aegis-info" || v["Type"] === "aegis-error" || v["Type"] === "klipper-error") {
 						msg += '<button type="button" id="btn-modal-approve" class="btn btn-info btn-mod-center"> Close</button>';
 					}else if(v["Type"] !== "error") {
 						msg += '<button type="button" id="btn-modal-continue" class="btn btn-info btn-mod-l"> Continue Anyways</button>';

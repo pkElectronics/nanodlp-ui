@@ -4,7 +4,7 @@
     <div class="panel-heading">
         Machine Status
     </div>
-    <div class="panel-body">
+    <div class="panel-body layer_details" data-ratio="{{displayRatio}}">
         <div class="col-md-12 no-padding" style="min-height: 250px">
             <div class="row">
                 <div id="print-preview" class="col-md-12">
@@ -45,7 +45,7 @@
                         </div>
                         <div>
                             <span class="val">Required Volume:</span>
-                            <span class="append">{{ job.TotalSolidArea }}</span>
+                            <span class="append">{{ job.TotalSolidArea|floatformat:0 }}</span>
                             <span class="append">ml</span>
                         </div>
                         <br>
