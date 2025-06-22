@@ -54,7 +54,8 @@ async function buildCameraStream(url = null) {
         img.style.maxHeight = livestreamContainer.style.height;
         img.style.transform = style.transform;
         img.style.maxWidth = style.maxWidth;
-        img.style.width = '177%';
+        img.style.width = 'auto';
+        img.style.height = '56%';
 
 
         streamer.image = img;
