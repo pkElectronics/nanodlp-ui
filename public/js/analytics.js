@@ -5,7 +5,7 @@ let uplots = [];
 // Used primarily for pausing the chart auto-update on zoom
 let isZoomed = false;
 
-const LOCAL_STORAGE_KEY = "legends:v2";
+const LOCAL_STORAGE_KEY = "legends:v3";
 
 const ANALYTICS_UPDATE_INTERVAL = 1000;
 
@@ -130,7 +130,7 @@ function applyLegend(opts, uplotId) {
     const storedString = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!storedString) return opts;
     const series = JSON.parse(storedString);
-    series[uplotId.replaceAll("#", "")].forEach((element,index) => {
+    series[uplotId].forEach((element,index) => {
         if (element.show === false && opts.series[index] !== undefined) opts.series[index].show = false;
     });
     return opts
