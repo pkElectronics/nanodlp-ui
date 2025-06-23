@@ -21,7 +21,6 @@ function onIotControlToggle(post=true){
 
 
 async function fetchIotConnectionData() {
-    //const response = await fetch('/athena-iot/printer_name', {});
     const response = await fetch('/athena-iot/printer_name', {});
     const data = await response.json();
 

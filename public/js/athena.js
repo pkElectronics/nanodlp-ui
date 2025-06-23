@@ -217,10 +217,8 @@ $("#BtnToggleHeater").click(async function(){
 
 		}
 	})
-
-	$("#BtnToggleHeater").html()
-
 });
+
 
 async function updateMachineCustomValues(callback) {
 	const response = await fetch('/json/db/machine.json');
@@ -437,6 +435,7 @@ function update_printertype() {
 			printer_type = result;
 			$("#printer_type").html("Printer Type: " + result);
 			update_changelog();
+			aegis_checkbox_init();
 		}
 	});
 }
@@ -617,6 +616,38 @@ $(document).ready(function() {
 
 });
 
+
+function aegis_checkbox_init() {
+	element = $("#aegis-available-toggle")[0];
+	container = $("#aegis-control-div");
+
+	if (element && (printer_type.startsWith("Athena2") || printer_type.startsWith("AthenaPro"))) {
+
+		element.addEventListener('change', e => {
+
+			if (e.target.checked) {
+				fetch("/athena-iot/aegis/enable",{
+					method: "POST"});
+			} else {
+				fetch("/athena-iot/aegis/disable",{
+					method: "POST"});
+			}
+
+		});
+
+		fetch("/athena-iot/aegis/available").then(
+			async value => {
+				let data = await value.json();
+				element.checked = !!data.available;
+			}
+
+		)
+		container.show();
+	}else{
+		container.hide();
+	}
+}
+
 $.ajax({
 	url: "/json/db/machine.json",
 	success: function( result ) {
@@ -633,10 +664,10 @@ $.ajax({
 });
 
 
-var upload_xhr;
-var last_progress_ts;
-var last_progress_loaded;
-var upload_started_ts;
+let last_progress_ts;
+let last_progress_loaded;
+let upload_started_ts;
+let upload_xhr = null;
 
 function bytesToStringRep(bytes){
 	let loaded_unit = "b";
@@ -736,6 +767,7 @@ function processingHandler() {
 function completeHandler(){
 	setTimeout(() => {
 		removeUploadProgressModal();
+		upload_xhr = null;
 		window.location.replace("/plates");
 	}, 1000);
 }
@@ -755,7 +787,7 @@ function abortHandler(){
 	removeUploadProgressModal();
 }
 
-function abortUpload(){
+function abortUpload(upload_xhr){
 	upload_xhr.abort();
 }
 
@@ -797,18 +829,15 @@ function showUploadProgressModal(){
 
 	upload_started_ts = Date.now();
 
-	$("#btn-uploadmodal-cancel").click(function (){
-		abortUpload();
-	})
 }
 
 $('.upload-disable').submit(function(e) {
 	let currentUrl = window.location.href
 
-	if( currentUrl.includes("plate/add")){
+	if( upload_xhr == null && currentUrl.includes("plate/add")){
 		e.preventDefault();
 
-		var formData = new FormData( document.getElementById("plate-upload-form") );
+		const formData = new FormData(document.getElementById("plate-upload-form"));
 
 		upload_xhr = new XMLHttpRequest();
 		upload_xhr.open("POST", "/plate/add");
@@ -819,9 +848,16 @@ $('.upload-disable').submit(function(e) {
 		upload_xhr.addEventListener("error", errorHandler, false);
 		upload_xhr.addEventListener("abort", abortHandler, false);
 		showUploadProgressModal();
+
+		$("#btn-uploadmodal-cancel").click(function (){
+			abortUpload(upload_xhr);
+		})
+
 		upload_xhr.send(formData);
 
-	}else{
+	}else if(upload_xhr != null){
+		console.error("Upload Submit triggered multiple times");
+	}else {
 		var form = $(this);
 		var submitButton = form.find('button[type="submit"]');
 		submitButton.prop('disabled', true);
@@ -841,7 +877,7 @@ $(function() {
 
 function fetch_resin_target(){
 	$.ajax({
-		url:'/analytic/value/12',
+		url:`${BASE_URL}/analytic/value/12`,
 		type: 'GET',
 		timeout: 2000
 	}).done(function(data) {
@@ -919,7 +955,9 @@ function display_notification_athena(){
 						+'</br>'
 						+'</div>' //end modal body
 						+'<div class="div-modal-buttons">';
-					if(v["Type"] !== "error") {
+					if(v["Type"] === "aegis-info" || v["Type"] === "aegis-error" || v["Type"] === "klipper-error") {
+						msg += '<button type="button" id="btn-modal-approve" class="btn btn-info btn-mod-center"> Close</button>';
+					}else if(v["Type"] !== "error") {
 						msg += '<button type="button" id="btn-modal-continue" class="btn btn-info btn-mod-l"> Continue Anyways</button>';
 						msg += '<button type="button" id="btn-modal-cancel" class="btn btn-danger btn-mod-r"> Cancel Print</button>'
 					}else{
@@ -945,7 +983,6 @@ function display_notification_athena(){
 			$(".navbar").after(msg);
 
 
-
 			$('#btn-modal-continue').click(function(){
 				try {
 					const response = fetch('/notification/disable/'+display_notification_athena.prev_data["Timestamp"], {
@@ -967,6 +1004,18 @@ function display_notification_athena(){
 						method: 'get'
 					});
 					const response2 = fetch('/api/v1/printer/printer/stop', {
+						method: 'get'
+					});
+					console.log('Completed!', response);
+				} catch(err) {
+					console.error('Error: ${err}');
+				}
+				$('#notificationModal').modal('hide');
+			});
+
+			$('#btn-modal-approve').click(function(){
+				try {
+					const response = fetch('/notification/disable/'+display_notification_athena.prev_data["Timestamp"], {
 						method: 'get'
 					});
 					console.log('Completed!', response);
@@ -1020,25 +1069,6 @@ async function runGcode(gcode) {
 	});
 }
 
-
-// NVME Disk Space on Athena 2
-
-var testdata= "\n" +
-	"{\n" +
-	"  \"mmcblk0p2\": {\n" +
-	"    \"Size\": \"31G\",\n" +
-	"    \"Used\": \"8.0G\",\n" +
-	"    \"Avail\": \"21G\",\n" +
-	"    \"Use%\": \"28%\"\n" +
-	"  },\n" +
-	"  \"nvme0n1p1\": {\n" +
-	"    \"Size\": \"251G\",\n" +
-	"    \"Used\": \"1.6G\",\n" +
-	"    \"Avail\": \"237G\",\n" +
-	"    \"Use%\": \"1%\"\n" +
-	"  }\n" +
-	"}\n"
-
 function setup_diskspace(json){
 	if(json.hasOwnProperty("nvme0n1p1")){
 		console.log("Printer has SSD installed");
@@ -1051,7 +1081,13 @@ function setup_diskspace(json){
 		let ssd_storage_value = $("#ssd-freespace-value");
 
 		emmc_storage_text.html("Free Disk Space (System)");
-		emmc_storage_value.html(json.mmcblk0p2.Used + " of "+json.mmcblk0p2.Size);
+
+		if("root" in json){
+			emmc_storage_value.html(json.root.Used + " of "+json.root.Size);
+		}else{
+			emmc_storage_value.html(json.mmcblk0p2.Used + " of "+json.mmcblk0p2.Size);
+		}
+
 
 		ssd_storage_container.removeClass("hidden");
 		ssd_storage_text.html("Free Disk Space (Jobs)");
@@ -1062,9 +1098,25 @@ function setup_diskspace(json){
 	}
 }
 
+async function updateIdWithAnalytic(elemId, analyticId) {
+	const elementById = document.getElementById(elemId);
+	const analyticValue = await getAnalytic(analyticId);
+
+	if (elementById) {
+		elementById.innerHTML = analyticValue;
+	}
+	return analyticValue;
+}
+
+async function getAnalytic(analyticId) {
+	if (DEV_MODE) return Math.floor(Math.random() * 100)
+
+	const response = await fetch(`/analytic/value/${analyticId}`, {});
+	return await response.text();
+}
 
 $(document).ready(function () {
-	let result = fetch("/athena-iot/status/disk_storage",{ method: "GET" })
+	let result = fetch(`${BASE_URL}/athena-iot/status/disk_storage`,{ method: "GET" })
 	result.then(async value => {
 		if (value.ok) {
 			let diskspace_data = await value.json();

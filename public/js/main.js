@@ -193,7 +193,6 @@ function profile_settings_open(t){
 
 
 function dashboard_init() {
-	console.log('hi')
 	$.get(`https://www.concepts3d.ca/pages/athenadashboard`, function (data) {
 		$(".nanodlp-content").html("<br>"+data);
 	});
@@ -586,6 +585,7 @@ function update_status(){
 			last_value('plate_height',data['PlateHeight']);
 			last_value('plate',data['PlateID']);
 			last_value('layer_time',data['LayerTime']/1000000000);
+			last_value('ResinLevelMm',data['ResinLevelMm']);
 			$(".idle-obj").slideUp();
 			image_display(data['PlateID'],data['LayerID'],data['Covered']);
 			if (data['Paused']) {
@@ -774,7 +774,7 @@ function update_timeline() {
 		let plate_height = last_value('plate_height');
 		let current_height = plate_height / last_value('layers_count') * current_layer_id;
 		last_value('last_location', current_layer_id + " of " + last_value('layers_count'));
-		last_value('last_height', Math.round(current_height * 10) / 10 + " of " + plate_height + "mm");
+		last_value('last_height', Math.round(current_height * 100) / 100 + " of " + plate_height + "mm");
 		let remaining_time = Math.round((last_value('layers_count') - current_layer_id) * last_value('layer_time') / 60);
 		let total_time = Math.round(last_value('layers_count') * last_value('layer_time') / 60);
 		let est = new Date();
@@ -828,27 +828,30 @@ function title_update(title){
 }
 
 var last_frame_key='';
-function image_display(path,layer_id,blackout){
+
+function image_display(path, layer_id, blackout) {
 	if (last_frame_key != layer_id) {
 		last_frame_key = layer_id;
-		var frame_src= BASE_URL + '/static/plates/' + path + '/' + layer_id + '.png?' + Math.floor(Date.now() / 1000);
-		var preview_src= BASE_URL + '/plate/preview/'+path+'/'+layer_id;
-		if ($("#image_wrapper div").html()=='') {
-			var d = ' style="aspect-ratio: calc(('+$(".layer_details").data("ratio")+'));" ';
-			$("#image_wrapper div").html('<img src="'+frame_src+'" class="two"'+d+'loading=lazy>');			;
-			$.get(BASE_URL + '/static/plates/' + path + '/3d.png',function(){
-				$("#image_wrapper div").html($("#image_wrapper div").html()+'<img src="'+preview_src+'" class="three" loading=lazy>');
-			}).fail(function() {
+		var frame_src = `${BASE_URL}/static/plates/${path}/${layer_id}.png?${Math.floor(Date.now() / 1000)}`;
+		var preview_src = `${BASE_URL}/plate/preview/${path}/${layer_id}`;
+		if ($("#image_wrapper div").html() == '') {
+			const $layerDetails = $(".layer_details");
+			const aspectRatioStyle = 'style="aspect-ratio: calc((' + $layerDetails.data("ratio") + '));" ';
+			$("#image_wrapper div").html(`<img src="${frame_src}" class="two" ${aspectRatioStyle} loading=lazy>`);
+
+			$.get(BASE_URL + '/static/plates/' + path + '/3d.png', function () {
+				$("#image_wrapper div").html($("#image_wrapper div").html() + '<img src="' + preview_src + '" class="three" loading=lazy>');
+			}).fail(function () {
 				$("#image_wrapper #change-preview").remove();
 				$("#image_wrapper").addClass("toggle");
 			});
-			return;			
+			return;
 		}
 		if ($("#image_wrapper").hasClass("toggle")) {
-			$(".two").attr("src",frame_src);
+			$(".two").attr("src", frame_src);
 		} else {
-			$(".three").attr("src",preview_src);
-		}		
+			$(".three").attr("src", preview_src);
+		}
 		//if (blackout) blackout = '<img src="/static/plates/' + path + '/' +layer_id+'.png_blackout.png?" id="blackout_overlay" class="two">';	else blackout = '';
 	}
 }

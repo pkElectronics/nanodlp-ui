@@ -1,0 +1,28 @@
+.aegis-header {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    padding: 16px;
+}
+
+.aegis-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    align-items: center;
+}
+
+.divider {
+    border-top: 1px solid #ccc;
+    margin: 1rem 0;
+}
+
+.circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+}

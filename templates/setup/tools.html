@@ -141,7 +141,18 @@
                 <input class="form-control" name="country" id="WiFiCountryTools" pattern="[A-Za-z]{2}|^$" style="width:50%">
                 <button type="submit" class="btn btn-default" translate>Set WiFi Country</button>
             </form>
-
+        </div>
+        <div class="col-md-4" id="aegis-control-div" style="display: none;">
+            <h4 translate>AEGIS</h4>
+            <label for="aegis-available-toggle">
+                Enable AEGIS System
+                <a class="help" data-toggle="tooltip" data-placement="bottom"
+                   title="Flip this switch only if the Aegis System is installed">i</a>
+            </label>
+            <label class="switch">
+                <input type="checkbox" id="aegis-available-toggle" name="aegisAvailableToggle">
+                <span class="switch-slider round"></span>
+            </label>
         </div>
     </div>
 </div>

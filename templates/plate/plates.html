@@ -1,16 +1,22 @@
 {% extends "../base.html" %}
 {% block content %}
+{% if restore %}
+<div class="row">
+	<div class="col-md-12">
+		<div class="alert alert-warning"><span
+			class="glyphicon glyphicon-exclamation-sign"></span><translate> Deleted jobs will be removed within 30 days</translate></div>
+	</div>
+</div>
+{% endif %}
 <div class="row">
 	<div class="col-md-6">
-		<h2><span translate>Jobs</span>
-			<a class="btn btn-default tip" href="/plate/add" role="button"><span
-					class="glyphicon glyphicon-plus"></span><translate class="hide">Add a new job</translate></a>
-			<a class="btn btn-default tip svg" target="_blank"
-				href="/static/editor/?ApplicationMode=embedded"
-				role="button">{{ icon(threed_icon) }}
-				<translate class="hide">Add a new job using 3D editor</translate>
-			</a>
-			<a class="btn btn-default tip" href="/custom/calibration" role="button"><img src="/static/general/calibration-icon.svg" alt="Icon" width="16" height="16"> Calibrate Exposure<translate class="hide">Calibrate resin with multicure exposure</translate></a>
+		<h2>
+		{% if !restore %}<span translate>Jobs</span> <a class="btn btn-default tip" href="/plate/add" role="button"><span
+			class="glyphicon glyphicon-plus"></span><translate class="hide">Add a new job</translate></a>
+			<a class="btn btn-default tip svg" target="_blank" href="/static/editor/?ApplicationMode=embedded" role="button">{{ icon(threed_icon) }}
+			<translate class="hide">Add a new job using 3D editor</translate></a>
+		{% else %}<span translate>Deleted Jobs</span>{% endif %}
+		<a class="btn btn-default tip" href="/custom/calibration" role="button"><img src="/static/general/calibration-icon.svg" alt="Icon" width="16" height="16"> Calibrate Exposure<translate class="hide">Calibrate resin with multicure exposure</translate></a>
 		</h2>
 	</div>
 	<div class="col-md-3">
@@ -34,8 +40,9 @@
 		{% endif %}
 	</div>
 </div>
-<div id="plates-list">{% include "list.html" %}</div>
-
+<div id="plates-list">
+	{% include "list.html" %}
+	{% if !restore %}
 	<tr>
 		<td></td>
 		<td translate>Job Generator</td>
@@ -47,9 +54,34 @@
 		</td>
 	</tr>
 
-
-</table>
-<a class="btn btn-danger ask" href="/plates/delete" data-ask="deleteall-confirm">Delete All Jobs</a>
+	<tr>
+		<td></td>
+		<td><span translate>Calibration Job</span>{{helpPage("https://docs.nano3dtech.com/manual/calibration-job/")}}</td>
+		<td colspan="3"><span translate>Rect:</span> {{generator.BlockWidth}}*{{generator.BlockHeight}}*{{generator.Depth}}
+			<br>
+			<span translate>Pillars:</span> {{generator.PillarSize}}*{{generator.Depth}}
+		</td>
+		<td colspan="1">
+			{% if 0 != status.PlateID or status.Printing == false %}
+			<a class="btn btn-success ask" href="/printer/start/0" data-ask="calibrate-confirm"><span
+					class="glyphicon glyphicon-play tip"></span><translate class="hide">Start the print</translate></a>
+			{% else %}
+			<div class="input-append">
+				<a class="btn btn-danger ask" href="/printer/stop" title="stop" data-ask="stop-confirm"><span
+						class="glyphicon glyphicon-stop"></span></a>
+			</div>
+			{% endif %}
+			<a class="btn btn-default tip" href="/plate/generator" title="Generate Calibration Job"><span class="glyphicon glyphicon-refresh"></span><translate class="hide">Regenerate calibration job</translate></a>
+			<a class="btn btn-default tip" href="/plate/preview/0"><span class="glyphicon glyphicon-eye-open"></span><translate class="hide">Preview</translate></a>
+		</td>
+	</tr>
+	{% endif %}
+	</table>
+</div>
+{% if !restore %}
+<a class="btn btn-default ask" href="/plates/delete" data-ask="deleteall-confirm">Delete All Jobs</a>
+<a class="btn btn-default" href="/plates/restore" >Restore Deleted Jobs</a>
+{% endif %}
 <br>
 <br>
 <div><span class="glyphicon glyphicon-resize-small"></span>
