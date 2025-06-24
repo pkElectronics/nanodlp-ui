@@ -17,7 +17,7 @@ $(document).ready(function () {
         if (streamer == null) {
             streamer = new Mjpegstreamer();
         }
-        const url = (DEV_MODE ? BASE_URL : "") + `/athena-camera/stream`;
+        const url = (DEV_MODE ? BASE_URL : document.location.origin) + `/athena-camera/stream`;
 
         streamer.url = url;
 
