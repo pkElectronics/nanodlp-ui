@@ -84,7 +84,10 @@
     }
 </script>
 
-{% include "components/print-progress.html" %}
+<div id="machine-status" class="row row-marginless">
+    {% include "components/print-progress.html" %}
+</div>
+
 <div id="uplot-1" class="uplot uplot-container"></div>
 <div id="uplot-2" class="uplot uplot-container"></div>
 <div class="row">
