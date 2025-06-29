@@ -626,16 +626,16 @@ function aegis_checkbox_init() {
 		element.addEventListener('change', e => {
 
 			if (e.target.checked) {
-				fetch("/athena-iot/aegis/enable",{
+				fetch(BASE_URL + "/athena-iot/aegis/enable",{
 					method: "POST"});
 			} else {
-				fetch("/athena-iot/aegis/disable",{
+				fetch(BASE_URL + "/athena-iot/aegis/disable",{
 					method: "POST"});
 			}
 
 		});
 
-		fetch("/athena-iot/aegis/available").then(
+		fetch(BASE_URL + "/athena-iot/aegis/available").then(
 			async value => {
 				let data = await value.json();
 				element.checked = !!data.available;

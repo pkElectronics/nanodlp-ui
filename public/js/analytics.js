@@ -130,7 +130,10 @@ function applyLegend(opts, uplotId) {
     const storedString = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!storedString) return opts;
     const series = JSON.parse(storedString);
-    series[uplotId].forEach((element,index) => {
+    const savedValuesForUplotId = series[uplotId];
+    if (!savedValuesForUplotId) return opts;
+
+    savedValuesForUplotId.forEach((element, index) => {
         if (element.show === false && opts.series[index] !== undefined) opts.series[index].show = false;
     });
     return opts

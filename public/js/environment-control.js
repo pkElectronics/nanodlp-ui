@@ -262,7 +262,7 @@ async function aegisSetup() {
 
     const container = document.getElementById('aegis-dashboard-container');
 
-    fetch("/athena-iot/aegis/available").then(async (response) => {
+    fetch(BASE_URL + "/athena-iot/aegis/available").then(async (response) => {
 
         const result = await response.json();
 
