@@ -1087,13 +1087,12 @@ function setup_diskspace(json){
 		if("root" in json){
 			emmc_storage_value.html(json.root.Used + " of "+json.root.Size);
 		}else{
-			emmc_storage_value.html(json.mmcblk0p2.Used + " of "+json.mmcblk0p2.Size);
+			emmc_storage_value.html(json.mmcblk0p2.Avail + " of "+json.mmcblk0p2.Size);
 		}
-
-
+		
 		ssd_storage_container.removeClass("hidden");
 		ssd_storage_text.html("Free Disk Space (Jobs)");
-		ssd_storage_value.html(json.nvme0n1p1.Used + " of "+json.nvme0n1p1.Size);
+		ssd_storage_value.html(json.nvme0n1p1.Avail + " of "+json.nvme0n1p1.Size);
 
 	}else{
 		console.log("No SSD Installed, skipping");
