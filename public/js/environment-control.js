@@ -221,7 +221,11 @@ async function setAegisStatus(inletValue) {
     const aegisStatusElem = document.getElementById('aegis-status');
     if (automaticMode) {
         if (automaticMode['automatic']) {
-            aegisStatusElem.innerText = 'Filtration Cycle Running';
+            if(automaticMode['state'] === "printing"){
+                aegisStatusElem.innerText = 'Negative Pressure Mode Active';
+            }else {
+                aegisStatusElem.innerText = 'Filtration Cycle Running';
+            }
             aegisStatusElem.style.borderColor = '#fff';
             return;
         }
