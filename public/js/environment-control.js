@@ -184,7 +184,7 @@ async function mixResin() {
 
     await fetch('/athena-iot/control/preheat_and_mix_standalone', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({temperature})
     });
 }
@@ -218,9 +218,11 @@ async function getAegisValues() {
 async function setAegisStatus(inletValue) {
 
     const automaticMode = await isAutomaticFilteringActive();
+    const aegisStatusElem = document.getElementById('aegis-status');
     if (automaticMode) {
         if (automaticMode['automatic']) {
-            document.getElementById('aegis-status').innerText = 'Filtration Cycle Running';
+            aegisStatusElem.innerText = 'Filtration Cycle Running';
+            aegisStatusElem.style.borderColor = '#fff';
             return;
         }
     }
@@ -228,19 +230,30 @@ async function setAegisStatus(inletValue) {
     const isVocCritical = inletValue <= VOC_CRITICAL_THRESHOLD;
 
     if (isVocCritical) {
-        document.getElementById('aegis-status').innerText = 'VOC Level Critical';
+        aegisStatusElem.innerText = 'VOC Level Critical';
+        aegisStatusElem.style.borderColor = '#d9534f';
+        return;
+    }
+
+    const isVocWarning = inletValue <= VOC_WARNING_THRESHOLD;
+
+    if (isVocWarning) {
+        aegisStatusElem.innerText = 'VOC Level Warning';
+        aegisStatusElem.style.borderColor = '#f0ad4e';
         return;
     }
 
     const replaceFilter = await doesFilterNeedReplacement();
     if (replaceFilter) {
         if (replaceFilter['filter_needs_replacement']) {
-            document.getElementById('aegis-status').innerText = 'Filter needs replacement';
+            aegisStatusElem.innerText = 'Filter needs replacement';
+            aegisStatusElem.style.borderColor = '#d9534f';
             return;
         }
     }
 
-    document.getElementById('aegis-status').innerText = 'VOC Level Ok';
+    aegisStatusElem.innerText = 'VOC Level Ok';
+    aegisStatusElem.style.borderColor = '#fff';
 }
 
 function setAegisIndicator(value, elemId) {
@@ -259,31 +272,31 @@ function setAegisIndicator(value, elemId) {
 }
 
 async function aegisSetup() {
-
     const container = document.getElementById('aegis-dashboard-container');
 
-    fetch(BASE_URL + "/athena-iot/aegis/available").then(async (response) => {
+    if (await isAegisAvailable()) {
+        container.style.display = 'block';
 
-        const result = await response.json();
+        const checkbox = document.getElementById('aegis-toggle');
+        await setupAegisPolling();
 
-        if(result.available) {
-            container.style.display = 'block';
+        const {fanRpm} = await getAegisValues();
 
-            const checkbox = document.getElementById('aegis-toggle');
-            await setupAegisPolling();
+        checkbox.checked = fanRpm > 0;
 
-            const {fanRpm} = await getAegisValues();
+        checkbox.addEventListener('change', async () => {
+            const endpoint = '/athena-iot/aegis/' + (checkbox.checked ? 'activate' : 'deactivate');
 
-            checkbox.checked = fanRpm > 0;
-
-            checkbox.addEventListener('change', async () => {
-                const endpoint = '/athena-iot/aegis/' + (checkbox.checked ? 'activate' : 'deactivate');
-
-                await fetch(endpoint, {
-                    method: 'POST',
-                });
+            await fetch(endpoint, {
+                method: 'POST',
             });
-        }
+        });
+    }
+}
 
-    });
+async function isAegisAvailable() {
+    if (DEV_MODE) return true;
+    const aegisAvailable = await fetch(`${BASE_URL}/athena-iot/aegis/available`);
+    const result = await aegisAvailable.json();
+    return result.available
 }
