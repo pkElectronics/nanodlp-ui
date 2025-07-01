@@ -76,6 +76,14 @@
                 </div>
             </div>
 
+            <div class="button-group pull-left">
+                {% if autoShutdown %}
+                <a class="btn btn-default" href="/printer/auto-shutdown/disable">Disable Shutdown After Print</a>
+                {% else %}
+                <a class="btn btn-default" href="/printer/auto-shutdown/enable">Shutdown After Print</a>
+                {% endif %}&nbsp;
+            </div>
+
             <div class="button-group pull-right">
                 <a class="ask btn btn-success print-btn pause-obj" href="/printer/unpause"><span class="glyphicon glyphicon-play"></span> Resume</a>
                 <a class="ask btn btn-warning print-btn printing-obj" href="/printer/pause"><span class="glyphicon glyphicon-pause"></span> Pause</a>
