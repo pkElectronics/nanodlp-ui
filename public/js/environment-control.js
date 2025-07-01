@@ -1,7 +1,9 @@
 async function onPageLoad() {
     await fetchInitialTemperature();
     await fetchHeatersEnabled();
-    await fetchHeatersActive();
+    let ptype = await fetchPrinterType();
+    await fetchHeatersActive(ptype);
+    await setupHeaterPolling(ptype);
 
     document.getElementById('heater-form').addEventListener('input', (e) => {
         const formData = new FormData(e.target.form);
@@ -67,6 +69,17 @@ async function runGcode(gcode) {
     });
 }
 
+async function fetchPrinterType(){
+    const response = await fetch("/static/printer_type", {})
+
+    //this could be solved with a substring currently but will need further changes in the future
+    if((await response.text()).startsWith("Athena2")){
+        return "Athena2";
+    }
+    return "Athena1";
+
+}
+
 async function fetchInitialTemperature() {
     const response = await fetch('/analytic/value/12', {});
     const currentHeaterTarget = await response.text();
@@ -118,13 +131,25 @@ async function fetchHeatersEnabled() {
     }
 }
 
-async function fetchHeatersActive() {
-    const chamberHeaterActive = await fetchHeaterActive(12);
+async function fetchHeatersActive(ptype) {
+
+    let chamberHeaterId;
+    let vatHeaterId;
+    if (ptype === "Athena2") {
+        chamberHeaterId = 23;
+        vatHeaterId = 12;
+    } else {
+        chamberHeaterId = 12;
+        vatHeaterId = 19;
+    }
+
+
+    const chamberHeaterActive = await fetchHeaterActive(chamberHeaterId);
     if (chamberHeaterActive) {
         document.getElementById('chamber-heater-toggle').checked = true;
     }
 
-    const vatHeaterActive = await fetchHeaterActive(19);
+    const vatHeaterActive = await fetchHeaterActive(vatHeaterId);
     if (vatHeaterActive) {
         document.getElementById('vat-heater-toggle').checked = true;
     }
@@ -144,6 +169,12 @@ async function fetchHeaterActive(analyticsId) {
     }
 
     return false;
+}
+
+async function setupHeaterPolling(ptype) {
+    setInterval(async () => {
+        await fetchHeatersActive(ptype);
+    }, 1000)
 }
 
 async function mixResin() {

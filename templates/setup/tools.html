@@ -16,9 +16,9 @@
         <div class="col-md-4">
             <div class="list-group">
                 <a href="#" class="list-group-item list-group-item-action disabled active" translate>Import</a>
-                <a href="/import" class="list-group-item list-group-item-action">Machine Settings</a>
+                <a href="/import" class="list-group-item list-group-item-action hidden" >Machine Settings</a>
                 <a href="/printer/restore" class="list-group-item list-group-item-action">Restore Backup</a>
-                <a data-ajax="/" href="/printer/restore-default" data-confirm="restore-confirm" class="list-group-item list-group-item-action ajax">Restore Default</a>
+                <a data-ajax="/" href="/printer/restore-default" data-confirm="restore-confirm" class="list-group-item list-group-item-action ajax hidden">Restore Default</a>
             </div>
         </div>
         <div class="col-md-4">
@@ -32,7 +32,7 @@
         <div class="col-md-4">
             <div class="list-group">
                 <a href="#" class="list-group-item list-group-item-action disabled active" translate>Customize</a>
-                <a href="/printer/distro/change" class="list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" translate>Change Distribution</a>
+                <a href="/printer/distro/change" class="list-group-item list-group-item-action hidden" translate>Change Distribution</a>
                 <a href="/setup/custom-buttons" class="list-group-item list-group-item-action" translate>Buttons</a>
                 <a href="/setup/custom-inputs" class="list-group-item list-group-item-action" translate>Inputs</a>
                 <a href="/setup/custom-sound" class="list-group-item list-group-item-action" translate>Sound</a>
@@ -89,7 +89,7 @@
                 <a href="/printer/hmi/stop" data-ajax="/" class="list-group-item list-group-item-action ajax" translate>Stop</a>
                 <a href="/printer/hmi/start" data-ajax="/" class="list-group-item list-group-item-action ajax" translate>Start</a>
                 <a href="/printer/hmi/restart" data-ajax="/" class="list-group-item list-group-item-action ajax" translate>Restart</a>
-                <a href="/printer/upgrade/dsi/nanodlp-dsi.beta.tar.gz" class="list-group-item list-group-item-action" translate>Upgrade</a>
+                <a href="/printer/upgrade/dsi/nanodlp-dsi.beta.tar.gz" class="list-group-item list-group-item-action hidden" translate>Upgrade</a>
             </div>
         </div>
     </div>
