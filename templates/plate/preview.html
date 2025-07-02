@@ -109,7 +109,9 @@
         <div class="col-md-4">
             <div id="preview">
                 <img src="/static/plates/{{plate.PlateID}}/{{layerID}}.png"
-                    data-path="/static/plates/{{plate.PlateID}}/" style="aspect-ratio: calc(({{ width }} / {{ height }}));">
+                     data-path="/static/plates/{{plate.PlateID}}/"
+                     style="aspect-ratio: {{ width | float / height | float }}"
+                />
             </div>
         </div>
         <div class="col-md-4">
