@@ -76,6 +76,14 @@
                 </div>
             </div>
 
+            <div class="button-group pull-left">
+                {% if autoShutdown %}
+                <a class="btn btn-default" href="/printer/auto-shutdown/disable">Disable Shutdown After Print</a>
+                {% else %}
+                <a class="ask btn btn-default" href="/printer/auto-shutdown/enable" data-ask="shutdown-after-print-confirm" translate>Shutdown After Print</a>
+                {% endif %}&nbsp;
+            </div>
+
             <div class="button-group pull-right">
                 <a class="ask btn btn-success print-btn pause-obj" href="/printer/unpause"><span class="glyphicon glyphicon-play"></span> Resume</a>
                 <a class="ask btn btn-warning print-btn printing-obj" href="/printer/pause"><span class="glyphicon glyphicon-pause"></span> Pause</a>
@@ -85,6 +93,7 @@
 
             <translate class="hide" id="stop-confirm">Are you sure you want to stop printing? It will stop after the current layer is completed. If you want to abort the current layer, use Force Stop.</translate>
             <translate class="hide" id="force-stop-confirm">Are you sure you want to force stop printing? Warning, Force Stop will reset the printer. Printing progress will be lost.</translate>
+            <translate class="hide" id="shutdown-after-print-confirm">Shutdown after print may cause timelapses and filtration cycles not to be run after print. Please confirm?</translate>
         </div>
     </div>
 </div>
