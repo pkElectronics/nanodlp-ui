@@ -835,9 +835,13 @@ function image_display(path, layer_id, blackout) {
 		var frame_src = `${BASE_URL}/static/plates/${path}/${layer_id}.png?${Math.floor(Date.now() / 1000)}`;
 		var preview_src = `${BASE_URL}/plate/preview/${path}/${layer_id}`;
 		if ($("#image_wrapper div").html() == '') {
-			const $layerDetails = $(".layer_details");
-			const aspectRatioStyle = 'style="aspect-ratio: calc((' + $layerDetails.data("ratio") + '));" ';
-			$("#image_wrapper div").html(`<img src="${frame_src}" class="two" ${aspectRatioStyle} loading=lazy>`);
+			const layerDetailsElem = $(".layer_details");
+			const ratio = layerDetailsElem.data("ratio");
+			const layerDetailsWidth = 100 * ratio
+			const layerDetailsHeight = 100;
+			const aspectRatioStyle = `style="width: ${layerDetailsWidth}%; height: ${layerDetailsHeight}%;" `;
+			const imgElem = `<img src="${frame_src}" class="two" ${aspectRatioStyle} loading=lazy>`;
+			$("#image_wrapper div").html(imgElem);
 
 			$.get(BASE_URL + '/static/plates/' + path + '/3d.png', function () {
 				$("#image_wrapper div").html($("#image_wrapper div").html() + '<img src="' + preview_src + '" class="three" loading=lazy>');
