@@ -840,7 +840,6 @@ $('.upload-disable').submit(function(e) {
 		const formData = new FormData(document.getElementById("plate-upload-form"));
 
 		upload_xhr = new XMLHttpRequest();
-		upload_xhr.open("POST", "/athena-iot/printjob/upload");
 
 		//
 		upload_xhr.setRequestHeader("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
