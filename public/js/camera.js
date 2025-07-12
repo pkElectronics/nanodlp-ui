@@ -15,13 +15,19 @@ $(document).ready(function () {
     if(document.getElementById('livestream-container') != null) {
 
         if (streamer == null) {
-            streamer = new Mjpegstreamer();
+            let isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+            if (isSafari) {
+                streamer = new MjpegstreamerAdaptive();
+            }else {
+                streamer = new Mjpegstreamer();
+            }
         }
         const url = (DEV_MODE ? BASE_URL : document.location.origin) + `/athena-camera/stream`;
 
         streamer.url = url;
 
         buildCameraStream(url);
+        
     }
 })
 
@@ -56,13 +62,11 @@ async function buildCameraStream(url) {
         img.style.width = 'auto';
         img.style.height = '56%';
 
-
         streamer.image = img;
 
         livestreamContainer.style.display = 'flex';
 
         await streamer.startStream(true);
-
 
     } else {
         hideElemIfPresent('webcam-preview')
@@ -112,9 +116,6 @@ class Mjpegstreamer {
         this.image=image;
     }
 
-    get fpsOutput() {
-        return this.currentFPS.toString().padStart(2, '0')
-    }
 
     log(msg, obj) {
         if (obj) {
@@ -158,6 +159,9 @@ class Mjpegstreamer {
         return output
     }
 
+    onload(){
+
+    }
 
     getLength(headers) {
         let contentLength = -1
@@ -339,6 +343,116 @@ class Mjpegstreamer {
 
 }
 
+class MjpegstreamerAdaptive {
+
+    status = 'connecting'
+
+    timer= null
+    request_start_time = performance.now()
+    time = 0
+
+    currentFPS = null
+    fpsTimer = null
+    frames = 0
+    image = null;
+    aspectRatio = null
+    url = "";
+
+
+    set url(url) {
+        this.url=url;
+    }
+
+    set image(image) {
+        this.image=image;
+    }
+
+    generateTransform(flip_horizontal, flip_vertical, rotation) {
+        let transforms = ''
+        if (flip_horizontal) transforms += ' scaleX(-1)'
+        if (flip_vertical) transforms += ' scaleY(-1)'
+        if (rotation !== 0) transforms += ' rotate('+rotation+'deg)'
+
+        // return transform when exist
+        if (transforms.trimStart().length) return transforms.trimStart()
+
+        // return none as fallback
+        return 'none'
+    }
+
+    get webcamStyle() {
+        const output = {
+            transform: this.generateTransform(
+                false,
+                false,
+                90
+            ),
+            aspectRatio: 16 / 9,
+            maxHeight: window.innerHeight - 155 + 'px',
+            maxWidth: 'auto',
+        }
+
+        if (this.aspectRatio) {
+            output.aspectRatio = this.aspectRatio
+            output.maxWidth = (window.innerHeight - 155) * this.aspectRatio + 'px'
+        }
+
+        return output
+    }
+
+    refreshFrame() {
+
+        if (this.timer !== null) {
+            window.clearTimeout(this.timer)
+            this.timer = null
+        }
+
+        const url = new URL(this.url)
+        url.searchParams.append('bypassCache', new Date().getTime().toString())
+        this.image.src = url.toString()
+        this.request_start_time = performance.now()
+    }
+
+    onload(){
+        this.startStream();
+    }
+
+    startStream() {
+        if (this.status !== 'connected') {
+            this.status = 'connecting'
+        }
+
+        this.clearTimers()
+
+        this.fpsTimer = window.setInterval(() => {
+            this.currentFPS = this.frames
+            this.frames = 0
+        }, 1000)
+
+        this.refreshFrame()
+    }
+
+    stopStream() {
+        this.clearTimers()
+    }
+
+    clearTimers() {
+        if (this.timer) {
+            window.clearTimeout(this.timer)
+            this.timer = null
+        }
+
+        if (this.fpsTimer) {
+            window.clearTimeout(this.fpsTimer)
+            this.fpsTimer = null
+            this.frames = 0
+        }
+    }
+}
+
+
+
+
 const hideElemIfPresent = (id) => {
     const $elem = document.getElementById(id);
     if ($elem)
@@ -365,32 +479,6 @@ const setBootstrapElemSizeIfPresent = (id, size) => {
     }
 }
 
-/*
-<style scoped>
-    .webcamImage {
-    width: 100%;
-    background: lightgray;
-}
-
-    .webcamFpsOutput {
-    display: inline-block;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 3px 10px;
-    border-top-left-radius: 5px;
-}
-
-    html.theme--light .webcamFpsOutput {
-    background: rgba(255, 255, 255, 0.7);
-}
-
-    ._webcam_mjpegstreamer_output {
-    aspect-ratio: calc(3 / 2);
-}
-</style>
-*/
 
 
 $(document).ready(() => {
