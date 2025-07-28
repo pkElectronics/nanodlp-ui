@@ -54,7 +54,7 @@
         {% if os=="linux" %}
         <li>
             {% if network==1 %}
-                <a href="#"><span class="label wifi-navbar-disconnected"><translate>Wired</translate> &nbsp;<span class="glyphicon glyphicon-transfer wifi-navbar-connected"></span></span></a>
+                <a href="/wifi"><span class="label wifi-navbar-disconnected"><translate>Wired</translate> &nbsp;<span class="glyphicon glyphicon-transfer wifi-navbar-connected"></span></span></a>
             {% else %}
                 {% if wifi!="" %}
                     <a href="/wifi"><span class="label wifi-navbar-disconnected">{{wifi}} &nbsp;<span class="glyphicon glyphicon-signal wifi-navbar-connected"></span></span></a>
