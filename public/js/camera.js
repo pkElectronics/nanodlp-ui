@@ -22,22 +22,25 @@ $(document).ready(function () {
                 streamer = new Mjpegstreamer();
             }
         }
-        const url = (DEV_MODE ? BASE_URL : document.location.origin) + `/athena-camera/stream`;
+        const url = (DEV_MODE ? BASE_URL : document.location.origin) + `/athena-camera`;
 
-        streamer.url = url;
+        streamer.url = url + '/stream';
 
         buildCameraStream(url);
-        
+
     }
 })
 
 async function isCameraEnabled(src) {
     try {
-        const response = await fetch(src, {method: 'HEAD'});
+        const response = await fetch(src+"/state", {method: 'GET'});
         if (response.status >= 400) {
             return false;
         }
-        return response.ok;
+
+        let json = await response.json()
+
+        return json.result.source.online;
     } catch (e) {
         return false;
     }
