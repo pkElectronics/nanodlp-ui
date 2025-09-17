@@ -52,40 +52,69 @@
 {% endmacro %}
 {% macro customInputs(inputs,values,place) %}
 {% if inputs %}
-	<h3 translate>Other Settings</h3>
-	<div class="row custom">
-		{% for input in inputs %}
-		{% if input.Place == place %}
-		<div class="col-md-4">
-			<label for="{{input.Name}}">{{input.Title}}{% if input.Unit!="" %} <span
-					class="label label-default">{{input.Unit}}</span>{% endif %}</label>
-			{% if input.Type==2 %}
-			<select name="{{input.Name}}" id="{{input.Name}}" class="form-control">
-				<option value="0" {% for key, value in values %}{% if key==input.Name && value=="0" %}selected{% endif %}{% endfor %}>Enabled</option>
-				<option value="1" {% for key, value in values %}{% if key==input.Name and value=="1" %}selected{% endif %}{% endfor %}>Disabled</option>
-			</select>
-			{% else %}
-			<input class="form-control" type="{% if input.Type==1 %}{{input.Type}}{% endif %}"
-				value="{% for key, value in values %}{% if key==input.Name %}{{value}}{% endif %}{% endfor %}"
-				name="{{input.Name}}" id="{{input.Name}}" {% if input.Type==1 %} min="{{input.Min}}"
-				max="{{input.Max}}" {% endif %}>
+	<div class="i_custom i_option tip" style="display: none;">
+		<div class="row custom">
+			{% for input in inputs %}
+			{% if input.Place == place %}
+			<div class="col-md-4">
+				<label for="{{input.Name}}">{{input.Title}}{% if input.Unit!="" %} <span
+						class="label label-default">{{input.Unit}}</span>{% endif %}</label>
+				{% if input.Type==2 %}
+				<select name="{{input.Name}}" id="{{input.Name}}" class="form-control">
+					<option value="0" {% for key, value in values %}{% if key==input.Name && value=="0" %}selected{% endif %}{% endfor %}>Enabled</option>
+					<option value="1" {% for key, value in values %}{% if key==input.Name and value=="1" %}selected{% endif %}{% endfor %}>Disabled</option>
+				</select>
+				{% else %}
+				<input class="form-control" type="{% if input.Type==1 %}{{input.Type}}{% endif %}"
+					value="{% for key, value in values %}{% if key==input.Name %}{{value}}{% endif %}{% endfor %}"
+					name="{{input.Name}}" id="{{input.Name}}" {% if input.Type==1 %} min="{{input.Min}}"
+					max="{{input.Max}}" {% endif %}>
+				{% endif %}
+				</div>
 			{% endif %}
-			</div>
-		{% endif %}
-		{% endfor %}
+			{% endfor %}
+		</div>
+		<br>
 	</div>
-	<br>
 {% endif %}	
 {% endmacro %}
 {% macro buttonsView(buttons,page) %} 
-	{% if buttons %}
-	<span class="custom-buttons">
-		{% for button in buttons %} 
+	{% if buttons || cast==false || projectorPowerCycle==1 || autoShutdown %}
+	<div class="custom-buttons-container">
+		<div class="custom-buttons-header">
+			<span class="custom-buttons-title">Quick Actions</span>
+		</div>
+		<div class="custom-buttons-group">
+			{% if autoShutdown %}
+			<div class="custom-button-item printing-obj">
+				<a class="btn btn-success custom-button" href="/printer/auto-shutdown/disable" alt="Disable shutdown after job completion"
+				translate>Disable Auto Shutdown</a>
+			</div>
+			{% else %}
+			<div class="custom-button-item printing-obj">
+				<a class="btn btn-warning custom-button" href="/printer/auto-shutdown/enable" alt="Enable shutdown after job completion" translate>Enable Auto Shutdown</a>
+			</div>
+			{% endif %}
+			{% if cast==false %}
+			<div class="custom-button-item idle-obj">
+				<a class="btn btn-success ask custom-button" href="/printer/cast" data-ask="display-confirm" translate>Start Display</a>
+			</div>
+			{% endif %}
+
+			{% if projectorPowerCycle==1 %}
+			<div class="custom-button-item idle-obj">
+				<a class="ajax btn btn-warning idle-obj custom-button" href="/projector/off" name="type" data-confirm="projectoroff-confirm" translate>Projector Off</a>
+			</div>
+			{% endif %}
+			<div class="custom-button-item hide">
+				<a class="btn btn-success custom-button" id="camera" href="/camera/take" translate>Take Photo</a>
+			</div>
+			{% for button in buttons %}
 			{% if button.Position==page %}
-			<span id="cbutton{{button.ID}}" style="{% if button.Condition=='hidden' %}display:none{%endif%}">
+			<div id="cbutton{{button.ID}}" class="custom-button-item" style="{% if button.Condition=='hidden' %}display:none{%endif%}">
 				{{button.HTML|safe}}
 				{% if button.HTML=="" %}
-					<a href="/button/press/{{button.ID}}" class="
+					<a href="/button/press/{{button.ID}}" class="custom-button
 					{% if button.Color=='toggle' %}
 						{% if !button.State %}btn btn-success{% else %}btn btn-danger{% endif %}
 					{% else %}
@@ -103,10 +132,11 @@
 					{% endif %}
 					</a>
 				{% endif %}
-			</span> &nbsp;
+			</div>
 			{% endif %}
-		{% endfor %}
-	</span>
+			{% endfor %}
+		</div>
+	</div>
 	{% endif %} 
 {% endmacro %}
 {% macro helpModal(helpFiles,title) %} {% if helpFiles %}<a href="#" class="help hh" data-files="{{helpFiles}}" translate>ⓘ</a>{% endif %} {% endmacro %}
@@ -144,6 +174,7 @@
 {% set cpu_icon = '<path d="M5 0a.5.5 0 0 1 .5.5V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2h1V.5a.5.5 0 0 1 1 0V2A2.5 2.5 0 0 1 14 4.5h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14v1h1.5a.5.5 0 0 1 0 1H14a2.5 2.5 0 0 1-2.5 2.5v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14h-1v1.5a.5.5 0 0 1-1 0V14A2.5 2.5 0 0 1 2 11.5H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2v-1H.5a.5.5 0 0 1 0-1H2A2.5 2.5 0 0 1 4.5 2V.5A.5.5 0 0 1 5 0m-.5 3A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13h7a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 11.5 3zM5 6.5A1.5 1.5 0 0 1 6.5 5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5zM6.5 6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z"/>' %}
 {% set images_icon = '<path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/><path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2M14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1M2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1z"/>' %}
 {% set threed_icon = '<path d="M4.52 8.368h.664c.646 0 1.055.378 1.06.9.008.537-.427.919-1.086.919-.598-.004-1.037-.325-1.068-.756H3c.03.914.791 1.688 2.153 1.688 1.24 0 2.285-.66 2.272-1.798-.013-.953-.747-1.38-1.292-1.432v-.062c.44-.07 1.125-.527 1.108-1.375-.013-.906-.8-1.57-2.053-1.565-1.31.005-2.043.734-2.074 1.67h1.103c.022-.391.383-.751.936-.751.532 0 .928.33.928.813.004.479-.383.835-.928.835h-.632v.914zm3.606-3.367V11h2.189C12.125 11 13 9.893 13 7.985c0-1.894-.861-2.984-2.685-2.984zm1.187.967h.844c1.112 0 1.621.686 1.621 2.04 0 1.353-.505 2.02-1.621 2.02h-.844z"/>	<path d="M14 3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/>' %}
+{% set list_icon = '<path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>' %}
 {% set repair_icon = '<path d="M.102 2.223A3.004 3.004 0 0 0 3.78 5.897l6.341 6.252A3.003 3.003 0 0 0 13 16a3 3 0 1 0-.851-5.878L5.897 3.781A3.004 3.004 0 0 0 2.223.1l2.141 2.142L4 4l-1.757.364zm13.37 9.019.528.026.287.445.445.287.026.529L15 13l-.242.471-.026.529-.445.287-.287.445-.529.026L13 15l-.471-.242-.529-.026-.287-.445-.445-.287-.026-.529L11 13l.242-.471.026-.529.445-.287.287-.445.529-.026L13 11z"/>' %}
 {% set compare_icon = '<path d="M8 4a.5.5 0 0 1 .5.5V6H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V7H6a.5.5 0 0 1 0-1h1.5V4.5A.5.5 0 0 1 8 4m-2.5 6.5A.5.5 0 0 1 6 10h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5"/><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1"/>' %}
 {% macro icon(ic) %}
@@ -183,14 +214,48 @@
 <body data-lang="{{lang}}">
 	<!-- Fixed navbar -->
 	<nav class="navbar navbar-default">
-		<div class="container">{% include "menu.html" %}</div>
+		{% include "menu.html" %}
 	</nav>
 
-	<div class="container">
-		{% block content %} {% endblock %}
-		<br>
-		<br>
-		<br>
+	<div class="container-fluid">
+		<div class="row">
+			<!-- Left Sidebar -->
+			<div class="col-md-2 sidebar">
+				<nav class="sidebar-nav">
+					<ul class="nav nav-pills nav-stacked">
+						<li><a href="/"><span class="glyphicon glyphicon-dashboard"></span>&nbsp; <translate>Dashboard</translate></a></li>
+						<li><a href="/plates"><span class="glyphicon glyphicon-tasks"></span>&nbsp; <translate>Jobs</translate></a></li>
+						<li><a href="/profiles"><span class="glyphicon glyphicon-tint"></span>&nbsp; <translate>Resin Profiles</translate></a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+								<span class="glyphicon glyphicon-wrench"></span>&nbsp; <translate>System</translate> <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								{% if !manHighLock %}
+								<li class="{% if viewMode == 0 %}hidden{% endif %}"><a href="/setup"><span class="glyphicon glyphicon-wrench"></span>&nbsp; <translate>Machine Settings</translate></a></li>
+								{% endif %}
+								<li><a href="/z-calibration"><span class="glyphicon glyphicon-resize-vertical"></span>&nbsp; <translate>Z Axis Control</translate></a></li>
+								<li><a href="/projector-calibration"><span class="glyphicon glyphicon-picture"></span>&nbsp; <translate>Display Calibration</translate></a></li>
+								<li role="separator" class="divider"></li>
+								{% if !manHighLock %}
+								<li class="{% if viewMode == 0 %}hidden{% endif %}"><a href="/tools"><span class="glyphicon glyphicon-cog"></span>&nbsp; <translate>Tools</translate></a></li>
+								{% endif %}
+								<li><a href="/support"><span class="glyphicon glyphicon-question-sign"></span>&nbsp; <translate>Help</translate></a></li>
+								<li><a href="#" id="expertModeCheckbox"><span class="glyphicon glyphicon-dashboard"></span>&nbsp; {% if viewMode == 1 %}<translate>Basic Mode</translate>{% else %}<translate>Expert Mode</translate>{% endif %}</a> </li>
+							</ul>
+						</li>
+					</ul>
+				</nav>
+			</div>
+
+			<!-- Main Content Area -->
+			<div class="col-md-10 main-content">
+				{% block content %} {% endblock %}
+				<br>
+				<br>
+				<br>
+			</div>
+		</div>
 	</div>
 	<!-- /container -->
 	<!-- Electron  -->
@@ -207,7 +272,6 @@
 	<script src='/static/js/po.js'></script>
 	<link rel="stylesheet" href="/static/dependencies/toastr/toastr.min.css">
 	<script src="/static/dependencies/toastr/toastr.min.js"></script>
-	<script>if (window.module) module = window.module;</script>
 	<script src='/static/js/athena.js?{{version}}(athenav7)'></script>
 	<script src='/static/js/camera.js?{{version}}(athenav7)'></script>
 	{% block js %} {% endblock %} {% block tail %} {% endblock %}
