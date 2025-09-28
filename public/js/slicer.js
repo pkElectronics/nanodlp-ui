@@ -16,7 +16,7 @@ function slicer_progress() {
 		timeout: 1000
 	}).done(function (data) {
 		// Remote slicing
-		if (data["url"] !== "") {
+		if ("url" in data && data["url"] !== "") {
 			$.ajax({
 				url: data["url"] + '/slicer',
 				dataType: 'json',
