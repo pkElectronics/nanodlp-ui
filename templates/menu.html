@@ -35,14 +35,14 @@
                 {% endif %}
                 <li><a href="/support"><span class="glyphicon glyphicon-question-sign"></span>&nbsp; <translate>Help</translate></a></li>
                 <li><a href="#" id="expertModeCheckbox"><span class="glyphicon glyphicon-dashboard"></span>&nbsp; {% if viewMode == 1 %}<translate>Basic Mode</translate>{% else %}<translate>Expert Mode</translate>{% endif %}</a> </li>
-            </ul>            
-        </li>   
-        <li><a href="/support"><span class="glyphicon glyphicon-question-sign"></span>&nbsp; <translate>Support</translate></a></li>     
+            </ul>
+        </li>
+        <li><a href="/support"><span class="glyphicon glyphicon-question-sign"></span>&nbsp; <translate>Support</translate></a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
         {% if rampsReconnect %}
         <li>
-            <a href="/ramps/reconnect"><span class="label label-danger"><span class="glyphicon glyphicon-transfer"></span>&nbsp; <translate>RAMPS: Reconnect</translate></span></a>
+            <a href="/ramps/reconnect"><span class="label label-danger"><span class="glyphicon glyphicon-transfer"></span>&nbsp; <translate>Controller Board: Reconnect</translate></span></a>
         </li>
         {% endif %}
         {% if printerError %}
