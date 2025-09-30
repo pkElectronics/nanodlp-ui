@@ -15,9 +15,11 @@
 
             <span class="glyphicon glyphicon-tint text-success"></span>
             <translate class="key">Total Resin Used</translate>
-            <div class="val">{{tstat.TotalResinVolume}}</div>
+            <div class="val">{{tstat.TotalResinVolume}}
+            </div>
             <br>
 
+            <a href="/printer/stat/reset" data-ask="reset-confirm" class="ask btn btn-default" translate>Reset Usage Stats</a>
         </div>
 
         <div class="col-md-4">
@@ -112,4 +114,6 @@
     </div>
     <br>
 </div>
+
+<translate class="hide" id="reset-confirm">Are you sure you want to reset your usage stats? These cannot be recovered</translate>
 {% endblock %}
