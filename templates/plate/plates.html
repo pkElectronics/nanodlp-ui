@@ -82,7 +82,6 @@
 <!--<div><span class="glyphicon glyphicon-resize-small"></span>
 	<translate>Plate Size</translate>: {{width|floatformat}}x{{height|floatformat}}<translate>mm</translate>
 </div>-->
-{% if freeSpace > 0 and freeSpace < 2000 %}
 <span class="glyphicon glyphicon-hdd"></span>
 <span id="emmc-freespace-text"><translate>Free Disk Space</translate></span>: <span id="emmc-freespace-value">{{freeSpace}}MB</span>
 </div>
@@ -96,5 +95,4 @@
 <br>
 <br>
 
-{% endif %}
 {% endblock %}
