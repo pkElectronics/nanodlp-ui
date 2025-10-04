@@ -28,10 +28,9 @@
                 {% if !manHighLock %}
                 <li><a href="/term"><span class="glyphicon glyphicon-phone"></span>&nbsp; <translate>Gcode Terminal</translate></a></li>
                 <li class="{% if viewMode == 0 %}hidden{% endif %}"><a href="/add-protection"><span class="glyphicon glyphicon-lock"></span>&nbsp; <translate>Password Protection</translate></a></li>
-                <li class="{% if viewMode == 0 %}hidden{% endif %}"><a href="/setup/custom-buttons"><span class="glyphicon glyphicon-pencil"></span>&nbsp; <translate>Custom Buttons</translate></a></li>
                 <li><a href="/printer"><span class="glyphicon glyphicon-phone"></span>&nbsp; <translate>Status</translate></a></li>
                 <li><a href="/plates/history"><span class="glyphicon glyphicon-list-alt"></span>&nbsp; <translate>Print History</translate></a></li>
-                <li><a href="/tools"><span class="glyphicon glyphicon-cog"></span>&nbsp; <translate>Tools</translate></a></li>
+                <li><a href="/tools"><span class="glyphicon glyphicon-cog"></span>&nbsp; <translate>Settings and Tools</translate></a></li>
                 {% endif %}
                 <li><a href="/support"><span class="glyphicon glyphicon-question-sign"></span>&nbsp; <translate>Help</translate></a></li>
                 <li><a href="#" id="expertModeCheckbox"><span class="glyphicon glyphicon-dashboard"></span>&nbsp; {% if viewMode == 1 %}<translate>Basic Mode</translate>{% else %}<translate>Expert Mode</translate>{% endif %}</a> </li>

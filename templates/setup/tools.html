@@ -15,28 +15,33 @@
     <div class="row flex-row">
         <div class="col-md-4">
             <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action disabled active" translate>Import</a>
-                <a href="/import" class="list-group-item list-group-item-action hidden" >Machine Settings</a>
-                <a href="/printer/restore" class="list-group-item list-group-item-action">Restore Backup</a>
-                <a data-ajax="/" href="/printer/restore-default" data-confirm="restore-confirm" class="list-group-item list-group-item-action ajax hidden">Restore Default</a>
-            </div>
+            <span class="list-group-item list-group-item-action active" translate>Manage Printer</span>
+            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/force-stop" data-confirm="stop-confirm" translate>Force Stop</a>
+            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/off" data-confirm="poweroff-confirm" translate>Power Off</a>
+            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/restart" data-confirm="restart-confirm" translate>Restart</a>
+            <a id="BtnToggleHeater" class="ajax list-group-item list-group-item-action" translate>Toggle Heater system</a>
+            <a class="ajax list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" data-ajax="/" href="/printer/reload" translate>Reload NanoDLP</a>
+            <a class="ajax list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" data-ajax="/" href="/printer/terminate" data-confirm="terminate-confirm" translate>Terminate NanoDLP</a>
+                <a href="/printer/hmi/restart" data-ajax="/" class="list-group-item list-group-item-action ajax {% if viewMode == 0 %}hidden{% endif %}" translate>Restart HMI</a>
+                <a href="/printer/hmi/stop" data-ajax="/" class="list-group-item list-group-item-action ajax {% if viewMode == 0 %}hidden{% endif %}" translate>Stop HMI</a>
+                <a href="/printer/hmi/start" data-ajax="/" class="list-group-item list-group-item-action ajax {% if viewMode == 0 %}hidden{% endif %}" translate>Start HMI</a>
+            {% if arch=="arm" %}
+            <a class="list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" href="/printer/edit/pi " translate>Edit Raspberry Pi Settings</a>
+            <a class="ajax list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" data-ajax="/" href="/printer/expand-fs" data-confirm="expand-confirm" translate>Expand Filesystem</a>
+            {% endif %}
+            {% if os=="linux" %}
+            <a class="list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" href="/setup/timezone" translate>Change Timezone</a>
+            {% endif %}
+            <a class="list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" href="/term" translate>Gcode Terminal</a>
+                <a href="/debug" class="list-group-item list-group-item-action" translate>Download Debug</a>
+                </div>
         </div>
         <div class="col-md-4">
             <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action disabled active" translate>Export</a>
-                <a href="/setup/export/nanosupport" class="list-group-item list-group-item-action">Settings for NanoSupport</a>
-                <a href="/setup/export" class="list-group-item list-group-item-action">Machine Settings</a>
-                <a href="/printer/backup" class="list-group-item list-group-item-action">Plates and Settings</a>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action disabled active" translate>Customize</a>
-                <a href="/printer/distro/change" class="list-group-item list-group-item-action hidden" translate>Change Distribution</a>
-                <a href="/setup/custom-buttons" class="list-group-item list-group-item-action" translate>Buttons</a>
-                <a href="/setup/custom-inputs" class="list-group-item list-group-item-action" translate>Inputs</a>
+                <span href="#" class="list-group-item list-group-item-action active" translate>Customize</span>
+                <a href="/setup/custom-inputs" class="list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" translate>Inputs</a>
                 <a href="/setup/custom-sound" class="list-group-item list-group-item-action" translate>Sound</a>
-                <a href="/setup/custom-consumables" class="list-group-item list-group-item-action" translate>Consumables</a>
+                <a href="/setup/custom-consumables" class="list-group-item list-group-item-action" translate>Manage Consumables</a>
                 <a href="/add-protection" class="list-group-item list-group-item-action" translate>Password Protection</a>
                 {% if arch=="arm" %}
                 <a href="/printer/edit/pi" class="list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" translate>Raspberry Pi Settings</a>
@@ -45,78 +50,17 @@
                 {% if os=="linux" %}<a href="/setup/timezone" class="list-group-item list-group-item-action" translate>Timezone</a>{% endif %}
             </div>
         </div>
-    </div>
-    <div class="row flex-row">
-        <div class="col-md-12">
-            <h2 translate>Device Management</h2>
-        </div>
-    </div>
-    <div class="row flex-row">
         <div class="col-md-4">
             <div class="list-group">
-            <a href="#" class="list-group-item list-group-item-action disabled active" translate>Printer</a>
-            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/force-stop" data-confirm="stop-confirm" translate>Force Stop</a>
-            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/off" data-confirm="poweroff-confirm" translate>Power Off</a>
-            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/restart" data-confirm="restart-confirm" translate>Restart</a>
-            {% if arch=="arm" %}
-            <a class="list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" href="/printer/edit/pi " translate>Edit Raspberry Pi Settings</a>
-            <a class="ajax list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" data-ajax="/" href="/printer/expand-fs" data-confirm="expand-confirm" translate>Expand Filesystem</a>
-            {% endif %}
-            {% if os=="linux" %}
-            <a class="list-group-item list-group-item-action" href="/setup/timezone" translate>Change Timezone</a>
-            {% endif %}
-            <a class="list-group-item list-group-item-action" href="/printer" translate>Status</a>
-            <a class="list-group-item list-group-item-action" href="/plates/history" translate>History</a>
-            <a class="list-group-item list-group-item-action" href="/term" translate>Gcode Terminal</a>
-                </div>
-        </div>
-        <div class="col-md-4">
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action disabled active" translate>NanoDLP</a>
-
-            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/reload" translate>Reload NanoDLP</a>
-            <a class="ajax list-group-item list-group-item-action" data-ajax="/" href="/printer/terminate" data-confirm="terminate-confirm" translate>Terminate NanoDLP</a>
-            <a class="list-group-item list-group-item-action" href="/printer/upgrade" translate>Upgrade NanoDLP</a>
-            <a class="list-group-item list-group-item-action" href="/debug" translate>Download Debug</a>
-            <a class="list-group-item list-group-item-action" href="/support" translate>Report a Problem</a>
-            <a class="list-group-item list-group-item-action" href="/analytic" translate>Analytic Dashboard</a>
-            <a class="list-group-item list-group-item-action" href="/add-protection" translate>Password Protection</a>
-                </div>
-        </div>
-        <div class="col-md-4">
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action disabled active" translate>DSI HMI</a>
-                <a href="/printer/hmi/stop" data-ajax="/" class="list-group-item list-group-item-action ajax" translate>Stop</a>
-                <a href="/printer/hmi/start" data-ajax="/" class="list-group-item list-group-item-action ajax" translate>Start</a>
-                <a href="/printer/hmi/restart" data-ajax="/" class="list-group-item list-group-item-action ajax" translate>Restart</a>
-                <a href="/printer/upgrade/dsi/nanodlp-dsi.beta.tar.gz" class="list-group-item list-group-item-action hidden" translate>Upgrade</a>
+                <span class="list-group-item list-group-item-action disabled active" translate>Import / Export</span>
+                <a href="/printer/restore" class="list-group-item list-group-item-action">Import Settings</a>
+                <a href="/setup/export" class="list-group-item list-group-item-action">Export Machine Settings</a>
+                <a href="/printer/backup" class="list-group-item list-group-item-action">Export Plates and Settings</a>
+                <a href="/setup/export/nanosupport" class="list-group-item list-group-item-action">Export NanoSupport Settings</a>
             </div>
         </div>
-    </div>
-    <div class="row flex-row">
-        <div class="col-md-12">
-            <h2 translate>System Health</h2>
-        </div>
-    </div>
-    <div class="row flex-row">
-        <div class="col-md-4">
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action disabled active" translate>Monitor</a>
-                <a href="/printer" class="list-group-item list-group-item-action" translate>Log & Status</a>
-                <a href="/plates/history" class="list-group-item list-group-item-action" translate>History</a>
-                <a href="/term" class="list-group-item list-group-item-action" translate>Gcode Terminal</a>
-                <a href="/analytic" class="list-group-item list-group-item-action" translate>Analytic Dashboard</a>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action disabled active" translate>Report</a>
-                <a href="/debug" class="list-group-item list-group-item-action" translate>Download Debug</a>
-                <a href="/support" class="list-group-item list-group-item-action" translate>Report a Problem</a>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="list-group">
+        <div class="col-md-4 {% if viewMode == 0 %}hidden{% endif %}">
+            <div class="list-group ">
                 <a href="#" class="list-group-item list-group-item-action disabled active" translate>Troubleshoot</a>
                 <a href="/debug/verbose" class="list-group-item list-group-item-action" translate>Enable Verbose Logging</a>
                 <a href="/debug/performance/cpu" class="list-group-item list-group-item-action" translate>CPU Profiling</a>
@@ -126,22 +70,6 @@
         </div>
     </div>
     <div class="row flex-row">
-        <div class="col-md-12">
-            <h3 translate>ATHENA</h3>
-        </div>
-    </div>
-    <div class="row flex-row">
-        <div class="col-md-4">
-            <h4 translate>Heater</h4>
-            <button id="BtnToggleHeater" class="btn btn-default" translate>Toggle Heater system</button>
-        </div>
-        <div class="col-md-4">
-            <h4 translate>Wifi</h4>
-            <form action="setup/wifi/country" method="post" class="edit-page" id="toolsform">
-                <input class="form-control" name="country" id="WiFiCountryTools" pattern="[A-Za-z]{2}|^$" style="width:50%">
-                <button type="submit" class="btn btn-default" translate>Set WiFi Country</button>
-            </form>
-        </div>
         <div class="col-md-4" id="aegis-control-div" style="display: none;">
             <h4 translate>AEGIS</h4>
             <label for="aegis-available-toggle">
