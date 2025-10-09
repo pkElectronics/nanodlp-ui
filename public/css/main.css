@@ -601,6 +601,14 @@ dl {
 	width: 25px;
 	height: 25px;
 }
+.sidebar .svg svg.bi{
+	width: auto;
+	height: auto;
+}
+.sidebar a.svg{
+	height: 28px;
+    padding-top: 7px;
+}
 .glyphicon-ring {
 	width: 44px;
 	height: 44px;
@@ -658,6 +666,12 @@ dl {
 .dropdown-menu{
 	border: 1px solid;
 }
+/* Nested dropdown support for job list */
+.dropdown-submenu{position:relative}
+.dropdown-submenu>.dropdown-menu{top:0;left:100%;margin-top:-1px}
+.dropdown-submenu>a:after{display:block;content:" ";float:right;width:0;height:0;border-color:transparent;border-style:solid;border-width:5px 0 5px 5px;border-left-color:#ccc;margin-top:5px;margin-right:-10px}
+.dropdown-submenu:hover>.dropdown-menu{display:block}
+.dropdown-submenu.pull-left>.dropdown-menu{left:auto;right:100%;margin-left:0;margin-right:-1px}
 #mask_grid input.point{
 	min-width: 80px;
 }
@@ -705,18 +719,148 @@ dl {
 .sidebar {
 	background-color: #2c3e50;
 	border-right: 1px solid #34495e;
-	min-height: calc(100vh - 56px);
-	padding: 20px 0;
+	min-height: 100vh;
+	padding: 0;
 	position: fixed;
-	top: 56px;
+	top: 0;
 	left: 0;
 	width: 16.66666667%;
 	z-index: 1000;
 	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+	padding: 15px 20px;
+	border-bottom: 1px solid #34495e;
+	flex-shrink: 0;
+}
+
+/* Sidebar Content Container */
+.sidebar-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 15px 0;
+}
+
+.sidebar-logo {
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+.sidebar-logo-img {
+	width: 100%;
+}
+
+.sidebar-printer-info {
+	text-align: center;
+}
+
+.sidebar-printer-name {
+	color: #ecf0f1;
+	font-size: 16px;
+	font-weight: bold;
+	margin: 0 0 5px 0;
+}
+
+.sidebar-version-info {
+	margin-top: 5px;
+}
+
+.sidebar-version {
+	color: #bdc3c7;
+	font-size: 12px;
+}
+
+.sidebar-upgrade-link {
+	text-decoration: none;
+}
+
+.sidebar-upgrade-link:hover {
+	text-decoration: none;
+}
+
+/* Sidebar Status Section */
+.sidebar-status {
+	padding: 0 20px 15px 20px;
+	border-top: 1px solid #34495e;
+	margin-top: 15px;
+	flex-shrink: 0;
+}
+
+.sidebar-status-indicators {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+	justify-content: center;
+	margin-bottom: 10px;
+	padding-top: 10px;
+}
+
+.sidebar-status-item {
+	margin-bottom: 8px;
+}
+
+.sidebar-status-link {
+	text-decoration: none;
+	display: inline-block;
+}
+
+.sidebar-status-link:hover {
+	text-decoration: none;
+}
+
+.sidebar-status-indicators .label {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 28px;
+	height: 28px;
+	padding: 4px 6px;
+	font-size: 11px;
+	line-height: 1;
+}
+
+.sidebar-status-indicators .label .glyphicon {
+	font-size: 12px;
+	line-height: 1;
+}
+
+.sidebar-network-status {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 28px;
+	height: 28px;
+	padding: 4px 6px;
+	font-size: 11px;
+	line-height: 1;
+}
+
+.sidebar-network-status .glyphicon {
+	font-size: 12px;
+	line-height: 1;
+}
+
+.sidebar-status-indicators .svg {
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.sidebar-version-info {
+	text-align: center;
+	margin-top: 10px;
 }
 
 .sidebar-nav {
 	padding: 0 10px;
+	flex: 1;
 }
 
 .sidebar-nav .nav > li > a {
@@ -765,7 +909,7 @@ dl {
 .main-content {
 	margin-left: 16.66666667%;
 	padding: 20px;
-	min-height: calc(100vh - 56px);
+	min-height: 100vh;
 }
 
 /* Main content header with logo */
@@ -799,6 +943,7 @@ dl {
 		width: 250px;
 		transform: translateX(-100%);
 		transition: transform 0.3s ease;
+		z-index: 1070;
 	}
 	
 	.sidebar.open {
@@ -814,13 +959,29 @@ dl {
 		left: 0;
 	}
 	
-	.navbar-toggle {
+	.sidebar-toggle {
 		display: block;
+	}
+	
+	/* Mobile navbar styles */
+	.navbar-fixed-top {
+		z-index: 1060;
+	}
+	
+	.navbar-brand {
+		font-size: 18px;
+		font-weight: bold;
+		color: #333;
+	}
+	
+	/* Ensure quick actions don't overlap with mobile menu */
+	.mlog {
+		z-index: 1050;
 	}
 }
 
 @media (min-width: 992px) {
-	.navbar-toggle {
+	.sidebar-toggle {
 		display: none;
 	}
 }

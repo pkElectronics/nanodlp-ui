@@ -7,7 +7,7 @@
 	<form action="" method="post" class="edit-page" id="setup">
 		<br>
 		<div class="row">
-			<div class="col-md-12 setup-categories profiles">
+			<div class="col-xs-12 col-sm-4 col-md-3 setup-categories profiles">
 				{{ setting_cat("<translate>Basic Details</translate>","<translate>Resin name, price, description</translate>",gear_icon,"i_basic") }}
 				{{ setting_cat("<translate>Slicer Options</translate>","<translate>Prepare models for print, erode, dimming, 3D AA, AA, resolution, dimming, hollowing, mask</translate>", glob_icon, "i_slicing") }}
 				{{ setting_cat("<translate>Before Layer</translate>","<translate>Move to layer, movement speed, slow section, sending code</translate>",axis_icon,"i_movetolayer") }}
@@ -16,10 +16,20 @@
 				{{ setting_cat("<translate>After Layer</translate>","<translate>Lift after print, wait after lift, sending code</translate>",axis_icon,"i_moveafterprint") }}
 				{{ setting_cat("<translate>Override Machine Settings</translate>","<translate>Resolution, codes, mask</translate>",pen_icon,"i_override") }}
 			</div>
-			<div class="col-md-12 selected-cat">	
-			</div>
-		</div>
+			<div class="col-xs-12 col-sm-8 col-md-9">
+				<div class="selected-cat">
+					<div class="section-header" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+						<h3 class="section-title" style="margin:0;" translate>Basic Details</h3>
+						<button type="submit" class="btn btn-success" translate>Save</button>
+					</div>
+					<hr>
+				</div>
+				
 		<div class="row flex-row" id="options">
+			<div class="col-md-4 i_basic i_option {{isHidden(basic.Title)}} tip">
+				<label for="Title" translate>Name</label>
+				<input class="form-control" value="{{profile.Title}}" name="Title" id="Title" required> <translate class="hide">Enter a descriptive name for this resin profile</translate>
+			</div>
 			<div class="col-md-4 i_basic i_option {{isHidden(basic.ResinID)}}">
 				<label for="ResinID" translate>Resin</label>
 				<select name="ResinID" id="ResinID" class="form-control">
@@ -29,10 +39,6 @@
 					{% endfor %}
 				</select>
 				<translate class="hide">Select the resin type for this profile</translate>				
-			</div>
-			<div class="col-md-4 i_basic i_option {{isHidden(basic.Title)}} tip">
-				<label for="Title" translate>Name</label>
-				<input class="form-control" value="{{profile.Title}}" name="Title" id="Title" required> <translate class="hide">Enter a descriptive name for this resin profile</translate>
 			</div>
 			<div class="col-md-4 i_basic i_option {{isHidden(basic.ResinPrice)}} tip">
 				<label for="ResinPrice">
@@ -817,7 +823,7 @@
 				</label>
 				<input class="form-control" value="{{profile.HatchingSpace}}" name="HatchingSpace" id="HatchingSpace" step="0.01"
 					type="number">
-			</div>-->
+				</div> -->
 		</div>
 		<br>
 		<input type="hidden" value="{{profile.Color}}" name="Color">
@@ -839,7 +845,7 @@
 		<input type="hidden" name="Type" value="{{profile.Type}}">
 		<input type="hidden" name="ManufacturerLock" value="{{profile.ManufacturerLock}}">
 		{{ customInputs(inputs,profile.CustomValues,1)}}
-		<button type="submit" class="btn btn-success" translate>Save</button> &nbsp; 
+		
 	</form>	
 	<br>
 	<br>

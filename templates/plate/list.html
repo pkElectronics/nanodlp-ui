@@ -269,23 +269,28 @@
 				  {% endif %}
 				  <li><a href="/plate/clone/{{row.PlateID}}"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; <translate>Clone</translate></a></li>
 				  <li class="req-processed"><a href="/analytic/plate/{{ row.PlateID }}"><span class="glyphicon glyphicon-stats"></span> &nbsp; <translate>Analytic</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/nanodlp"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download NanoDLP</translate></a></li>
-				  <li role="separator" class="divider"></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/cbddlp"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download CBDDLP</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/photon"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download Photon</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/ctb"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download CTB</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/cws"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download CWS</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/zip"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download CZIP</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/fdg"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download FDG</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/lgs"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download LGS</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/lgs30"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download LGS30</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/phz"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download PHZ</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/pws"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download PWS</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/pw0"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download PW0</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/sl1"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download SL1</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/uvj"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download UVJ</translate></a></li>
-				  <li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/zcodex"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download ZCODEX</translate></a></li>
-				  {% if (row.Type) %}<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/{{ row.Type }}"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download {{ row.Type|upper }}</translate></a></li>{% endif %}
+				  <li class="dropdown-submenu">
+				  	<a tabindex="-1" href="#"><span class="glyphicon glyphicon-download-alt"></span> &nbsp; <translate>Download</translate></a>
+				  	<ul class="dropdown-menu">
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/nanodlp"><translate>NanoDLP</translate></a></li>
+				  		<li role="separator" class="divider"></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/cbddlp"><translate>CBDDLP</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/photon"><translate>Photon</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/ctb"><translate>CTB</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/cws"><translate>CWS</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/zip"><translate>CZIP</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/fdg"><translate>FDG</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/lgs"><translate>LGS</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/lgs30"><translate>LGS30</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/phz"><translate>PHZ</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/pws"><translate>PWS</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/pw0"><translate>PW0</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/sl1"><translate>SL1</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/uvj"><translate>UVJ</translate></a></li>
+				  		<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/zcodex"><translate>ZCODEX</translate></a></li>
+				  		{% if (row.Type) %}<li class="req-processed"><a href="/plate/download/{{ row.PlateID }}/{{ row.Type }}"><translate>{{ row.Type|upper }}</translate></a></li>{% endif %}
+				  	</ul>
+				  </li>
 				</ul>
 			</div>
 			{% if status.Printing == false %}
