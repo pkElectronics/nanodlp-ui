@@ -1,24 +1,20 @@
-function markProgress(){
-    lastProgressTs = Date.now();
-}
-
-function restartWorkers(){
-    try { nanodlpCore && nanodlpCore.terminate && nanodlpCore.terminate(); } catch(e){}
-    for (var i=0;i<nanodlpWorker.length;i++){
-        try { nanodlpWorker[i] && nanodlpWorker[i].terminate && nanodlpWorker[i].terminate(); } catch(e){}
-    }
-    workerReady = 0;
-    createWorkers();
-}
+// Worker tracking and queue system
+var workerBusy = []; // Track which workers are busy
+var workQueue = []; // Queue of pending work items
 
 var onmessageEvents = function(e) {
     if (e.data[0]=="layerRenderFinished"){
             finishedLayer++;
             update_progress();
-            markProgress();
+            // Mark worker as available and process next item in queue
+            var workerIndex = e.data[2]; // Get worker index from message
+            if (workerIndex !== undefined) {
+                workerBusy[workerIndex] = false;
+                processWorkQueue();
+            }
     } else if (e.data[0]=="sliceFinished"){
         nanodlpCore.terminate();
-        setInterval(function(){ 
+        setInterval(function(){
             if (processLayer!=finishedLayer){
                 update_progress();
                 return;
@@ -30,66 +26,137 @@ var onmessageEvents = function(e) {
     } else if (e.data[0]=="renderLayer"){
         processLayer++;
         update_progress();
-        markProgress();
-        nanodlpWorker[processLayer%workerCount].postMessage(["WASMRenderLayer",e.data[1]]);
+        // Queue the work instead of immediately dispatching
+        queueWork(["WASMRenderLayer", e.data[1]]);
     } else if (e.data[0]=="console"){
         console.log(e.data);
     } else if (e.data[0]=="plateIDUpdate"){
         plateID=e.data[1];
     } else if (e.data[0]=="sliceProgress"){
         layerCount=e.data[1];
-        markProgress();
     } else if (e.data[0]=="workerReady"){
         workerReady++;
-        update_slice_button(); // Update button state when worker becomes ready
-    } else if (e.data[0]=="workerError"){
-        reportWasmError(e.data[1]||"Unknown worker error");
+        update_slice_button();
+    }
+}
+
+// Function to add work to the queue
+function queueWork(workData) {
+    workQueue.push(workData);
+    processWorkQueue();
+}
+
+// Function to process work from queue when workers are available
+function processWorkQueue() {
+    if (workQueue.length === 0) return;
+    
+    // Find an available worker
+    var availableWorker = -1;
+    for (var i = 0; i < workerCount; i++) {
+        if (!workerBusy[i]) {
+            availableWorker = i;
+            break;
+        }
+    }
+    
+    // If no worker is available, wait for one to finish
+    if (availableWorker === -1) {
+        return;
+    }
+    
+    // Get the next work item
+    var workItem = workQueue.shift();
+    
+    // Mark worker as busy and dispatch work
+    workerBusy[availableWorker] = true;
+    
+    // Special handling for WASMRenderLayer to track which worker is processing it
+    if (workItem[0] === "WASMRenderLayer") {
+        // Send the work with the worker index
+        nanodlpWorker[availableWorker].postMessage([workItem[0], workItem[1], availableWorker]);
+    } else {
+        nanodlpWorker[availableWorker].postMessage(workItem);
     }
 }
 workerReady = 0;
+update_slice_button();
+var nanodlpCore = new Worker('/s/slicer.js');
+update_slice_button();
 workerCount = window.navigator.hardwareConcurrency-1;
-if (workerCount<1) workerCount=1;
+if (workerCount<1)workerCount=1;
 var nanodlpWorker=[];
-var nanodlpCore;
 
-function createWorkers(){
-    nanodlpCore = new Worker('/s/slicer.js');
-    nanodlpCore.onmessage = onmessageEvents;
-    nanodlpCore.onerror = function(){ reportWasmError("Core worker error"); };
-    nanodlpWorker = [];
-    for (var i=0;i<workerCount;i++){
-        var w = new Worker('/s/slicer.js');
-        w.onmessage = onmessageEvents;
-        w.onerror = function(){ reportWasmError("Render worker error"); };
-        nanodlpWorker.push(w);
-    }
+// Initialize worker tracking arrays
+for (var i=0;i<workerCount;i++){
+    workerBusy[i] = false; // Initialize all workers as available
 }
 
-createWorkers();
-update_slice_button();
-var zipFileElement = document.getElementById('ZipFile');
-var browserSliceElement = document.getElementById('browser_slice');
-if (zipFileElement!==null){
-    zipFileElement.addEventListener('change', function() {
+for (var i=0;i<workerCount;i++){
+    nanodlpWorker.push(new Worker('/s/slicer.js'));
+    nanodlpWorker[i].onmessage = onmessageEvents;
+    // Set worker index for tracking
+    nanodlpWorker[i].postMessage(["setWorkerIndex", i]);
+}
+
+// Download WASM once and share with all workers
+var wasmDownloadPromise = null;
+var sharedWasmBytes = null;
+
+function downloadWasmOnce() {
+    if (wasmDownloadPromise) {
+        return wasmDownloadPromise;
+    }
+    
+    wasmDownloadPromise = fetch("/s/nanodlp.wasm?1")
+        .then(response => response.arrayBuffer())
+        .then(bytes => {
+            sharedWasmBytes = bytes;
+            return bytes;
+        })
+        .catch(error => {
+            console.error('Failed to download WASM:', error);
+            wasmDownloadPromise = null;
+            throw error;
+        });
+    
+    return wasmDownloadPromise;
+}
+
+// Initialize all workers with shared WASM
+function initializeAllWorkers() {
+    downloadWasmOnce().then(wasmBytes => {
+        // Send WASM bytes to all render workers
+        nanodlpWorker.forEach(function(worker) {
+            worker.postMessage(["initWasm", wasmBytes]);
+        });
+        // Also send to core worker
+        nanodlpCore.postMessage(["initWasm", wasmBytes]);
+    }).catch(error => {
+        console.error("Failed to download and distribute WASM:", error);
+    });
+}
+
+// Initialize workers when page loads
+setTimeout(initializeAllWorkers, 100);
+
+if (document.getElementById('ZipFile')!==null){
+    document.getElementById('ZipFile').addEventListener('change', function() {
         update_slice_button();
     });
-    if (browserSliceElement) {
-        browserSliceElement.addEventListener('click', function() {
-            $("#ZipFile")[0].disabled=true;
-            $.post('/api/v1/wasm/plate/add/', $("#browser_slice").parents("form").serialize(), function(data) {
-                save_source_file(data["PlateID"]);
-                $(".progress").removeClass("hide");
-                $("#browser_slice").parents("form").find("input,button").prop("disabled",true);
-                var reader = new FileReader();
-                reader.onload = function() {
-                    // TODO: Prevent possible reallocation
-                    var bytes = new Uint8Array(reader.result);
-                    nanodlpCore.postMessage(["slice",window.location.origin, JSON.stringify(data), bytes]);
-                }
-                reader.readAsArrayBuffer(document.getElementById('ZipFile').files[0]);
-            });
-        });
-    }
+    document.getElementById('browser_slice').addEventListener('click', function() {
+        $("#ZipFile")[0].disabled=true;
+        $.post('/api/v1/wasm/plate/add/', $("#browser_slice").parents("form").serialize(), function(data) {
+            save_source_file(data["PlateID"]);
+            $(".progress").removeClass("hide");
+            $("#browser_slice").parents("form").find("input,button").prop("disabled",true);
+            var reader = new FileReader();
+            reader.onload = function() {
+                var bytes = new Uint8Array(reader.result);
+                nanodlpCore.postMessage(["slice",window.location.origin, JSON.stringify(data), bytes]);
+            }
+            reader.readAsArrayBuffer(document.getElementById('ZipFile').files[0]);
+        });		
+    });
 }
 var processLayer = 0;
 var finishedLayer = 0;
@@ -97,49 +164,20 @@ var layerCount = 0;
 var plateID = 0;
 nanodlpCore.onmessage = onmessageEvents;
 var current_finished_layer=0;
-var lastProgressTs = Date.now();
-var stallWatchdog = setInterval(function(){
-    // If slicing started (layerCount>0) and no progress for 30s, attempt recovery
-    if (layerCount>0 && (Date.now()-lastProgressTs)>30000){
-        reportWasmError("Slicing stalled");
-    }
-}, 5000);
-
 function update_progress(){
-    // Prevent negative progress
     if (current_finished_layer<finishedLayer)current_finished_layer=finishedLayer;
     $(".progress-bar-main").css("width",current_finished_layer*100/layerCount+"%");
 }
 
 function update_slice_button(){
     if (document.getElementById('ZipFile')===null) return;
-    var sliceButton = document.getElementById('browser_slice');
-    if (!sliceButton) return;
     var filename = document.getElementById('ZipFile').value;
     var ext = filename.substr(filename.length - 3, 3).toLowerCase();
-    // Check if file is STL, under size limit, core worker exists, and all workers are ready
-    if ( ext == "stl"&&$("#ZipFile")[0].files[0].size<5000000000&&typeof(nanodlpCore)!=="undefined"&&workerReady>=workerCount+1) { // ||  ext == "obj"
-        sliceButton.disabled=false;
+    if ( ext == "stl"&&$("#ZipFile")[0].files[0].size<5000000000&&typeof(nanodlpCore)!=="undefined"&&workerReady>=workerCount+1) {
+        document.getElementById('browser_slice').disabled=false;
     } else {
-        sliceButton.disabled=true;
+        document.getElementById('browser_slice').disabled=true;
     }
-}
-
-function reportWasmError(msg){
-    try {
-        console.error("WASM:", msg);
-        $(".progress").addClass("hide");
-        $("#browser_slice").parents("form").find("input,button").prop("disabled",false);
-        var sliceButton = document.getElementById('browser_slice');
-        if (sliceButton) {
-            sliceButton.disabled = false;
-        }
-        // Restart workers to recover
-        restartWorkers();
-        update_slice_button();
-        // Optional: show toast
-        if (window.toastr){ toastr.error("Web slicing stalled. Workers restarted."); }
-    } catch(e){ console.error(e); }
 }
 
 function save_source_file(plateID){
@@ -168,11 +206,9 @@ function checkRegenerate(){
     xhr.onload = function(e) {
       if (this.status == 200) {
         var bytes = new Uint8Array(this.response);
-        if (typeof(nanodlpCore)!=="undefined") {
-            nanodlpCore.postMessage(["slice",window.location.origin, JSON.stringify($("#wasm").data("options")), bytes]);
-        }
+        nanodlpCore.postMessage(["slice",window.location.origin, JSON.stringify($("#wasm").data("options")), bytes]);
       }
-    };
+    };    
     xhr.send();
 }
 
