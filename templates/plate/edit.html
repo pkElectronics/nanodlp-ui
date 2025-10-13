@@ -1,4 +1,12 @@
 {% extends "../base.html" %}
+{% block head %}
+{{ parent }}
+<!-- Disable Chrome bfcache to prevent web worker memory leaks -->
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, private">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Surrogate-Control" content="no-store">
+{% endblock %}
 {% block content %}
 <div class="starter-template">
 	<legend>
@@ -141,4 +149,52 @@
 	{% endif %}
 </div>
 <script src='/static/js/wasm.js'></script>
+<script>
+// Additional JavaScript to prevent bfcache and clean up web workers
+(function() {
+    // Prevent page from being stored in bfcache
+    var cleanupWorkers = function() {
+        if (typeof nanodlpWorker !== 'undefined') {
+            nanodlpWorker.forEach(function(worker) {
+                try {
+                    worker.terminate();
+                } catch (e) {
+                    console.error('Error terminating worker:', e);
+                }
+            });
+            nanodlpWorker = [];
+        }
+        if (typeof nanodlpCore !== 'undefined') {
+            try {
+                nanodlpCore.terminate();
+            } catch (e) {
+                console.error('Error terminating core worker:', e);
+            }
+            nanodlpCore = null;
+        }
+    };
+    
+    // Handle page unload
+    window.addEventListener('beforeunload', cleanupWorkers);
+    
+    // Handle page visibility changes
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+            cleanupWorkers();
+        }
+    });
+    
+    // Handle page navigation events
+    window.addEventListener('pagehide', cleanupWorkers);
+    
+    // Handle pageshow event to detect bfcache restoration
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            // Page was restored from bfcache, reload to ensure clean state
+            console.warn('Page restored from bfcache, reloading to prevent memory leaks');
+            window.location.reload();
+        }
+    });
+})();
+</script>
 {% endblock %}
