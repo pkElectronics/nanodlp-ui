@@ -54,16 +54,43 @@
         }, ANALYTICS_UPDATE_INTERVAL)
     });
 
+    let switchedTo10000 = false;  // persists across calls
+
     const fetchData = async () => {
+        // Check printer status
         const statusFetch = await fetch(`${BASE_URL}/status`);
         const status = await statusFetch.json();
 
-        const dataPointToFetch = (!!status.Printing) ? "start" : "10000"
+        let dataPointToFetch;
+
+        if (!status.Printing) {
+            // Not printing → always use 10000 endpoint
+            dataPointToFetch = "10000";
+            switchedTo10000 = false; // reset for the next print
+        } else {
+            // Printing → use "start" until switched
+            dataPointToFetch = switchedTo10000 ? "10000" : "start";
+        }
 
         const response = await fetch(`${BASE_URL}/analytic/data/${dataPointToFetch}`);
         const data = await response.json();
+
+        // If using "start" and dataset size exceeds 10k, switch permanently
+        if (status.Printing && !switchedTo10000) {
+            const dataSize = Array.isArray(data)
+                ? data.length
+                : typeof data === "object" && data !== null
+                    ? Object.keys(data).length
+                    : 0;
+
+            if (dataSize > 10000) {
+                switchedTo10000 = true;
+            }
+        }
+
         return data;
-    }
+    };
+
 </script>
 <div id="uplot-1" class="uplot uplot-container"></div>
 <div style="text-align: center">
