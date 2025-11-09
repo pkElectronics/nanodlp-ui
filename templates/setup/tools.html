@@ -1,5 +1,6 @@
 {% extends "../base.html" %}
 {% block content %}
+<script src="/static/js/tools.js"></script>
 <translate class="hide" id="expand-confirm">Are you sure you want to expand filesystem?</translate>
 <translate class="hide" id="restore-confirm">Are you sure you want to restore the default settings and reboot the printer?</translate>
 <translate class="hide" id="stop-confirm">Are you sure you want to force stop the printer?</translate>
@@ -25,6 +26,7 @@
                 <a href="/printer/hmi/restart" data-ajax="/" class="list-group-item list-group-item-action ajax {% if viewMode == 0 %}hidden{% endif %}" translate>Restart HMI</a>
                 <a href="/printer/hmi/stop" data-ajax="/" class="list-group-item list-group-item-action ajax {% if viewMode == 0 %}hidden{% endif %}" translate>Stop HMI</a>
                 <a href="/printer/hmi/start" data-ajax="/" class="list-group-item list-group-item-action ajax {% if viewMode == 0 %}hidden{% endif %}" translate>Start HMI</a>
+                <a id="orion-toggle" class="ajax list-group-item list-group-item-action" style="display: none" onclick="onOrionToggle()">Toggle Orion</a>
             {% if arch=="arm" %}
             <a class="list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" href="/printer/edit/pi " translate>Edit Raspberry Pi Settings</a>
             <a class="ajax list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" data-ajax="/" href="/printer/expand-fs" data-confirm="expand-confirm" translate>Expand Filesystem</a>
