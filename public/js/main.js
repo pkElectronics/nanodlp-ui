@@ -104,8 +104,8 @@ function settings_init() {
     if ($("#setup .setup").length==0) return;
     $("body").on("click",".setting-cat",function(e){
         e.preventDefault();
-        if ($("#scategory").val()!="") settings_close();
-        else settings_open(this);
+        settings_close();
+        settings_open(this);
     });
     $(window).on('popstate', function(event) {
         // Forward
@@ -145,10 +145,10 @@ function select_setting(){
 }
 
 function settings_open(t){
-    $(".setup-categories").slideUp();
+    console.log(t)
     var cl = $(t).data("related");
     $("#scategory").val(cl);
-    $("."+cl).slideDown();
+    $("."+cl).show();
     window.location = "#"+cl;
     $('.conditional').conditionize();
     $(".selected-cat").html($(t).clone());
@@ -157,9 +157,8 @@ function settings_open(t){
 
 function settings_close(){
     $("#scategory").val("");
-    $(".i_option").slideUp();
+    $(".i_option").hide();
     window.location = "#";
-    $(".setup-categories").slideDown();
     $(".selected-cat").html("");
 }
 
@@ -186,7 +185,7 @@ function profile_settings_open(t){
 	$(".i_option").hide();
 	var cl = $(t).data("related");
 	$("#scategory").val(cl);
-	$("."+cl).slideDown();
+	$("."+cl).show();
 	window.location = "#"+cl;
 	$('.conditional').conditionize();
 }
@@ -654,9 +653,9 @@ function update_status(){
 			$('.resume-obj').css('display','none');
 			if (data['PlateID'] && data['LayerID']>1 && data['LayersCount'] > 1 + data['LayerID']) {
 				$('.resume-obj').css('display','inline-block');
-				$(".dashboard").slideDown();
+				$(".dashboard").show();
 			} else {
-				$(".dashboard").slideUp();
+				$(".dashboard").hide();
 			}
 			hideElemIfPresent('machine-status')
 		} else {
@@ -667,9 +666,9 @@ function update_status(){
 			last_value('plate',data['PlateID']);
 			last_value('layer_time',data['LayerTime']/1000000000);
 			last_value('ResinLevelMm',data['ResinLevelMm']);
-			$(".idle-obj").slideUp();
+			$(".idle-obj").hide();
 			image_display(data['PlateID'],data['LayerID'],data['Covered']);
-			$(".dashboard").slideDown();
+			$(".dashboard").show();
 			if (data['Paused']) {
 				$(".pause-obj").css('display','inline-block');
 				$(".printing-obj").css('display','none');
@@ -979,7 +978,7 @@ function update_platform_photo(camera_frequency){
 		key = Math.floor(Date.now() / 1000);		
 	}
 	$("#camera").parent().removeClass("hide");
-	$("#photo_wrapper").slideDown();
+	$("#photo_wrapper").show();
 	$("#photo_wrapper div").html('<img src="/static/shot.jpg?'+key+'">');
 	$('img').error(function(){
 		$(this).slideUp().remove();

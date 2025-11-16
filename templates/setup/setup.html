@@ -58,9 +58,9 @@
 				{{ setting_cat("<translate>Other Settings</translate>","<translate>Additional custom settings and parameters</translate>",gear_icon,"i_custom") }}
 			</div>
 			<div class="col-xs-12 col-sm-8 col-md-9">
-				<div class="selected-cat">
+				<div>
 					<div class="section-header" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-						<h3 class="section-title" style="margin:0;" translate>Interface and Appearance</h3>
+						<h3 class="section-title" style="margin:0;" translate>System Settings</h3>
 						<button type="submit" class="btn btn-success" translate>Save</button>
 					</div>
 					<hr>
@@ -324,7 +324,7 @@
 			</div>
 			<div class="col-md-11 i_code i_axis i_option tip i_lock">
 				<label for="ShieldStart">
-					<translate>Start of Print Code</translate> {{helpPage("https://docs.nano3dtech.com/manual/code/")}} 
+					<translate>Start of Print Code</translate> {{helpPage("https://docs.nano3dtech.com/manual/code/")}}
 					{{formulaModal()}}
 				</label>
 				<textarea class="form-control" name="ShieldStart" id="ShieldStart">{{ShieldStart}}</textarea>
@@ -332,7 +332,7 @@
 			</div>
 			<div class="col-md-11 i_code i_axis i_option tip i_lock">
 				<label for="ShieldResume">
-					<translate>Resume Print Code</translate> {{helpPage("https://docs.nano3dtech.com/manual/code/")}} 
+					<translate>Resume Print Code</translate> {{helpPage("https://docs.nano3dtech.com/manual/code/")}}
 					{{formulaModal()}}
 				</label>
 				<textarea class="form-control" name="ShieldResume" id="ShieldResume">{{ShieldResume}}</textarea>
@@ -475,7 +475,7 @@
 			</div>
 			<div class="col-md-4 i_display i_slicing i_option tip i_lock">
 				<label for="DisplayController">
-					<translate>Display Controller</translate> 
+					<translate>Display Controller</translate>
 				</label>
 				<select class="form-control" name="DisplayController" id="DisplayController"> <translate class="hide">Type of display controller being used</translate>
 					<option value="0" {% if ConfigSlicerOptions.DisplayController==0 %}selected{% endif %} translate>Normal</option>
@@ -702,10 +702,10 @@
 			</div>
 			<div class="col-md-4 i_axis i_option tip i_lock">
 				<label for="ZAxisHeight">
-					<translate>Z-Axis Height</translate> 
+					<translate>Z-Axis Height</translate>
 					<span class="label label-default" translate>Pulse</span>
-					<span id="axis_in_mm">-</span> 
-					<span class="label label-default" translate>mm</span> 
+					<span id="axis_in_mm">-</span>
+					<span class="label label-default" translate>mm</span>
 				</label>
 				<input class="form-control" value="{{ZAxisHeight|floatformat}}" name="ZAxisHeight" id="ZAxisHeight" type="number"> <translate class="hide">Z-axis height in pulse units</translate>
 			</div>
@@ -754,7 +754,7 @@
 					<option value="{{path}}">
 					{% endfor %}
 				</datalist>
-			</div>	
+			</div>
 				<div class="col-md-4 conditional i_hardware i_option tip i_lock" data-condition="#arch=='arm' && #scategory=='i_hardware'">
 				<label for="ShutdownPin">
 					<translate>Stop/Shutdown Physical GPIO</translate> {{helpPage("https://docs.nano3dtech.com/manual/hardware/#shutdown")}}
@@ -851,7 +851,7 @@
 		<input type="hidden" name="USBPath" value="{{USBPath}}">
 		<input type="hidden" name="UpdateCustomInput" value="true">
 		{{ customInputs(inputs,CustomValues,0)}}
-	</form>	
+	</form>
 	<br>
 	<br>
 </div>
