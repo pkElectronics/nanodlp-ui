@@ -1,6 +1,6 @@
 // Dev mode points some URLs to a specific URL rather than the local server. Helpful for development locally.
 // Should ALWAYS be committed as false.
-const DEV_MODE = false;
+const DEV_MODE = true;
 const BASE_URL = DEV_MODE ? 'http://192.168.4.160' : '';
 
 var favicon;
@@ -901,7 +901,8 @@ function current_status_display(){
 
 	let level = last_value('ResinLevelMm');
 	$(".last_level").html(level);
-	$(".last_amount").html((level*240*160)/1000);
+    const remainingResinVolume = (level * 240 * 160) / 1000;
+    $(".last_amount").html(Math.round(remainingResinVolume));
 
 }
 
