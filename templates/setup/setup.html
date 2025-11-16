@@ -46,23 +46,26 @@
 		<div class="alert alert-warning" role="alert" translate>Some critical settings such as type of the shield and etc, will not take effect in the middle of printing. To change those settings without restart, stop printing and submit this page again.</div>
 		{% endif %}
 		<div class="row">
-			<div class="col-md-6 setup-categories setup">
+			<div class="col-xs-12 col-sm-4 col-md-3 setup-categories setup">
 				{{ setting_cat("<translate>Interface and Appearance</translate>","<translate>Printer name, HMI, theme, language, sound</translate>",font_icon,"i_appearance") }}
-				{{ setting_cat("<translate>Display</translate>","<translate>Display resolution, connection, lamp</translate>",computer_icon,"i_display") }}
-				{{ setting_cat("<translate>Movement</translate>","<translate>Positioning, speed, g-codes</translate>",axis_icon,"i_axis") }}
-				{{ setting_cat("<translate>Dynamic G-Code</translate>","<translate>Boot-up, start, resume, stop print, before, after layer</translate>",code_icon,"i_code") }}
-				{{ setting_cat("<translate>Other Settings</translate>","<translate>Additional custom settings and parameters</translate>",gear_icon,"i_custom") }}
-			</div>
-			<div class="col-md-6 setup-categories">
 				{{ setting_cat("<translate>Slicing and Print Quality</translate>","<translate>Resolution, remote slicer, light output, barrel correction</translate>",layers_icon,"i_slicing") }}
-				{{ setting_cat("<translate>Hardware</translate>","<translate>Printer type, controller, GPIO, shutter</translate>",cpu_icon,"i_hardware") }}
+				{{ setting_cat("<translate>Dynamic G-Code</translate>","<translate>Boot-up, start, resume, stop print, before, after layer</translate>",code_icon,"i_code") }}
+				{{ setting_cat("<translate>Movement</translate>","<translate>Positioning, speed, g-codes</translate>",axis_icon,"i_axis") }}
+				{{ setting_cat("<translate>Display</translate>","<translate>Display resolution, connection, lamp</translate>",computer_icon,"i_display") }}
 				{{ setting_cat("<translate>Network</translate>","<translate>Network port, remote slicer, WiFi</translate>",wifi_icon,"i_network") }}
 				{{ setting_cat("<translate>Camera</translate>","<translate>Camera settings, storage</translate>",cam_icon,"i_camera") }}
+				{{ setting_cat("<translate>Hardware</translate>","<translate>Printer type, controller, GPIO, shutter</translate>",cpu_icon,"i_hardware") }}
+				{{ setting_cat("<translate>Other Settings</translate>","<translate>Additional custom settings and parameters</translate>",gear_icon,"i_custom") }}
 			</div>
-			<div class="col-md-12 selected-cat">	
-			</div>
-		</div>
-		<div class="row flex-row">
+			<div class="col-xs-12 col-sm-8 col-md-9">
+				<div>
+					<div class="section-header" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+						<h3 class="section-title" style="margin:0;" translate>System Settings</h3>
+						<button type="submit" class="btn btn-success" translate>Save</button>
+					</div>
+					<hr>
+				</div>
+				<div class="row flex-row">
 			<div class="col-md-4 i_appearance i_option tip">
 				<label for="Name">
 					<translate>Printer Name</translate>
@@ -321,7 +324,7 @@
 			</div>
 			<div class="col-md-11 i_code i_axis i_option tip i_lock">
 				<label for="ShieldStart">
-					<translate>Start of Print Code</translate> {{helpPage("https://docs.nano3dtech.com/manual/code/")}} 
+					<translate>Start of Print Code</translate> {{helpPage("https://docs.nano3dtech.com/manual/code/")}}
 					{{formulaModal()}}
 				</label>
 				<textarea class="form-control" name="ShieldStart" id="ShieldStart">{{ShieldStart}}</textarea>
@@ -329,7 +332,7 @@
 			</div>
 			<div class="col-md-11 i_code i_axis i_option tip i_lock">
 				<label for="ShieldResume">
-					<translate>Resume Print Code</translate> {{helpPage("https://docs.nano3dtech.com/manual/code/")}} 
+					<translate>Resume Print Code</translate> {{helpPage("https://docs.nano3dtech.com/manual/code/")}}
 					{{formulaModal()}}
 				</label>
 				<textarea class="form-control" name="ShieldResume" id="ShieldResume">{{ShieldResume}}</textarea>
@@ -472,7 +475,7 @@
 			</div>
 			<div class="col-md-4 i_display i_slicing i_option tip i_lock">
 				<label for="DisplayController">
-					<translate>Display Controller</translate> 
+					<translate>Display Controller</translate>
 				</label>
 				<select class="form-control" name="DisplayController" id="DisplayController"> <translate class="hide">Type of display controller being used</translate>
 					<option value="0" {% if ConfigSlicerOptions.DisplayController==0 %}selected{% endif %} translate>Normal</option>
@@ -699,10 +702,10 @@
 			</div>
 			<div class="col-md-4 i_axis i_option tip i_lock">
 				<label for="ZAxisHeight">
-					<translate>Z-Axis Height</translate> 
+					<translate>Z-Axis Height</translate>
 					<span class="label label-default" translate>Pulse</span>
-					<span id="axis_in_mm">-</span> 
-					<span class="label label-default" translate>mm</span> 
+					<span id="axis_in_mm">-</span>
+					<span class="label label-default" translate>mm</span>
 				</label>
 				<input class="form-control" value="{{ZAxisHeight|floatformat}}" name="ZAxisHeight" id="ZAxisHeight" type="number"> <translate class="hide">Z-axis height in pulse units</translate>
 			</div>
@@ -751,7 +754,7 @@
 					<option value="{{path}}">
 					{% endfor %}
 				</datalist>
-			</div>	
+			</div>
 				<div class="col-md-4 conditional i_hardware i_option tip i_lock" data-condition="#arch=='arm' && #scategory=='i_hardware'">
 				<label for="ShutdownPin">
 					<translate>Stop/Shutdown Physical GPIO</translate> {{helpPage("https://docs.nano3dtech.com/manual/hardware/#shutdown")}}
@@ -807,6 +810,7 @@
 					<option value="1" {% if AutoSlice==1 %}selected{% endif %} translate>Disable</option>
 				</select>
 			</div>
+				</div><!-- /.row -->
 		</div>
 		<br>
 		<input type="hidden" value="{{USBDisplayBaud}}" name="USBDisplayBaud">
@@ -847,9 +851,7 @@
 		<input type="hidden" name="USBPath" value="{{USBPath}}">
 		<input type="hidden" name="UpdateCustomInput" value="true">
 		{{ customInputs(inputs,CustomValues,0)}}
-		<button type="submit" class="btn btn-success" translate>Save</button> &nbsp; 
-		<a type="submit" class="btn btn-default" href="/setup" translate>Cancel</a>
-	</form>	
+	</form>
 	<br>
 	<br>
 </div>

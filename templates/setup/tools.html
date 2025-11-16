@@ -7,6 +7,8 @@
 <translate class="hide" id="poweroff-confirm">Are you sure you want to power off the printer?</translate>
 <translate class="hide" id="terminate-confirm">Are you sure you want to terminate NanoDLP and have access to terminal?</translate>
 <translate class="hide" id="restart-confirm">Are you sure you want to restart the printer?</translate>
+<translate class="hide" id="reset-confirm">Are you sure you want to reset all the printer statistics?</translate>
+<translate class="hide" id="sampling-confirm">Toggle debug sampling? This will collect stack traces and memory usage every minute.</translate>
 <div class="starter-template">
     <div class="row flex-row">
         <div class="col-md-12">
@@ -68,6 +70,8 @@
                 <a href="/debug/performance/cpu" class="list-group-item list-group-item-action" translate>CPU Profiling</a>
                 <a href="/debug/performance/memory" class="list-group-item list-group-item-action" translate>Memory Profiling</a>
                 <a href="/debug/performance/trace" class="list-group-item list-group-item-action" translate>Tracing</a>
+                <a href="/debug/sampling" class="list-group-item list-group-item-action ajax" data-confirm="sampling-confirm" translate>Sample Stack</a>
+                <a href="/debug/stack" class="list-group-item list-group-item-action" translate>View Stack</a>
             </div>
         </div>
     </div>

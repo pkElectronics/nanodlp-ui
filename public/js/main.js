@@ -1,6 +1,6 @@
 // Dev mode points some URLs to a specific URL rather than the local server. Helpful for development locally.
 // Should ALWAYS be committed as false.
-const DEV_MODE = false;
+const DEV_MODE = false ;
 const BASE_URL = DEV_MODE ? 'http://192.168.4.160' : '';
 
 var favicon;
@@ -22,7 +22,7 @@ $(function(){
 		update_status();
 		setInterval(function () { update_status(); }, 4000);
 	}
-		dashboard_init();
+    dashboard_init();
 	// /printer route for logger
 	if($('#console').length>0){
 		display_console_log();
@@ -101,27 +101,27 @@ function oem_lock(){
 
 /* Setup page category handling */
 function settings_init() {
-	if ($("#setup .setup").length==0) return;
-	$("body").on("click",".setting-cat",function(e){
-		e.preventDefault();
-		if ($("#scategory").val()!="") settings_close();
-		else settings_open(this);
-	});
-	$(window).on('popstate', function(event) {
-		// Forward
-		var page = window.location.hash.substr(1);
-		if ($("#scategory").val()==page) return;
-		if (window.location.hash.length>2){
-			select_setting();
-		} else {
-			settings_close();
-		}
-	});
-	if (window.location.hash.length>2){
-		select_setting();
-	}
-	axis_height();
-	oem_lock();
+    if ($("#setup .setup").length==0) return;
+    $("body").on("click",".setting-cat",function(e){
+        e.preventDefault();
+        settings_close();
+        settings_open(this);
+    });
+    $(window).on('popstate', function(event) {
+        // Forward
+        var page = window.location.hash.substr(1);
+        if ($("#scategory").val()==page) return;
+        if (window.location.hash.length>2){
+            select_setting();
+        } else {
+            settings_close();
+        }
+    });
+    if (window.location.hash.length>2){
+        select_setting();
+    }
+    axis_height();
+    oem_lock();
 }
 
 function axis_height(){	
@@ -145,48 +145,47 @@ function select_setting(){
 }
 
 function settings_open(t){
-	$(".setup-categories").slideUp();
-	var cl = $(t).data("related");	
-	$("#scategory").val(cl);
-	$("."+cl).slideDown();
-	window.location = "#"+cl;
-	$('.conditional').conditionize();
-	$(".selected-cat").html($(t).clone());
-	oem_lock();
+    console.log(t)
+    var cl = $(t).data("related");
+    $("#scategory").val(cl);
+    $("."+cl).show();
+    window.location = "#"+cl;
+    $('.conditional').conditionize();
+    $(".selected-cat").html($(t).clone());
+    oem_lock();
 }
 
 function settings_close(){
-	$("#scategory").val("");
-	$(".i_option").slideUp();
-	window.location = "#";
-	$(".setup-categories").slideDown();
-	$(".selected-cat").html("");
+    $("#scategory").val("");
+    $(".i_option").hide();
+    window.location = "#";
+    $(".selected-cat").html("");
 }
 
 /* Profile page category handling */
 function profile_settings_init() {
-	$(".setting-cat").each(function(){
-		var cl = $(this).data("related");
-		if ($("."+cl+"").length==0||$("."+cl).not(".hidden").length==0){
-			$(this).hide();
-		}	
-	});	
-	$("body").on("input","input.ticks",function(e){
-		$(this).parent("h4").find(".val").html($(this).val());
-	});
-	if ($("#setup .profiles").length==0) return;
-	$("body").on("click",".setting-cat",function(e){
-		e.preventDefault();
-		$("#options").insertAfter($(this));
-		profile_settings_open(this);
-	});
+    $(".setting-cat").each(function(){
+        var cl = $(this).data("related");
+        if ($("."+cl+"").length==0||$("."+cl).not(".hidden").length==0){
+            $(this).hide();
+        }
+    });
+    $("body").on("input","input.ticks",function(e){
+        $(this).parent("h4").find(".val").html($(this).val());
+    });
+    if ($("#setup .profiles").length==0) return;
+    $("body").on("click",".setting-cat",function(e){
+        e.preventDefault();
+        $("#options").insertAfter($(this));
+        profile_settings_open(this);
+    });
 }
 
 function profile_settings_open(t){
 	$(".i_option").hide();
 	var cl = $(t).data("related");
 	$("#scategory").val(cl);
-	$("."+cl).slideDown();
+	$("."+cl).show();
 	window.location = "#"+cl;
 	$('.conditional').conditionize();
 }
@@ -654,9 +653,9 @@ function update_status(){
 			$('.resume-obj').css('display','none');
 			if (data['PlateID'] && data['LayerID']>1 && data['LayersCount'] > 1 + data['LayerID']) {
 				$('.resume-obj').css('display','inline-block');
-				$(".dashboard").slideDown();
+				$(".dashboard").show();
 			} else {
-				$(".dashboard").slideUp();
+				$(".dashboard").hide();
 			}
 			hideElemIfPresent('machine-status')
 		} else {
@@ -667,8 +666,9 @@ function update_status(){
 			last_value('plate',data['PlateID']);
 			last_value('layer_time',data['LayerTime']/1000000000);
 			last_value('ResinLevelMm',data['ResinLevelMm']);
-			$(".idle-obj").slideUp();
+			$(".idle-obj").hide();
 			image_display(data['PlateID'],data['LayerID'],data['Covered']);
+			$(".dashboard").show();
 			if (data['Paused']) {
 				$(".pause-obj").css('display','inline-block');
 				$(".printing-obj").css('display','none');
@@ -900,7 +900,8 @@ function current_status_display(){
 
 	let level = last_value('ResinLevelMm');
 	$(".last_level").html(level);
-	$(".last_amount").html((level*240*160)/1000);
+    const remainingResinVolume = (level * 240 * 160) / 1000;
+    $(".last_amount").html(Math.round(remainingResinVolume));
 
 }
 
@@ -977,7 +978,7 @@ function update_platform_photo(camera_frequency){
 		key = Math.floor(Date.now() / 1000);		
 	}
 	$("#camera").parent().removeClass("hide");
-	$("#photo_wrapper").slideDown();
+	$("#photo_wrapper").show();
 	$("#photo_wrapper div").html('<img src="/static/shot.jpg?'+key+'">');
 	$('img').error(function(){
 		$(this).slideUp().remove();
@@ -1164,6 +1165,17 @@ $(document).ready(function() {
 	} else {
 		$('.sidebar-nav a[href="' + currentPath + '"]').parent().addClass('active');
 	}
+
+	// Prevent dropdown submenu overflow: flip to left if needed
+	$(document).on('mouseenter', '.dropdown-submenu', function() {
+		var submenu = $(this).children('.dropdown-menu');
+		if (submenu.length === 0) return;
+		submenu.css({display: 'block', visibility: 'hidden'});
+		var rect = submenu[0].getBoundingClientRect();
+		submenu.css({display: '', visibility: ''});
+		var overflow = rect.right > (window.innerWidth || document.documentElement.clientWidth);
+		$(this).toggleClass('pull-left', overflow);
+	});
 });
 
 $("#expertModeCheckbox").click(function (e) {
