@@ -1,6 +1,6 @@
 // Dev mode points some URLs to a specific URL rather than the local server. Helpful for development locally.
 // Should ALWAYS be committed as false.
-const DEV_MODE = true;
+const DEV_MODE = false ;
 const BASE_URL = DEV_MODE ? 'http://192.168.4.160' : '';
 
 var favicon;
