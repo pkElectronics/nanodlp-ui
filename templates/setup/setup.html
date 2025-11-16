@@ -46,23 +46,26 @@
 		<div class="alert alert-warning" role="alert" translate>Some critical settings such as type of the shield and etc, will not take effect in the middle of printing. To change those settings without restart, stop printing and submit this page again.</div>
 		{% endif %}
 		<div class="row">
-			<div class="col-md-6 setup-categories setup">
+			<div class="col-xs-12 col-sm-4 col-md-3 setup-categories setup">
 				{{ setting_cat("<translate>Interface and Appearance</translate>","<translate>Printer name, HMI, theme, language, sound</translate>",font_icon,"i_appearance") }}
-				{{ setting_cat("<translate>Display</translate>","<translate>Display resolution, connection, lamp</translate>",computer_icon,"i_display") }}
-				{{ setting_cat("<translate>Movement</translate>","<translate>Positioning, speed, g-codes</translate>",axis_icon,"i_axis") }}
-				{{ setting_cat("<translate>Dynamic G-Code</translate>","<translate>Boot-up, start, resume, stop print, before, after layer</translate>",code_icon,"i_code") }}
-				{{ setting_cat("<translate>Other Settings</translate>","<translate>Additional custom settings and parameters</translate>",gear_icon,"i_custom") }}
-			</div>
-			<div class="col-md-6 setup-categories">
 				{{ setting_cat("<translate>Slicing and Print Quality</translate>","<translate>Resolution, remote slicer, light output, barrel correction</translate>",layers_icon,"i_slicing") }}
-				{{ setting_cat("<translate>Hardware</translate>","<translate>Printer type, controller, GPIO, shutter</translate>",cpu_icon,"i_hardware") }}
+				{{ setting_cat("<translate>Dynamic G-Code</translate>","<translate>Boot-up, start, resume, stop print, before, after layer</translate>",code_icon,"i_code") }}
+				{{ setting_cat("<translate>Movement</translate>","<translate>Positioning, speed, g-codes</translate>",axis_icon,"i_axis") }}
+				{{ setting_cat("<translate>Display</translate>","<translate>Display resolution, connection, lamp</translate>",computer_icon,"i_display") }}
 				{{ setting_cat("<translate>Network</translate>","<translate>Network port, remote slicer, WiFi</translate>",wifi_icon,"i_network") }}
 				{{ setting_cat("<translate>Camera</translate>","<translate>Camera settings, storage</translate>",cam_icon,"i_camera") }}
+				{{ setting_cat("<translate>Hardware</translate>","<translate>Printer type, controller, GPIO, shutter</translate>",cpu_icon,"i_hardware") }}
+				{{ setting_cat("<translate>Other Settings</translate>","<translate>Additional custom settings and parameters</translate>",gear_icon,"i_custom") }}
 			</div>
-			<div class="col-md-12 selected-cat">	
-			</div>
-		</div>
-		<div class="row flex-row">
+			<div class="col-xs-12 col-sm-8 col-md-9">
+				<div class="selected-cat">
+					<div class="section-header" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+						<h3 class="section-title" style="margin:0;" translate>Interface and Appearance</h3>
+						<button type="submit" class="btn btn-success" translate>Save</button>
+					</div>
+					<hr>
+				</div>
+				<div class="row flex-row">
 			<div class="col-md-4 i_appearance i_option tip">
 				<label for="Name">
 					<translate>Printer Name</translate>
@@ -807,6 +810,7 @@
 					<option value="1" {% if AutoSlice==1 %}selected{% endif %} translate>Disable</option>
 				</select>
 			</div>
+				</div><!-- /.row -->
 		</div>
 		<br>
 		<input type="hidden" value="{{USBDisplayBaud}}" name="USBDisplayBaud">
@@ -847,8 +851,6 @@
 		<input type="hidden" name="USBPath" value="{{USBPath}}">
 		<input type="hidden" name="UpdateCustomInput" value="true">
 		{{ customInputs(inputs,CustomValues,0)}}
-		<button type="submit" class="btn btn-success" translate>Save</button> &nbsp; 
-		<a type="submit" class="btn btn-default" href="/setup" translate>Cancel</a>
 	</form>	
 	<br>
 	<br>

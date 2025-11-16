@@ -2,14 +2,22 @@ $(function(){
 	var lang = $("body").data("lang");
 	if (lang.length===0||lang=="en") {
 		update_tooltip_title();
-		$('.tip').tooltip();
+		$('.tip').tooltip({
+			container: 'body',
+			placement: 'auto bottom',
+			viewport: { selector: 'body', padding: 8 }
+		});
 		return;
 	}
 	$.get("/static/lang/"+lang+".po",function(data){
 		var lang = parse(data);
 		replace_lang(lang);
 	});
-	$('.tip').tooltip();
+	$('.tip').tooltip({
+		container: 'body',
+		placement: 'auto bottom',
+		viewport: { selector: 'body', padding: 8 }
+	});
 });
 
 function replace_lang(lang){

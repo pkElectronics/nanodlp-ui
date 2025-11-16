@@ -21,6 +21,10 @@
 			</div>
 		</div>
 		<div class="row flex-row" id="options">
+			<div class="col-md-4 i_basic i_option {{isHidden(basic.Title)}} tip">
+				<label for="Title" translate>Name</label>
+				<input class="form-control" value="{{profile.Title}}" name="Title" id="Title" required> <translate class="hide">Enter a descriptive name for this resin profile</translate>
+			</div>
 			<div class="col-md-4 i_basic i_option {{isHidden(basic.ResinID)}}">
 				<label for="ResinID" translate>Resin</label>
 				<select name="ResinID" id="ResinID" class="form-control">
@@ -29,10 +33,7 @@
 						<option value="{{p.ID}}" {% if profile.ResinID == p.ID %}selected{% endif %}>{{p.Brand}} {{p.Model}}</option>
 					{% endfor %}
 				</select><translate class="hide">Select the resin type for this profile</translate>
-			</div>
-			<div class="col-md-4 i_basic i_option {{isHidden(basic.Title)}} tip">
-				<label for="Title" translate>Name</label>
-				<input class="form-control" value="{{profile.Title}}" name="Title" id="Title" required> <translate class="hide">Enter a descriptive name for this resin profile</translate>
+
 			</div>
 			<div class="col-md-4 i_basic i_option {{isHidden(basic.ResinPrice)}} tip">
 				<label for="ResinPrice">
@@ -95,6 +96,15 @@
 				<input class="form-control" value="{{profile.SupportWaitAfterPrint|floatformat}}" name="SupportWaitAfterPrint"
 					step="0.01" id="SupportWaitAfterPrint" type="number" required> <translate class="hide">Wait time after completing burn-in layers</translate>
 			</div>
+			<div class="col-md-4 i_burnin i_option conditional {{isHidden(basic.SupportWaitAfterPrint)}} tip" data-condition="#PrinterType != 2 && ['i_burnin'].includes(#scategory)">
+				<label for="SupportOverCure">
+					<translate>Over Cure Support</translate>
+					<span class="label label-default" translate>Second</span>
+				</label>
+				<input class="form-control" value="{{profile.SupportOverCure|floatformat}}" name="SupportOverCure"
+					step="0.01" id="SupportOverCure" type="number" required> <translate class="hide">Additional exposure time for support structures to ensure higher print success rate and ability to use lighter supports</translate>
+			</div>
+
 			<div class="col-md-4 i_option i_burnin conditional {{isHidden(basic.TransitionalLayer)}} tip" data-condition="#PrinterType != 2 && ['i_burnin'].includes(#scategory)">
 				<label for="TransitionalLayer">
 					<translate>Transitional Layer</translate>
@@ -818,7 +828,7 @@
 				</label>
 				<input class="form-control" value="{{profile.HatchingSpace}}" name="HatchingSpace" id="HatchingSpace" step="0.01"
 					type="number">
-			</div>-->
+				</div> -->
 		</div>
 		<br>
 		<input type="hidden" value="{{profile.Color}}" name="Color">
@@ -1349,6 +1359,7 @@
 		<input type="hidden" value="{{profile.XScale}}" name="XScale">
 		<input type="hidden" value="{{profile.YScale}}" name="YScale">
 		<input type="hidden" value="{{profile.ZScale}}" name="ZScale">
+		<input type="hidden" value="{{profile.SupportOverCure|floatformat}}" name="SupportOverCure">
 		</div>
 	</form>
 	</div>

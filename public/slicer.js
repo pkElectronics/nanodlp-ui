@@ -1,8 +1,30 @@
 importScripts("wasm_exec.js")
-const go = new Go();
-WebAssembly.instantiateStreaming(fetch("/s/nanodlp.wasm?1"), go.importObject).then((result) => {
-  go.run(result.instance);
-});
+
+var wasmInitialized = false;
+var wasmInitPromise = null;
+
+function initWasmFromBytes(wasmBytes) {
+    if (wasmInitialized) {
+        return Promise.resolve();
+    }
+    
+    if (wasmInitPromise) {
+        return wasmInitPromise;
+    }
+    
+    wasmInitPromise = new Promise((resolve, reject) => {
+        const go = new Go();
+        WebAssembly.instantiate(wasmBytes, go.importObject)
+            .then(result => {
+                go.run(result.instance);
+                wasmInitialized = true;
+                resolve();
+            })
+            .catch(reject);
+    });
+    
+    return wasmInitPromise;
+}
 
 function updatePlateID(plateID){
 	postMessage(["plateIDUpdate",plateID]);
@@ -16,14 +38,27 @@ function WASMIsReady(){
 	postMessage(["workerReady"]);
 }
 
+// Store worker index for tracking
+var workerIndex = null;
+
 onmessage = function(e) {
-	console.log(e.data[0]) // ,e.data[1])
-	if (e.data[0]=="slice"){
-		// window.location.origin, JSON.stringify(data), bytes
+	if (e.data[0]=="initWasm") {
+		initWasmFromBytes(e.data[1]).then(() => {
+			postMessage(["workerReady"]);
+		}).catch(error => {
+			postMessage(["workerError", "WASM initialization failed: " + error.message]);
+		});
+	} else if (e.data[0]=="slice"){
 		BrowserSliceUpload(e.data[1], e.data[2], e.data[3]);
 		postMessage(["sliceFinished"]);
 	} else if (e.data[0]=="WASMRenderLayer"){
+		// Store the worker index from the message if provided
+		if (e.data.length > 2) {
+			workerIndex = e.data[2];
+		}
 		WASMRenderLayer(e.data[1]);
-		postMessage(["layerRenderFinished"]);
+		postMessage(["layerRenderFinished", null, workerIndex]);
+	} else if (e.data[0]=="setWorkerIndex") {
+		workerIndex = e.data[1];
 	}
 }

@@ -1,4 +1,12 @@
 {% extends "../base.html" %}
+{% block head %}
+{{ parent }}
+<!-- Disable Chrome bfcache to prevent web worker memory leaks -->
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, private">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Surrogate-Control" content="no-store">
+{% endblock %}
 {% block content %}
 <h1 translate>Slicing on browser</h1>
 <div id="wasm" data-options='{{data}}' data-source="{{source}}"></div>
@@ -6,4 +14,46 @@
     <div style="width: 0%" class="progress-bar progress-bar-main progress-bar-warning"></div>
 </div>
 <script src='/static/js/wasm.js'></script>
+<script>
+// Prevent bfcache and clean up web workers
+(function() {
+    var cleanupWorkers = function() {
+        if (typeof nanodlpWorker !== 'undefined') {
+            nanodlpWorker.forEach(function(worker) {
+                try {
+                    worker.terminate();
+                } catch (e) {
+                    console.error('Error terminating worker:', e);
+                }
+            });
+            nanodlpWorker = [];
+        }
+        if (typeof nanodlpCore !== 'undefined') {
+            try {
+                nanodlpCore.terminate();
+            } catch (e) {
+                console.error('Error terminating core worker:', e);
+            }
+            nanodlpCore = null;
+        }
+    };
+    
+    window.addEventListener('beforeunload', cleanupWorkers);
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+            cleanupWorkers();
+        }
+    });
+    window.addEventListener('pagehide', cleanupWorkers);
+    
+    // Also cleanup when returning from bfcache
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            // Page was restored from bfcache, reload to ensure clean state
+            console.warn('Page restored from bfcache, reloading to prevent memory leaks');
+            window.location.reload();
+        }
+    });
+})();
+</script>
 {% endblock %}
