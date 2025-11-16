@@ -102,27 +102,26 @@ function oem_lock(){
 /* Setup page category handling */
 function settings_init() {
     if ($("#setup .setup").length==0) return;
-    // Keep categories visible; show options on right and update header
     $("body").on("click",".setting-cat",function(e){
         e.preventDefault();
-        var cl = $(this).data("related");
-        var title = $(this).find('h4').text();
-        $(".selected-cat .section-title").text(title);
-        $("#scategory").val(cl);
-        $(".i_option").hide();
-        $("."+cl).slideDown();
-        window.location = "#"+cl;
-        $('.conditional').conditionize();
-        oem_lock();
+        if ($("#scategory").val()!="") settings_close();
+        else settings_open(this);
     });
-    // Default open via hash or first category (appearance)
-    if (window.location.hash && window.location.hash.length>1) {
-        var c = window.location.hash.substring(1);
-        $(".setting-cat[data-related='"+c+"']").first().trigger('click');
-    } else {
-        $(".setting-cat[data-related='i_appearance']").first().trigger('click');
+    $(window).on('popstate', function(event) {
+        // Forward
+        var page = window.location.hash.substr(1);
+        if ($("#scategory").val()==page) return;
+        if (window.location.hash.length>2){
+            select_setting();
+        } else {
+            settings_close();
+        }
+    });
+    if (window.location.hash.length>2){
+        select_setting();
     }
     axis_height();
+    oem_lock();
 }
 
 function axis_height(){	
@@ -146,13 +145,13 @@ function select_setting(){
 }
 
 function settings_open(t){
+    $(".setup-categories").slideUp();
     var cl = $(t).data("related");
     $("#scategory").val(cl);
     $("."+cl).slideDown();
     window.location = "#"+cl;
     $('.conditional').conditionize();
-    var title = $(t).find('h4').text();
-    $(".selected-cat .section-title").text(title);
+    $(".selected-cat").html($(t).clone());
     oem_lock();
 }
 
@@ -160,37 +159,27 @@ function settings_close(){
     $("#scategory").val("");
     $(".i_option").slideUp();
     window.location = "#";
+    $(".setup-categories").slideDown();
+    $(".selected-cat").html("");
 }
 
 /* Profile page category handling */
 function profile_settings_init() {
-	$(".setting-cat").each(function(){
-		var cl = $(this).data("related");
-		if ($("."+cl+"").length==0||$("."+cl).not(".hidden").length==0){
-			$(this).hide();
-		}	
-	});	
-	$("body").on("input","input.ticks",function(e){
-		$(this).parent("h4").find(".val").html($(this).val());
-	});
+    $(".setting-cat").each(function(){
+        var cl = $(this).data("related");
+        if ($("."+cl+"").length==0||$("."+cl).not(".hidden").length==0){
+            $(this).hide();
+        }
+    });
+    $("body").on("input","input.ticks",function(e){
+        $(this).parent("h4").find(".val").html($(this).val());
+    });
     if ($("#setup .profiles").length==0) return;
     $("body").on("click",".setting-cat",function(e){
         e.preventDefault();
-        var title = $(this).find('h4').text();
-        $(".selected-cat .section-title").text(title);
-        // Keep options on the right column; do not move it under the clicked category
+        $("#options").insertAfter($(this));
         profile_settings_open(this);
     });
-    // Default open: use hash if present; otherwise open Basic by default
-    var initial = window.location.hash;
-    if (!initial || initial.length<=1) {
-        // Basic category id is i_basic
-        $(".setting-cat[data-related='i_basic']").first().trigger('click');
-    } else {
-        // Open the category from hash on load
-        var hashClass = initial.substring(1);
-        $(".setting-cat[data-related='"+hashClass+"']").first().trigger('click');
-    }
 }
 
 function profile_settings_open(t){
