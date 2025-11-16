@@ -1,3 +1,36 @@
+@font-face {
+    font-family: "Atkinson Hyperlegible";
+    src: url("/static/fonts/AtkinsonHyperlegible-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Atkinson Hyperlegible";
+    src: url("/static/fonts/AtkinsonHyperlegible-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Atkinson Hyperlegible";
+    src: url("/static/fonts/AtkinsonHyperlegible-Italic.ttf") format("truetype");
+    font-weight: 400;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "Atkinson Hyperlegible";
+    src: url("/static/fonts/AtkinsonHyperlegible-BoldItalic.ttf") format("truetype");
+    font-weight: 700;
+    font-style: italic;
+}
+
+
+html, body, h1, h2, h3, h4, h5, h6, .btn, .navbar, .nav, .panel, .label {
+    font-family: 'Atkinson Hyperlegible', sans-serif  !important;
+}
+
 .btn-movement {
   /*background-color: #f0ad4e;*/
 }
