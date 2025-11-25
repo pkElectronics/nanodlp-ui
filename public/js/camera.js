@@ -2,18 +2,11 @@ var streamer = null;
 
 $(document).ready(function () {
 
-    if(document.location.pathname.endsWith("webcam")) {
-        document.getElementById('camera-led-on').addEventListener('click', (e) => {
-            runGcode('CAMERA_LED_ON')
-        })
-
-        document.getElementById('camera-led-off').addEventListener('click', (e) => {
-            runGcode('CAMERA_LED_OFF')
-        })
-    }
+    document.getElementById('camera-led-on')?.addEventListener('click', (e) => {
+        runGcode('CAMERA_LED_ON')
+    })
 
     if(document.getElementById('livestream-container') != null) {
-
         if (streamer == null) {
             let isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
             if (isSafari) {
@@ -27,7 +20,6 @@ $(document).ready(function () {
         streamer.url = url + '/stream';
 
         buildCameraStream(url);
-
     }
 })
 
