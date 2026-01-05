@@ -19,7 +19,38 @@
     <a class="btn btn-default tip" href="/import"><span class="glyphicon glyphicon-import"></span>
         <translate class="hide">Import a resin profile</translate>
     </a>
+    
+    <!-- Resin Database Integration Button -->
+    <a class="btn btn-primary tip" href="#" id="resin-db-toggle" role="button">
+        <span class="glyphicon glyphicon-cloud"></span>
+        <translate class="hide">Browse Resin Database</translate>
+    </a>
 </h2>
+
+<!-- Resin Database Integration Container -->
+<div id="resin-database-container" style="display: none; margin-top: 20px; margin-bottom: 20px;">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <translate>Resin Profile Database</translate>
+                <span id="machine-type-badge" class="badge" style="display: none; margin-left: 10px;"></span>
+                <button type="button" class="close" id="resin-db-close" style="margin-top: -2px;">&times;</button>
+            </h3>
+        </div>
+        <div class="panel-body" style="padding: 0;">
+            <div id="resin-database-iframe-container" style="width: 100%; height: 800px; border: 1px solid #ddd;">
+                <iframe id="resin-database-iframe" 
+                        src="" 
+                        style="width: 100%; height: 100%; border: none;"
+                        title="Resin Database">
+                </iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Integration Script -->
+<script src="/static/js/resin-database-integration.js"></script>
 <table class="table table-striped table-bordered model-list">
     <thead>
         <tr>
@@ -88,3 +119,4 @@
 </table>
 <br>
 {% endblock %}
+
