@@ -466,7 +466,7 @@ function update_changelog(){
 
 				$( "#changelog-display" ).html( result );
 				if(!result.includes("No Update available")){
-					$("#btn-update-container").className = "";
+					$("#btn-update-container").removeClass();
 					version_str.html("Update Available");
 					version_str.addClass("label");
 					version_str.addClass("label-success");
