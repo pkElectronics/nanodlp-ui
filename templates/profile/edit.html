@@ -913,6 +913,31 @@
 				</div>
 			</div>
 
+			<!-- Physical Properties Details -->
+			<div class="col-md-12 i_basic i_option" style="padding-top:10px;">
+				<div class="col-md-6 i_basic i_option" style="padding-left: 0px;">
+					<h5><span translate><strong>Physical Properties</strong></span></h5>
+				</div>
+			</div>
+			<div class="col-md-2 col-sm-3 i_basic i_option" style="padding-top:5px;">
+				<label for="ViscositySimple">
+					<translate>Viscosity at room temperature (<b>cps or mPa</b>)</translate>
+					<a class="help" data-toggle="tooltip" data-placement="top"
+					   title="The resins viscosity as found in the TDS">i</a>
+				</label>
+				<input class="form-control" value="{{profile.CustomValues.Viscosity}}" name="Viscosity" id="ViscositySimple" step="1" type="number">
+			</div>
+
+			<div class="col-md-2 col-sm-3 i_basic i_option" style="padding-top:5px;">
+				<label for="YieldPressureSimple">
+					<translate>Yield Pressure (<b>mPa</b>)</translate>
+					<a class="help" data-toggle="tooltip" data-placement="top"
+					   title="A metric to determine the resistance of the green part against pressure">i</a>
+				</label>
+				<input class="form-control" value="{{profile.CustomValues.YieldPressure}}" name="YieldPressure" id="YieldPressureSimple" step="1" type="number">
+			</div>
+
+
 			<!-- Layer Details -->
 			<div class="col-md-12 i_basic i_option" style="padding-top:10px;">
 				<div class="col-md-6 i_basic i_option" style="padding-left: 0px;">
@@ -1258,6 +1283,17 @@
 								<input class="form-control" value="{{profile.CustomValues.DwFlowEndSlope}}" name="DwFlowEndSlope" id="DwFlowEndSlopeSimple" step="1" type="number">
 
 							</div>
+
+							<div class="col-md-4">
+
+								<label for="DwFlowMinimumWaitSimple">
+									<translate>Dynamic Wait Minimum Wait Time (<b>ms</b>)</translate>
+									<a class="help" data-toggle="tooltip" data-placement="top"
+									   title="Minimum Time DynamicWait should wait before starting the exposure">i</a>
+								</label>
+								<input class="form-control" value="{{profile.CustomValues.DwMinimumWaitTimeMS}}" name="DwMinimumWaitTimeMS" id="DwFlowMinimumWaitSimple" step="1" type="number">
+
+							</div>
 						</div>
 
 					</div>
@@ -1305,6 +1341,7 @@
 		<input type="hidden" name="UpdateCustomInput" value="true">
 		<input type="hidden" name="Type" value="{{profile.Type}}">
 	    <input type="hidden" value="{{profile.CustomValues.RlThreshold}}" name="RlThreshold" id="RlThresholdSimple">
+	    <input type="hidden" value="{{profile.CustomValues.Matteo}}" name="Matteo" id="Matteo">
 		<input type="hidden" value="{{profile.ShieldBeforeLayer}}" name="ShieldBeforeLayer">
 		<input type="hidden" value="{{profile.ShieldAfterLayer}}" name="ShieldAfterLayer">
 		<input type="hidden" value="{{profile.FillColor}}" name="FillColor">
