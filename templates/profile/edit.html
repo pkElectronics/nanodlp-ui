@@ -934,7 +934,7 @@
 					<a class="help" data-toggle="tooltip" data-placement="top"
 					   title="Modulus of Elasticity, Bending Strength or similar as found in the datasheet">i</a>
 				</label>
-				<input class="form-control" value="{{profile.CustomValues.YieldPressure}}" name="YieldPressure" id="YieldPressureSimple" step="0.01" type="number">
+				<input class="form-control" value="{{profile.CustomValues.YieldPressure}}" name="YieldPressure" id="YieldPressureSimple" step="0.0001" type="number">
 			</div>
 
 
@@ -1221,7 +1221,7 @@
 								<select name="PdPeelMode" id="PdPeelMode" class="form-control">
 									<option value="0" {% if profile.CustomValues.PdPeelMode=="0" %}selected{% endif %}>Minimal</option>
 									<option value="1" {% if profile.CustomValues.PdPeelMode=="1" %}selected{% endif %}>Full</option>
-									<option value="1" {% if profile.CustomValues.PdPeelMode=="2" %}selected{% endif %}>Smart</option>
+									<option value="2" {% if profile.CustomValues.PdPeelMode=="2" %}selected{% endif %}>Smart</option>
 								</select>
 							</div>
 							<div class="col-md-4">
