@@ -13,7 +13,8 @@
     const RESIN_DB_CONFIG = window.RESIN_DB_CONFIG || {
         // URL of the resin database frontend
         databaseUrl: 'https://proteus.concepts3d.eu',
-        
+        //databaseUrl: 'http://localhost:3000',
+
         // Machine type - can be auto-detected or manually set
         // Valid values: 'athena_1_8k', 'athena_1_12k', 'athena_2', 'athena_2_pro', 'athena_2_xl'
         // Leave empty string to auto-detect
@@ -22,6 +23,9 @@
         // Machine base URL for profile uploads
         // Use empty string for relative URLs (same origin) since everything runs in the same browser
         machineBaseUrl: '',
+
+        // NanoDLP / firmware image version (integer). Passed to the DB API for gcode compatibility.
+        imageVersion: null,
     };
     
     // Initialize when DOM is ready
@@ -55,6 +59,14 @@
                 }
             });
         }
+        if (!RESIN_DB_CONFIG.imageVersion) {
+            detectImageVersion().then(function(imageVersion) {
+                RESIN_DB_CONFIG.imageVersion = imageVersion;
+                if ($('#resin-database-container').data('initialized')) {
+                    updateIframeUrl();
+                }
+            });
+        }
     });
     
     /**
@@ -75,6 +87,9 @@
         iframeUrl.searchParams.set('embedded', 'true');
         if (RESIN_DB_CONFIG.machineType) {
             iframeUrl.searchParams.set('machine_type', RESIN_DB_CONFIG.machineType);
+        }
+        if (RESIN_DB_CONFIG.imageVersion != null && RESIN_DB_CONFIG.imageVersion !== '') {
+            iframeUrl.searchParams.set('image_version', String(RESIN_DB_CONFIG.imageVersion));
         }
         // Only set machine_base_url if explicitly provided (otherwise use relative URLs)
         if (RESIN_DB_CONFIG.machineBaseUrl && RESIN_DB_CONFIG.machineBaseUrl !== '') {
@@ -100,6 +115,11 @@
             currentUrl.searchParams.set('machine_type', RESIN_DB_CONFIG.machineType);
         } else {
             currentUrl.searchParams.delete('machine_type');
+        }
+        if (RESIN_DB_CONFIG.imageVersion != null && RESIN_DB_CONFIG.imageVersion !== '') {
+            currentUrl.searchParams.set('image_version', String(RESIN_DB_CONFIG.imageVersion));
+        } else {
+            currentUrl.searchParams.delete('image_version');
         }
         iframe.src = currentUrl.toString();
         updateMachineTypeBadge();
@@ -128,7 +148,27 @@
             });
         });
     }
-    
+
+    function detectImageVersion() {
+        return new Promise(function(resolve) {
+            // Try to detect from machine API
+            $.ajax({
+                url: '/static/image_version',
+                method: 'GET',
+                success: function(data) {
+                    if (data) {
+                        resolve(data);
+                        return;
+                    }
+                    resolve(''); // Default fallback
+                },
+                error: function() {
+                    // Fallback to default
+                    resolve('');
+                }
+            });
+        });
+    }
     // Track if listener is already set up
     let postMessageListenerSetup = false;
     
@@ -226,18 +266,17 @@
         // This is needed so the iframe can make requests to the local machine API
         const parentOrigin = window.location.origin;
         
-        const message = {
-            type: 'init',
-            config: {
-                embedded: true,
-                machineType: RESIN_DB_CONFIG.machineType,
-                // Send parent origin so iframe can construct correct URLs for machine API
-                parentOrigin: parentOrigin,
-                // Only include machineBaseUrl if it's explicitly set (otherwise use parent origin)
-                machineBaseUrl: RESIN_DB_CONFIG.machineBaseUrl || parentOrigin,
-            }
+        const config = {
+            embedded: true,
+            machineType: RESIN_DB_CONFIG.machineType,
+            parentOrigin: parentOrigin,
+            machineBaseUrl: RESIN_DB_CONFIG.machineBaseUrl || parentOrigin,
         };
-        
+        if (RESIN_DB_CONFIG.imageVersion != null && RESIN_DB_CONFIG.imageVersion !== '') {
+            config.imageVersion = RESIN_DB_CONFIG.imageVersion;
+        }
+        const message = { type: 'init', config: config };
+
         iframe.contentWindow.postMessage(JSON.stringify(message), '*');
     }
     

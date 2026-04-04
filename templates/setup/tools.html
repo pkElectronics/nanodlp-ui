@@ -52,6 +52,8 @@
                 <a href="/printer/expand-fs" data-ajax="/" class="ajax list-group-item list-group-item-action {% if viewMode == 0 %}hidden{% endif %}" data-confirm="expand-confirm" translate>Expand Filesystem</a>
                 {% endif %}
                 {% if os=="linux" %}<a href="/setup/timezone" class="list-group-item list-group-item-action" translate>Timezone</a>{% endif %}
+                <a href="#" id="expertModeCheckbox" class="ajax list-group-item list-group-item-action">{% if viewMode == 1 %}<translate>Leave Service Mode</translate>{% else %}<translate>Enter Service Mode</translate>{% endif %}</a>
+
             </div>
         </div>
         <div class="col-md-4">

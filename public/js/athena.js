@@ -65,6 +65,59 @@ setUpCheckboxToggle($("#DwEnableSimple"));
 setUpCheckboxToggle($("#CdEnableSimple"), $('.crash-detection-settings'));
 setUpCheckboxToggle($("#PreheatMixSimple"));
 
+function isEasyModeEnabled(){
+	return window.localStorage.getItem("ProfileEasyMode") !== "false";
+}
+
+function setEasyMode(enabled){
+	if(enabled){
+		window.localStorage.setItem("ProfileEasyMode", "true");
+	}else {
+		window.localStorage.setItem("ProfileEasyMode", "false");
+	}
+
+	updateEasyModeNavButtonText();
+	updateEasyModeProfileFieldVisibility();
+}
+
+function updateEasyModeNavButtonText(){
+	let navButton = $("#easyModeNavButtonText");
+
+	if(isEasyModeEnabled()){
+		navButton.text("Advanced Mode");
+	}else {
+		navButton.text("Easy Mode");
+	}
+}
+
+function updateEasyModeProfileFieldVisibility(){
+		if(isEasyModeEnabled()) {
+			$(".advance_mode").hide();
+			$(".easy_mode").show();
+		}else {
+			$(".advance_mode").show();
+			$(".easy_mode").hide();
+		}
+
+}
+
+
+function setupEasyMode(){
+
+	updateEasyModeNavButtonText();
+	updateEasyModeProfileFieldVisibility();
+
+	let navButton = $("#easyModeNavButtonText");
+	navButton.click(function () {
+		setEasyMode(!isEasyModeEnabled());
+	});
+}
+
+//$(document).ready(function(){
+	setupEasyMode();
+//})
+
+
 $(document).ready(function() {
 
 	// Add click event listener to the confirm button on forceStop
@@ -410,6 +463,7 @@ var channel = "";
 var image_version = "";
 var printer_type= "";
 var version_str = "";
+var printer_name = "";
 
 function update_channel() {
 	$.ajax({
@@ -455,12 +509,23 @@ function update_image_version() {
 	});
 }
 
+function update_printer_name_version() {
+	$.ajax({
+		url: "/static/printer_name",
+		cache: false,
+		success: function (result) {
+			printer_name = result;
+			update_changelog();
+		}
+	});
+}
+
 function update_changelog(){
 
 	if( printer_type !== "" && image_version !== "" && channel !== "" ){
 
 		$.ajax({
-			url: "https://olymp.concepts3d.eu/api/changelog?printer_type="+printer_type+"&channel="+channel+"&current_version="+version_str,
+			url: "https://olymp.concepts3d.eu/api/changelog?printer_type="+printer_type+"&channel="+channel+"&current_version="+version_str+"&printer_qualified_name="+printer_name,
 			success: function( result ) {
 				let version_str = $("#athena-version-str");
 
