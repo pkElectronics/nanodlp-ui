@@ -509,7 +509,7 @@ function update_image_version() {
 	});
 }
 
-function update_printer_name_version() {
+function update_printer_name() {
 	$.ajax({
 		url: "/static/printer_name",
 		cache: false,
@@ -638,6 +638,7 @@ $(document).ready(function() {
 	update_channel();
 	update_printertype();
 	update_image_version();
+	update_printer_name();
 
 	check_if_update_running();
 
