@@ -19,6 +19,19 @@ function onIotControlToggle(post=true){
     }
 }
 
+function onAssetSyncToggle(post=true){
+
+    let state = document.getElementById('asset-sync-toggle').checked;
+
+    if(post){
+        fetch('/athena-iot/asset_sync/status', {
+            headers: {'Content-Type': 'application/json'},
+            method: 'post',
+            body: JSON.stringify({"status":state}),
+        });
+    }
+
+}
 
 async function fetchIotConnectionData() {
     const response = await fetch('/athena-iot/printer_name', {});
@@ -43,11 +56,24 @@ async function fetchIotState(){
 }
 
 
+async function fetchAssetSyncState(){
+    const response = await fetch('/athena-iot/asset_sync/status', {});
+    const data = await response.json();
+
+    if (data) {
+        document.getElementById('asset-sync-toggle').checked = data["status"];
+        onAssetSyncToggle(post=false);
+    }
+
+}
+
 
 async function onPageLoad() {
     await fetchIotConnectionData();
     await fetchIotState();
+    await fetchAssetSyncState();
     document.getElementById("iot-control-toggle").addEventListener("click", onIotControlToggle)
+    document.getElementById("asset-sync-toggle").addEventListener("click", onAssetSyncToggle)
 }
 
 
