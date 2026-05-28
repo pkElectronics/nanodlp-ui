@@ -510,6 +510,7 @@ function update_image_version() {
 }
 
 function update_printer_name() {
+
 	$.ajax({
 		url: "/static/printer_name",
 		cache: false,
@@ -522,7 +523,7 @@ function update_printer_name() {
 
 function update_changelog(){
 
-	if( printer_type !== "" && image_version !== "" && channel !== "" ){
+	if( printer_type !== "" && image_version !== "" && channel !== "" && printer_name !== ""){
 
 		$.ajax({
 			url: "https://olymp.concepts3d.eu/api/changelog?printer_type="+printer_type+"&channel="+channel+"&current_version="+version_str+"&printer_qualified_name="+printer_name,
