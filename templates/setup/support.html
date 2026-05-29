@@ -89,7 +89,7 @@
 					<div class="col-md-6 center-block">
 						<div class="row" id="iot-control-toggle-row">
 							<div class="col-md-6 center-block" >
-								<label for="iot-control-toggle">Enable Athena IOT Service</label>
+								<label for="iot-control-toggle">Enable Cloud Connectivity</label>
 							</div>
 							<div class="col-md-6 center-block">
 								<label class="switch">
@@ -123,10 +123,10 @@
 
 	<div class="row">
 		<div class="col-md-12 center-block" >
-			<h5>By enabling the Athena IOT Service you agree that anonymous ussage statistics are collected and processed by Concepts3D and it's affiliates</h5>
+			<h5>By enabling the Cloud Connectivity feature you agree that anonymous ussage statistics are collected and processed by Concepts3D and it's affiliates</h5>
 			<p> This includes information about completed prints, number of layers printed and duration of prints among others</p>
-			<p> The IOT Service is a necessary requirement to use the printer in the Athena Mobile App</p>
-			<p> Therefore data is transmitted to servers operated in Europe or the United States of America</p>
+			<p> The Cloud Service is a necessary requirement to use the printer in the Athena Mobile App</p>
+			<p> Therefore printer data is transmitted to servers operated by Concepts 3D in Europe </p>
 			<p> To make the data available in the app, following pieces of information are transmitted</p>
 			<ul>
 				<li>Machine identifier and Serial Number</li>
@@ -135,6 +135,54 @@
 				<li>Print jobs available on the machine (but no preview images or stl files)</li>
 				<li>Print progress and associated status messages</li>
 			</ul>
+
+			<p> As we believe transparency about how and where you data is processed is important, following services are operated.</p>
+			<table>
+				<thead>
+				<tr>
+					<th>System / Service</th>
+					<th>Function</th>
+					<th>Provider / Platform</th>
+					<th>Location / Region</th>
+					<th>Data Stored / Processed</th>
+					<th>Notes</th>
+				</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>olymp.concepts3d.eu</td>
+						<td>Printer management, machine-to-machine authentication, update management</td>
+						<td>Hetzner</td>
+						<td>EU Central</td>
+						<td> Printer serial numbers, user-printer mappings, user-device mappings, print job preview images optional, timelapses optional </td>
+						<td>Central management endpoint</td>
+					</tr>
+					<tr>
+						<td>hades.concepts3d.eu</td>
+						<td>MQTT server</td>
+						<td>Hetzner</td>
+						<td>EU Central</td>
+						<td>Printer live data</td>
+						<td>Central IoT MQTT broker</td>
+					</tr>
+					<tr>
+						<td>talos.concepts3d.eu</td>
+						<td>User authentication and access management</td>
+						<td>Auth0</td>
+						<td>US-4</td>
+						<td>User login credentials, social login tokens, user roles</td>
+						<td>Central user management</td>
+					</tr>
+					<tr>
+						<td>hermes.concepts3d.eu</td>
+						<td>Object storage</td>
+						<td>Hetzner</td>
+						<td>EU Central</td>
+						<td>Athena software update binaries</td>
+						<td>None</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
 
