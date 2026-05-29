@@ -126,7 +126,7 @@
 			<h5>By enabling the Cloud Connectivity feature you agree that anonymous ussage statistics are collected and processed by Concepts3D and it's affiliates</h5>
 			<p> This includes information about completed prints, number of layers printed and duration of prints among others</p>
 			<p> The Cloud Service is a necessary requirement to use the printer in the Athena Mobile App</p>
-			<p> Therefore printer data is transmitted to servers operated by Concepts 3D in Europe </p>
+			<p> Therefore printer data is transmitted to servers operated by Concepts 3D in Europe or by partners globally</p>
 			<p> To make the data available in the app, following pieces of information are transmitted</p>
 			<ul>
 				<li>Machine identifier and Serial Number</li>
@@ -137,24 +137,69 @@
 			</ul>
 
 			<p> As we believe transparency about how and where you data is processed is important, following services are operated.</p>
-			<table>
-				<thead>
-				<tr>
-					<th>System / Service</th>
-					<th>Function</th>
-					<th>Provider / Platform</th>
-					<th>Location / Region</th>
-					<th>Data Stored / Processed</th>
-					<th>Notes</th>
-				</tr>
-				</thead>
-				<tbody>
+
+			<style>
+				.athena-cloud-table {
+					width: 100%;
+					border-collapse: collapse;
+					margin: 1.5rem 0;
+					font-size: 0.95rem;
+					line-height: 1.45;
+					background: transparent;
+				}
+
+				.athena-cloud-table th,
+				.athena-cloud-table td {
+					border: 1px solid rgba(255, 255, 255, 0.18);
+					padding: 0.75rem 0.9rem;
+					vertical-align: top;
+					text-align: left;
+				}
+
+				.athena-cloud-table th {
+					background: rgba(255, 255, 255, 0.10);
+					font-weight: 700;
+				}
+
+				.athena-cloud-table tbody tr:nth-child(even) {
+					background: rgba(255, 255, 255, 0.04);
+				}
+
+				.athena-cloud-table tbody tr:hover {
+					background: rgba(255, 255, 255, 0.07);
+				}
+
+				.athena-cloud-table td:first-child,
+				.athena-cloud-table th:first-child {
+					font-weight: 600;
+					white-space: nowrap;
+				}
+
+				.athena-cloud-table-wrapper {
+					width: 100%;
+					overflow-x: auto;
+				}
+			</style>
+
+			<div class="athena-cloud-table-wrapper">
+				<table class="athena-cloud-table">
+					<thead>
+					<tr>
+						<th>System / Service</th>
+						<th>Function</th>
+						<th>Provider / Platform</th>
+						<th>Location / Region</th>
+						<th>Data Stored / Processed</th>
+						<th>Notes</th>
+					</tr>
+					</thead>
+					<tbody>
 					<tr>
 						<td>olymp.concepts3d.eu</td>
 						<td>Printer management, machine-to-machine authentication, update management</td>
 						<td>Hetzner</td>
 						<td>EU Central</td>
-						<td> Printer serial numbers, user-printer mappings, user-device mappings, print job preview images optional, timelapses optional </td>
+						<td>Printer serial numbers, user-printer mappings, user-device mappings, optional print job preview images, optional timelapses</td>
 						<td>Central management endpoint</td>
 					</tr>
 					<tr>
@@ -179,12 +224,29 @@
 						<td>Hetzner</td>
 						<td>EU Central</td>
 						<td>Athena software update binaries</td>
-						<td>None</td>
+						<td>Software update file storage</td>
 					</tr>
-				</tbody>
-			</table>
+					<tr>
+						<td>Managed MariaDB Server</td>
+						<td>Central Database</td>
+						<td>Hetzner</td>
+						<td>EU Central</td>
+						<td>Printer serial numbers, user-printer mappings, user-device mappings, optional print job preview images, optional timelapses</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td>Google Firebase</td>
+						<td>Push Notifications</td>
+						<td>Google</td>
+						<td>Global</td>
+						<td>Printer status messages</td>
+						<td></td>
+					</tr>
+
+					</tbody>
+				</table>
+			</div>
 		</div>
-	</div>
 
 	<div class="row" id="iot-control-qr" >
 		</br>
