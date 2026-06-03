@@ -251,7 +251,7 @@
 					</a></li>
 					{% endif %}
 					<li id="show-more-timelapse-{{ row.PlateID }}" style="display: none">
-						<a target="_blank" href="/static/plates/{{ row.PlateID }}/out.mp4">
+						<a href="/custom/timelapse?plateid={{ row.PlateID }}">
 							<span class="glyphicon glyphicon-camera"></span> &nbsp; <translate>Timelapse</translate>
 						</a>
 					</li>

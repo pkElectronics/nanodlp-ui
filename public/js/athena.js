@@ -1110,7 +1110,7 @@ function display_notification_athena(){
 
 $(document).on('click', '.list-more-button',async (event) => {
 	let plateId = event.target.id.split("show-more-")[1];
-	const response = await fetch(`/athena-iot/control/timelapse_processing_status?plateid=${plateId}`, { method: "GET" });
+	const response = await fetch(BASE_URL+`/athena-iot/control/timelapse_processing_status?plateid=${plateId}`, { method: "GET" });
 
 	const timelapseStatus = await response.json();
 

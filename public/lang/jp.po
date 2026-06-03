@@ -3208,3 +3208,60 @@ msgstr "∑"
 #: ../templates/base.html:111
 msgid "ⓘ"
 msgstr "ⓘ"
+
+#: ../templates/athena-timelapse.html:9
+msgid "Timelapses"
+msgstr ""
+
+#: ../templates/athena-timelapse.html:13
+msgid "A timelapse is still being encoded…"
+msgstr ""
+
+#: ../templates/athena-timelapse.html:18
+msgid "No timelapses found."
+msgstr ""
+
+#: ../templates/athena-timelapse.html:31
+msgid "Timelapse"
+msgstr ""
+
+#: ../templates/athena-timelapse.html:37
+msgid "Close"
+msgstr ""
+
+#: ../templates/athena-timelapse.html:44
+msgid "Are you sure you want to delete this timelapse?"
+msgstr ""
+
+#: ../templates/menu.html:27
+msgid "Timelapses"
+msgstr ""
+
+
+#: ../templates/athena-timelapse.html
+msgid "Print job"
+msgstr ""
+
+#: ../templates/athena-timelapse.html
+msgid "All jobs"
+msgstr ""
+
+#: ../templates/athena-timelapse.html
+msgid "Time range"
+msgstr ""
+
+#: ../templates/athena-timelapse.html
+msgid "All time"
+msgstr ""
+
+#: ../templates/athena-timelapse.html
+msgid "Last 24 hours"
+msgstr ""
+
+#: ../templates/athena-timelapse.html
+msgid "Last 7 days"
+msgstr ""
+
+#: ../templates/athena-timelapse.html
+msgid "Last 30 days"
+msgstr ""
