@@ -188,7 +188,8 @@ $("#SupportSubmitButton").click(function(){
 		email: $("#SupportEmailField").val(),
 		name: $("#SupportNameField").val(),
 		text: $("#SupportTextField").val(),
-		timestamp: ticketTimestamp
+		timestamp: ticketTimestamp,
+		ai_analysis: $("#SupportAiAnalysisField").is(":checked")
 	};
 
 	$("#SupportEmailField").val("");

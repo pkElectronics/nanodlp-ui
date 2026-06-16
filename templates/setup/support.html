@@ -72,6 +72,12 @@
                 <input id="SupportNameField" class="form-control" name="name" type="name" placeholder="Your Name" required>
                 <input id="SupportEmailField" class="form-control" name="email" type="email" placeholder="Email address" required>
 				<textarea id="SupportTextField" class="form-control" name="report" placeholder="Detail of the bug you want to report." required></textarea>
+				<div class="support-form-checkbox">
+					<label for="SupportAiAnalysisField">
+						<input id="SupportAiAnalysisField" type="checkbox" name="ai_analysis" checked>
+						<span translate>Allow AI-assisted analysis of my diagnostic data to help support triage my ticket</span>
+					</label>
+				</div>
                 <input id="SupportSubmitButton" class="btn btn-success" value="Send">
             </form>
             <br>  

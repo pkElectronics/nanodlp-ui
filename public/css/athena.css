@@ -202,6 +202,25 @@ a.list-group-item {
   height: 133px;
 }
 
+.support-form-checkbox {
+  margin: 12px 0 16px;
+}
+
+.support-form-checkbox label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-weight: normal;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+.support-form-checkbox input[type="checkbox"] {
+  margin: 3px 0 0;
+  width: auto;
+  box-shadow: none;
+}
+
 .toast-top-center {
   margin-top: 16px !important;
 }
