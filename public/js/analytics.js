@@ -20,6 +20,14 @@ const ColourValues = [
     "E00000", "00E000", "0000E0", "E0E000", "E000E0", "00E0E0", "E0E0E0",
 ];
 
+// Readable series colors on dark surfaces, indexed by metric id (see ALL_CHART_CONFIG)
+const DARK_PALETTE = [
+    "#f0ad4e", "#4dd0e1", "#66bb6a", "#ffa726", "#ab47bc", "#ec407a", "#d2a13e",
+    "#ef5350", "#26a69a", "#5c6bc0", "#ff7043", "#8d6e63", "#ffca28", "#29b6f6",
+    "#9ccc65", "#f06292", "#ba68c8", "#ff8a65", "#4db6ac", "#7986cb", "#ffb74d",
+    "#aed581", "#e57373", "#64b5f6", "#81c784", "#dce775", "#4dd0e1", "#f48fb1",
+];
+
 const ALL_CHART_CONFIG = [
     { key: 'LayerHeight', id: 0 },
     { key: 'SolidArea', id: 1 },
@@ -61,7 +69,23 @@ function renderChart(name, dataRows, series, chartConfig) {
 
     if (dataRows.length <= 1) return;
 
-    let plotHeight = chartConfig?.height ?? 400;
+    let plotHeight = getPlotHeight(chartConfig);
+    const containerEl = $uplot[0];
+    const parentEl = containerEl ? containerEl.parentElement : null;
+    if (chartConfig.fitParent === true && parentEl) {
+        const cs = getComputedStyle(parentEl);
+        const pad = parseFloat(cs.paddingTop || 0) + parseFloat(cs.paddingBottom || 0);
+        const plotCs = getComputedStyle(containerEl);
+        const plotMargin = parseFloat(plotCs.marginTop || 0) + parseFloat(plotCs.marginBottom || 0);
+        // uPlot renders its legend inside the container, so reserve that too
+        const legendEl = containerEl.querySelector('.u-legend');
+        const legendH = legendEl ? legendEl.offsetHeight + 6 : 56;
+        const inner = parentEl.clientHeight - pad - plotMargin;
+        if (inner - legendH > 150) {
+            plotHeight = Math.round(inner - legendH);
+            containerEl.style.height = Math.round(inner) + 'px';
+        }
+    }
     const axes = prepareAxis(series);
     let opts = {
         title: name,
@@ -70,6 +94,7 @@ function renderChart(name, dataRows, series, chartConfig) {
         height: plotHeight,
         series: series,
         axes: axes,
+        scales: buildScaleOptions(chartConfig),
         cursor: {
             sync: {
                 key: 'chartCursorSync'
@@ -100,6 +125,15 @@ function renderChart(name, dataRows, series, chartConfig) {
         }
     };
 
+    // Dark theme: match dashboard surfaces (grid, ticks, axes, cursor)
+    opts.axes = opts.axes.map(ax => ({
+        ...ax,
+        stroke: 'rgba(255,255,255,0.88)',
+        ticks: { ...(ax.ticks || {}), stroke: 'rgba(255,255,255,0.45)', width: 1 },
+        grid: { ...(ax.grid || {}), stroke: 'rgba(255,255,255,0.06)', width: 1 },
+    }));
+    opts.cursor = { ...opts.cursor, stroke: 'rgba(255,255,255,0.55)' };
+
     if (isZoomed) {
         return;
     }
@@ -108,6 +142,10 @@ function renderChart(name, dataRows, series, chartConfig) {
     if (plotToUpdate && plotToUpdate.seriesLength === series.length) {
 
         // Chart already exists, update the data and return so we don't rebuilt the whole HTML
+        const w = $uplot.width();
+        if (plotToUpdate.uplot.width !== w || plotToUpdate.uplot.height !== plotHeight) {
+            plotToUpdate.uplot.setSize({ width: w, height: plotHeight });
+        }
         plotToUpdate.uplot.setData(dataRows);
         return;
     }
@@ -116,7 +154,7 @@ function renderChart(name, dataRows, series, chartConfig) {
     opts = applyLegend(opts, uplotId);
     const newUplot = new uPlot(opts, dataRows, $uplot[0]);
 
-    let newUplotReference = { id: uplotId, uplot: newUplot, seriesLength: series.length };
+    let newUplotReference = { id: uplotId, uplot: newUplot, seriesLength: series.length, chartConfig };
     if (plotToUpdate && plotToUpdate.seriesLength !== series.length) {
         // This was a legend update trigger so we want to set our uplot reference with the new series length
         uplots = uplots.map(uplot => uplot.id === plotToUpdate.id ? newUplotReference : uplot)
@@ -162,9 +200,9 @@ function prepareAxis(series) {
             const config = ALL_CHART_CONFIG.find(config => config.key === serie.key);
             const label = config?.overrideAxisLabel ?? scale;
             axes.push({
-                    labelSize: 15,
-                    gap: 0,
-                    size: 40,
+                    labelSize: 16,
+                    gap: 8,
+                    size: 62,
                     side: 3,
                     grid: {show: false},
                     label,
@@ -220,8 +258,8 @@ function getSeries(axes) {
             label,
             scale: element.Type,
             value: (self, rawValue) => (rawValue != null ? rawValue.toFixed(element.Decimal) + unit : ""),
-            stroke: "#" + ColourValues[key] + "88",
-            width: 1,
+            stroke: (config && DARK_PALETTE[config.id]) ? DARK_PALETTE[config.id] : ("#" + ColourValues[key] + "cc"),
+            width: 1.5,
         });
     });
     return series;
@@ -339,3 +377,47 @@ function renderSplitChart(series, backFilledData, chartConfig, name) {
 
     renderChart(name, dataWithoutNulls, seriesWithoutNulls, chartConfig);
 }
+
+function getPlotHeight(chartConfig) {
+    const configuredHeight = chartConfig && chartConfig.height;
+    const desktopHeight = Number.isFinite(configuredHeight) ? configuredHeight : 420;
+    return window.matchMedia && window.matchMedia('(max-width: 767px)').matches
+        ? Math.min(desktopHeight, 320)
+        : desktopHeight;
+}
+
+function minimumSpanRange(minimumSpan) {
+    return function (_uplot, min, max) {
+        if (!Number.isFinite(min) || !Number.isFinite(max) || max - min >= minimumSpan) {
+            return [min, max];
+        }
+        const midpoint = (min + max) / 2;
+        return [midpoint - minimumSpan / 2, midpoint + minimumSpan / 2];
+    };
+}
+
+function buildScaleOptions(chartConfig) {
+    const constraints = chartConfig.minimumScaleSpans || {};
+    return Object.keys(constraints).reduce((scales, scaleName) => {
+        const minimumSpan = Number(constraints[scaleName]);
+        if (Number.isFinite(minimumSpan) && minimumSpan > 0) {
+            scales[scaleName] = { range: minimumSpanRange(minimumSpan) };
+        }
+        return scales;
+    }, {});
+}
+
+let analyticsResizeTimer;
+window.addEventListener('resize', function () {
+    clearTimeout(analyticsResizeTimer);
+    analyticsResizeTimer = setTimeout(function () {
+        uplots.forEach(function (plot) {
+            const container = document.querySelector(plot.id);
+            if (!container) return;
+            plot.uplot.setSize({
+                width: $(container).width(),
+                height: getPlotHeight(plot.chartConfig),
+            });
+        });
+    }, 120);
+});

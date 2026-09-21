@@ -1,122 +1,149 @@
 {% extends "../base.html" %}
 {% block content %}
 
-<h2>
-    <translate>Resin Profiles</translate>
-
-    <span class="resin-profile-page-actions">
-        <!-- Athena profiles cannot be created from scratch; create one by cloning the first factory profile. -->
+<div class="c3d-page-head">
+    <div>
+        <div class="c3d-page-eyebrow"><translate>Library</translate></div>
+        <h1 class="c3d-page-title"><translate>Resins</translate></h1>
+    </div>
+    <div class="c3d-page-actions">
         {% if profiles %}
             {% for profile in profiles %}
                 {% if profile.ProfileID == 1 %}
-                    <a class="btn btn-default tip" href="/profile/clone/1" role="button">
-                        <span class="glyphicon glyphicon-plus"></span><translate>New Profile</translate>
-                        <translate class="hide">Create a new resin profile from the factory template</translate>
-                    </a>
+                    <!-- Athena profiles cannot be created from scratch, they must be cloned from an AFP -->
+                    <a class="btn c3d-ghost c3d-ghost-gold c3d-btn-i tip" href="/profile/clone/1" role="button"><span class="glyphicon glyphicon-plus"></span><translate>New Resin</translate><translate class="hide">Create a new resin profile from the factory template</translate></a>
                 {% endif %}
             {% endfor %}
         {% endif %}
+        <a class="btn c3d-ghost c3d-ghost-info c3d-btn-i tip" href="/import" role="button"><span class="glyphicon glyphicon-import"></span><translate>Import</translate><translate class="hide">Import a resin profile from a file</translate></a>
+    </div>
+</div>
 
-        <a class="btn btn-default tip" href="/import" role="button">
-            <span class="glyphicon glyphicon-import"></span><translate>Import Profile</translate>
-            <translate class="hide">Import a resin profile from a file</translate>
-        </a>
-    </span>
-</h2>
-
-<!-- Persistent Athena Resin Database bar. Clicking anywhere on the bar expands/collapses the existing iframe. -->
-<div class="athena-resin-db-panel">
-    <a href="#" id="resin-db-toggle" class="athena-resin-db-toggle" role="button" aria-expanded="false" aria-controls="resin-database-container">
-        <span class="glyphicon glyphicon-cloud athena-resin-db-icon"></span>
-        <span class="athena-resin-db-copy">
-            <span class="athena-resin-db-title"><translate>Athena Resin Database</translate></span>
-            <span class="athena-resin-db-description">
-                <translate>Pre-tested starting profiles for Athena printers. Exposure calibration is still recommended.</translate>
-            </span>
+<!-- Production Athena database interaction, adapted to the current design system. -->
+<div class="c3d-resin-db">
+    <a href="#" id="resin-db-toggle" class="c3d-resin-db-toggle" role="button" aria-expanded="false" aria-controls="resin-database-container">
+        <span class="glyphicon glyphicon-cloud c3d-resin-db-icon" aria-hidden="true"></span>
+        <span class="c3d-resin-db-copy">
+            <span class="c3d-resin-db-title"><translate>Proteus Resin Database</translate> <span id="machine-type-badge" class="c3d-badge c3d-badge--set" style="display: none;"></span></span>
+            <span class="c3d-resin-db-description"><translate>Pre-tested starting profiles for Athena printers. Exposure calibration is still recommended.</translate></span>
         </span>
-        <span class="glyphicon glyphicon-chevron-down athena-resin-db-chevron"></span>
+        <span class="glyphicon glyphicon-chevron-down athena-resin-db-chevron" aria-hidden="true"></span>
     </a>
-
     <div id="resin-database-container" style="display: none;">
         <div id="resin-database-iframe-container">
-            <iframe id="resin-database-iframe"
-                    src=""
-                    title="Athena Resin Database">
-            </iframe>
+            <iframe id="resin-database-iframe" src="" title="Proteus Resin Database"></iframe>
         </div>
     </div>
 </div>
 
-<!-- Existing Resin Database integration handles lazy iframe initialization and profile upload messages. -->
-<script src="/static/js/resin-database-integration.js"></script>
+<script src="/static/js/resin-database-integration.js?{{version}}(athenav9)"></script>
 
-<h4 class="local-resin-profiles-heading"><translate>Profiles on This Printer</translate></h4>
+{% if profiles %}
+<div id="c3d-resin-all">
+    <div class="c3d-list-toolbar">
+        <span class="c3d-section-label"><translate>All resins</translate> <span id="c3d-resin-count" class="c3d-count"></span></span>
+        <div class="c3d-chips" role="group" aria-label="Sort resins">
+            <button type="button" class="c3d-chip" data-sort="name" title="Tap again to reset"><translate>Name</translate></button>
+            <button type="button" class="c3d-chip" data-sort="depth-asc" title="Tap again to reset"><translate>Thinnest</translate></button>
+            <button type="button" class="c3d-chip" data-sort="depth-desc" title="Tap again to reset"><translate>Thickest</translate></button>
+            <button type="button" class="c3d-chip" data-sort="cure-asc" title="Tap again to reset"><translate>Fastest</translate></button>
+            <button type="button" class="c3d-chip" data-sort="cure-desc" title="Tap again to reset"><translate>Slowest</translate></button>
+        </div>
+    </div>
+    <div class="c3d-list" id="c3d-resin-list">
+        {% for profile in profiles %}
+        <div class="c3d-list-row {% if defaultProfile==profile.ProfileID %}c3d-list-row--default{% endif %}" data-idx="{{forloop.Counter}}" data-depth="{{profile.Depth}}" data-cure="{{profile.CureTime}}">
+            <div class="c3d-list-main">
+                {% if profile.ManufacturerLock %}<span class="glyphicon glyphicon-lock c3d-lock" title="Factory profile"></span>{% endif %}
+                <span class="c3d-list-title">{{profile.Title}}</span>
+                {% if defaultProfile==profile.ProfileID %}<span class="c3d-badge c3d-badge--default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <translate>Default</translate></span>{% endif %}
+                <span class="c3d-list-meta"><translate>Layer</translate> {{profile.Depth|floatformat}} µm &nbsp;·&nbsp; <translate>Cure</translate> {{profile.CureTime|floatformat}} s</span>
+            </div>
+            <div class="c3d-list-actions">
+                {% if defaultProfile!=profile.ProfileID %}
+                <a class="c3d-badge c3d-badge--set tip" href="/profile/default/{{profile.ProfileID}}"><span class="glyphicon glyphicon-ok"></span> <translate>Set default</translate><translate class="hide">Set default resin profile</translate></a>
+                {% endif %}
+                {% if !profile.ManufacturerLock %}
+                <a class="btn c3d-ghost c3d-btn-i tip" href="/profile/edit/{{profile.ProfileID}}"><span class="glyphicon glyphicon-pencil"></span><translate class="hide">Edit</translate></a>
+                {% else %}
+                <a class="btn c3d-ghost c3d-btn-i tip" href="#" disabled tabindex="-1" aria-disabled="true"><span class="glyphicon glyphicon-pencil"></span><translate class="hide">Edit</translate></a>
+                {% endif %}
+                <a class="btn c3d-ghost c3d-btn-i tip" href="/profile/clone/{{profile.ProfileID}}"><span class="glyphicon glyphicon-duplicate"></span><translate class="hide">Clone</translate></a>
+                <a class="btn c3d-ghost c3d-btn-i tip" href="/profile/compare/{{profile.ProfileID}}"><span class="glyphicon glyphicon-random"></span><translate class="hide">Compare</translate></a>
+                <a class="btn c3d-ghost c3d-btn-i tip" href="/profile/export/{{profile.ProfileID}}"><span class="glyphicon glyphicon-export"></span><translate class="hide">Export</translate></a>
+                {% if !profile.ManufacturerLock %}
+                <a class="btn c3d-ghost c3d-ghost-danger c3d-btn-i ask tip" data-ask="delete-confirm" href="/profile/delete/{{profile.ProfileID}}"><span class="glyphicon glyphicon-trash"></span><translate class="hide">Delete</translate></a>
+                {% else %}
+                <a class="btn c3d-ghost c3d-ghost-danger c3d-btn-i tip" href="#" disabled tabindex="-1" aria-disabled="true"><span class="glyphicon glyphicon-trash"></span><translate class="hide">Delete</translate></a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 
-<table class="table table-striped table-bordered model-list">
-    <thead>
-        <tr>
-            <th translate>Title</th>
-            <th><span translate>Layer Thickness</span> <sup translate>Micron</sup></th>
-            <th><span translate>Cure Time</span> <sup translate>Second</sup></th>
-            <th translate>Default</th>
-            <th translate>Actions</th>
-        </tr>
-    </thead>
+<script>
+(function () {
+    'use strict';
+    var list = document.getElementById('c3d-resin-list');
+    var chips = Array.prototype.slice.call(document.querySelectorAll('.c3d-chip'));
+    if (!list) return;
+    if (!list.querySelector('.c3d-list-row')) {
+        var all = document.getElementById('c3d-resin-all');
+        if (all) all.style.display = 'none';
+        return;
+    }
 
-    {% if profiles %}
-    {% for profile in profiles %}
-    <tr>
-        <td>{{profile.Title}}</td>
-        <td>{{profile.Depth|floatformat}}</td>
-        <td>{{profile.CureTime|floatformat}}</td>
-        <td>
-            {% if defaultProfile==profile.ProfileID %}
-            <a class="btn btn-success tip" href="#" disabled><span
-                class="glyphicon glyphicon-ok"></span>
-                <translate class="hide">Set default resin profile</translate>
-            </a>
-            {% else %}
-            <a class="btn btn-default tip" href="/profile/default/{{profile.ProfileID}}"><span
-                    class="glyphicon glyphicon-ok"></span>
-                <translate class="hide">Set default resin profile</translate>
-            </a>
-            {% endif %}
-        </td>
-        <td>
-            {% if !profile.ManufacturerLock %}
-            <a class="btn btn-default tip" href="/profile/edit/{{profile.ProfileID}}"><span
-                    class="glyphicon glyphicon-pencil"></span>
-                <translate class="hide">Edit</translate>
-            </a>
-            {% endif %}
-            <a class="btn btn-default tip" href="/profile/clone/{{profile.ProfileID}}"><span
-                    class="glyphicon glyphicon-duplicate"></span>
-                <translate class="hide">Clone</translate>
-            </a>
-            <a class="btn btn-default tip svg" href="/profile/compare/{{profile.ProfileID}}">{{ icon(compare_icon) }}
-                <translate class="hide">Compare</translate>
-            </a>
-            <a class="btn btn-default tip" href="/profile/export/{{profile.ProfileID}}"><span
-                    class="glyphicon glyphicon-export"></span>
-                <translate class="hide">Export</translate>
-            </a>
-            {% if !profile.ManufacturerLock %}
-            <a class="btn btn-danger ask tip" data-ask="delete-confirm"
-                href="/profile/delete/{{profile.ProfileID}}"><span class="glyphicon glyphicon-trash"></span>
-                <translate class="hide">Delete</translate>
-            </a>
-            {% endif %}
-            <translate class="hide" id="delete-confirm">Are you sure you want to delete this profile?</translate>
-        </td>
-    </tr>
-    {% endfor %}
-    {% else %}
-    <tr>
-        <td colspan="999">
-            <div class="text-center" translate>No Profile</div>
-        </td>
-    </tr>
-    {% endif %}
-</table>
-<br>
+    function rows() {
+        return Array.prototype.slice.call(list.children);
+    }
+    function num(row, key) {
+        var v = parseFloat(row.getAttribute('data-' + key));
+        return isNaN(v) ? 0 : v;
+    }
+    function title(row) {
+        var t = row.querySelector('.c3d-list-title');
+        return t ? t.textContent.trim().toLowerCase() : '';
+    }
+    function decorate() {
+        var c = document.getElementById('c3d-resin-count');
+        if (c) c.textContent = '(' + rows().length + ')';
+    }
+    function setActive(mode) {
+        chips.forEach(function (c) {
+            c.classList.toggle('is-active', c.getAttribute('data-sort') === mode);
+        });
+    }
+    function sortBy(mode) {
+        var r = rows(), cmp = null;
+        if (mode === 'name') cmp = function (a, b) { return title(a) < title(b) ? -1 : (title(a) > title(b) ? 1 : 0); };
+        else if (mode === 'depth-asc') cmp = function (a, b) { return num(a, 'depth') - num(b, 'depth'); };
+        else if (mode === 'depth-desc') cmp = function (a, b) { return num(b, 'depth') - num(a, 'depth'); };
+        else if (mode === 'cure-asc') cmp = function (a, b) { return num(a, 'cure') - num(b, 'cure'); };
+        else if (mode === 'cure-desc') cmp = function (a, b) { return num(b, 'cure') - num(a, 'cure'); };
+        if (cmp) r.sort(cmp).forEach(function (el) { list.appendChild(el); });
+        setActive(mode);
+    }
+    function reset() {
+        rows().sort(function (a, b) {
+            return (+a.getAttribute('data-idx')) - (+b.getAttribute('data-idx'));
+        }).forEach(function (el) { list.appendChild(el); });
+        setActive(null);
+    }
+    chips.forEach(function (c) {
+        c.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (c.classList.contains('is-active')) reset();
+            else sortBy(c.getAttribute('data-sort'));
+        });
+    });
+    decorate();
+})();
+</script>
+{% else %}
+<div class="c3d-empty"><translate>No Profile</translate></div>
+{% endif %}
+
+<translate class="hide" id="delete-confirm">Are you sure you want to delete this profile?</translate>
+
 {% endblock %}

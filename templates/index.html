@@ -1,13 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div>
-    <div id="machine-status" class="row row-marginless">
-        {% include "components/print-progress.html" %}
+<div class="c3d-dash-head">
+    <div>
+        <h1 class="c3d-dash-name" id="c3d-greeting">Good Morning!</h1>
     </div>
+    <div class="c3d-updates">
+        <button type="button" class="btn btn-default c3d-updates-toggle" id="updates-toggle" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-bullhorn"></span>&nbsp; <translate>News</translate></button>
+        <a class="btn c3d-ghost c3d-ghost-gold hidden" id="dashboard-software-update" href="/printer/upgrade"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>&nbsp; <translate>Software Update</translate></a>
+        <div class="c3d-updates-popover" id="updates-popover" hidden>
+            <div class="c3d-updates-popover-header"><translate>Latest News</translate></div>
+            <div class="c3d-updates-list" id="updates-list"></div>
+        </div>
+    </div>
+</div>
 
-    <div class="row row-marginless">
+<div class="c3d-dash-main">
+    <div class="row row-marginless c3d-dash-row">
         <div id="control-column" class="col-md-8 no-padding">
+            <div id="machine-status" class="row row-marginless">
+                {% include "components/print-progress.html" %}
+            </div>
+
             <div class="row control-row row-marginless display-flex">
                 <div id="heater-column" class="col-md-8 no-padding">
                     <div class="panel panel-default dashboard-panel">
@@ -22,36 +36,47 @@
                         <div class="panel-heading">Printer Control</div>
                         <div class="panel-body">
 
-                            <div class="col-md-12 no-padding">
-                                <div class="dashboard-button-panel" style="margin-top: 10px">
-                                    <a class="ask btn btn-default" href="/printer/off" data-ask="poweroff-confirm"><span class="glyphicon glyphicon-off text-danger"></span></a>
-                                    <a class="ask btn btn-default" href="/printer/restart" data-ask="restart-confirm"><span class="glyphicon glyphicon-repeat text-warning"></span></a>
-                                </div>
+                            <div class="c3d-printer-actions">
+                                <a class="ask btn btn-danger" href="/printer/off" data-ask="poweroff-confirm"><span class="c3d-btn-i"><span class="glyphicon glyphicon-off"></span><translate>Power Off</translate></span></a>
+                                <a class="ask btn btn-primary" href="/printer/restart" data-ask="restart-confirm"><span class="c3d-btn-i"><span class="glyphicon glyphicon-repeat"></span><translate>Restart</translate></span></a>
                             </div>
-                            <div class="col-md-12 no-padding"><br/>
-                                <h5>Move Plate</h5>
 
-                                <div class="btn-group-vertical" style="padding-right: 10px">
-                                    <button id="btnUp" class="btn btn-primary btn-axis-move" style="margin-bottom: 20px"><span class="glyphicon glyphicon-chevron-up"></span></button>
-                                    <button id="btnMove100000" class="btn btn-default btn-movement">100 mm</button>
-                                    <button id="btnMove10000" class="btn btn-default btn-movement">10 mm</button>
-                                    <button id="btnMove1000" class="btn btn-default btn-movement btn-movement-active">1 mm</button>
-                                    <button id="btnMove100" class="btn btn-default btn-movement">0.1 mm</button>
-                                    <button id="btnDown" class="btn btn-primary btn-axis-move" style="margin-top: 20px"><span class="glyphicon glyphicon-chevron-down"></span></button>
-                                </div>
-
-                                <div class="btn-group-vertical" style="padding-top: 80px">
-                                    <button id="btnMoveHome" class="btn btn-default">Home</button>
-                                    <button id="btnMoveBottom" class="btn btn-default">Floor</button>
-
-                                    <div class="dashboard-z-position">
-                                        <span class="dashboard-z-position-label">Z Position</span>
-                                        <span id="dashboard-z-position" class="dashboard-z-position-value">--</span>
-                                    </div>
-
-                                    <button id="btnStop" class="btn btn-danger" style="margin-top: 20px"><span class="glyphicon glyphicon-stop"></span></button>
-                                </div>
+                            <div class="c3d-section-label c3d-move-label">
+                                <translate>Move Plate</translate>
+                                <span class="c3d-z-position" aria-label="Current Z position">Z: <span id="dashboard-z-position">--</span><span aria-hidden="true"> mm</span></span>
                             </div>
+
+                            <button id="btnUp" type="button" class="btn c3d-ghost c3d-ghost-gold c3d-z-btn"><span class="c3d-btn-i"><span class="glyphicon glyphicon-chevron-up"></span><translate>Move Up</translate></span></button>
+
+                            <div class="c3d-step-group">
+                                <button id="btnMove100000" class="btn c3d-ghost c3d-ghost-info btn-movement">100&nbsp;mm</button>
+                                <button id="btnMove10000" class="btn c3d-ghost c3d-ghost-info btn-movement">10&nbsp;mm</button>
+                                <button id="btnMove1000" class="btn c3d-ghost c3d-ghost-info btn-movement btn-movement-active">1&nbsp;mm</button>
+                                <button id="btnMove100" class="btn c3d-ghost c3d-ghost-info btn-movement">0.1&nbsp;mm</button>
+                            </div>
+
+                            <button id="btnDown" type="button" class="btn c3d-ghost c3d-ghost-gold c3d-z-btn"><span class="c3d-btn-i"><span class="glyphicon glyphicon-chevron-down"></span><translate>Move Down</translate></span></button>
+
+                            <div class="c3d-pos-row">
+                                <button id="btnMoveHome" type="button" class="btn c3d-ghost c3d-ghost-info"><translate>Home</translate></button>
+                                <button id="btnMoveBottom" type="button" class="btn c3d-ghost c3d-ghost-info"><translate>Floor</translate></button>
+                            </div>
+
+                            <button id="btnStop" type="button" class="btn c3d-ghost c3d-ghost-danger c3d-stop"><span class="c3d-btn-i"><span class="glyphicon glyphicon-stop"></span><translate>Stop</translate></span></button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-marginless pressure-row">
+                <div id="pressure-chart-column" class="col-md-12 no-padding">
+                    <div class="panel panel-default dashboard-panel">
+                        <div class="panel-heading c3d-panel-heading--split">
+                            <span>Force &amp; Resin Temperature</span>
+                            <a class="c3d-panel-heading-action" href="/analytic"><span class="glyphicon glyphicon-stats"></span><translate>Full Analytics</translate></a>
+                        </div>
+                        <div class="panel-body">
+                            {% include "dashboard-widgets/pressure-chart.html" %}
                         </div>
                     </div>
                 </div>
@@ -59,7 +84,10 @@
         </div>
         <div id="webcam-column" class="col-md-4 no-padding">
             <div class="panel panel-default dashboard-panel">
-                <div class="panel-heading">Webcam</div>
+                <div class="panel-heading c3d-panel-heading--split">
+                    <span>Webcam</span>
+                    <button id="camera-led-on" type="button" class="c3d-panel-heading-action" title="Turn camera LED on for 10 seconds"><span class="glyphicon glyphicon-flash"></span>LED 10s</button>
+                </div>
                 <div class="panel-body">
                     {% include "dashboard-widgets/camera.html" %}
                 </div>
@@ -67,30 +95,22 @@
         </div>
     </div>
 
-    <div class="row row-marginless">
-        <div id="pressure-chart-column" class="col-md-12 no-padding">
-            <div class="panel panel-default dashboard-panel">
-                <div class="panel-heading">Pressure Sensor</div>
-                <div class="panel-body">
-                    {% include "dashboard-widgets/pressure-chart.html" %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row chart-row row-marginless">
-        <div class="col-md-12 no-padding">
-            <div class="panel panel-default dashboard-panel">
-                <div class="panel-heading">Latest Updates</div>
-                <div class="panel-body">
-                    <div class="nanodlp-content"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <translate class="hide" id="restart-confirm">Are you sure you want to restart the printer?</translate>
 <translate class="hide" id="poweroff-confirm">Are you sure you want to power off the printer?</translate>
 
+{% endblock %}
+
+{% block js %}
+<script>
+(function () {
+    var el = document.getElementById('c3d-greeting');
+    if (!el) return;
+    var h = new Date().getHours();
+    var g = (h >= 5 && h < 12) ? 'Good Morning!' : (h >= 12 && h < 17) ? 'Good Afternoon!' : 'Good Evening!';
+    el.textContent = g;
+})();
+</script>
+<script src='/static/js/updates-feed.js?{{version}}(c3dv3)'></script>
 {% endblock %}

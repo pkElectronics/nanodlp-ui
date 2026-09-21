@@ -1,35 +1,72 @@
 <script src='/static/js/aegis-client.js'></script>
 <link href='/static/css/aegis.css' rel="stylesheet">
 
-<div id="aegis-dashboard-container" class="col-md-12" style="display: none;">
+<div id="aegis-dashboard-container" style="display: none;">
 
-<!--  <div class="panel">-->
     <div class="aegis-header" id="aegis-status">VOC Level Ok</div>
 
-    <div class="aegis-row">
-      <span>AEGIS Fan</span>
-
-      <label class="switch">
-        <input id="aegis-toggle" type="checkbox">
-        <span class="switch-slider round"></span>
-      </label>
+    <div class="c3d-heater-row">
+        <button type="button" class="c3d-heater-btn c3d-aegis-btn is-off" data-aegis-toggle="aegis-toggle" data-aegis-name="AEGIS Fan" aria-pressed="false">AEGIS Fan: Disabled</button>
+        <input type="checkbox" id="aegis-toggle" class="c3d-hidden-check">
     </div>
 
-    <div class="aegis-row">
-      <span>Fan RPM</span>
-      <span id="aegis-fan-rpm">1000</span>
+    <div class="c3d-metric">
+        <span class="c3d-metric-label">Fan RPM</span>
+        <span class="c3d-metric-value" id="aegis-fan-rpm">0</span>
     </div>
 
-    <div class="divider"></div>
-
-    <div class="aegis-row">
-      <span>VOC Index Outlet</span>
-      <span><span id="aegis-fan-voc-outlet-status" class="glyphicon circle label-success"></span><span id="aegis-fan-voc-outlet">100</span></span>
+    <div class="c3d-voc-grid">
+        <div class="c3d-voc-tile state-ok" id="voc-outlet-tile">
+            <span class="c3d-voc-label">VOC Outlet</span>
+            <span class="c3d-voc-value" id="aegis-fan-voc-outlet">0</span>
+            <span id="aegis-fan-voc-outlet-status" class="glyphicon circle label-success c3d-hidden-dot"></span>
+        </div>
+        <div class="c3d-voc-tile state-ok" id="voc-inlet-tile">
+            <span class="c3d-voc-label">VOC Inlet</span>
+            <span class="c3d-voc-value" id="aegis-fan-voc-inlet">0</span>
+            <span id="aegis-fan-voc-inlet-status" class="glyphicon circle label-success c3d-hidden-dot"></span>
+        </div>
     </div>
 
-    <div class="aegis-row">
-      <span>VOC Index Inlet</span>
-      <span><span id="aegis-fan-voc-inlet-status" class="glyphicon circle label-success"></span><span id="aegis-fan-voc-inlet">100</span></span>
-    </div>
-<!--  </div>-->
 </div>
+
+<script>
+(function () {
+    'use strict';
+    var btn = document.querySelector('.c3d-heater-btn[data-aegis-toggle]');
+    var box = btn && document.getElementById(btn.getAttribute('data-aegis-toggle'));
+    if (!btn || !box) return;
+    var name = btn.getAttribute('data-aegis-name') || 'AEGIS Fan';
+
+    var vocStates = [
+        { dot: 'aegis-fan-voc-outlet-status', tile: 'voc-outlet-tile' },
+        { dot: 'aegis-fan-voc-inlet-status', tile: 'voc-inlet-tile' }
+    ];
+
+    function sync() {
+        var on = box.checked;
+        btn.classList.toggle('is-on', on);
+        btn.classList.toggle('is-off', !on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        btn.textContent = name + ': ' + (on ? 'Enabled' : 'Disabled');
+
+        vocStates.forEach(function (pair) {
+            var dot = document.getElementById(pair.dot);
+            var tile = document.getElementById(pair.tile);
+            if (!dot || !tile) return;
+            var state = dot.classList.contains('label-danger') ? 'state-critical'
+                : dot.classList.contains('label-warning') ? 'state-warning'
+                : 'state-ok';
+            tile.classList.remove('state-ok', 'state-warning', 'state-critical');
+            tile.classList.add(state);
+        });
+    }
+    btn.addEventListener('click', function () {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change', { bubbles: true }));
+        sync();
+    });
+    sync();
+    setInterval(sync, 700);
+})();
+</script>

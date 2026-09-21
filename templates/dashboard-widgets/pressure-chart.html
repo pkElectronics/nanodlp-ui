@@ -33,6 +33,11 @@
         {
             uplotId: '#uplot-1',
             height: 250,
+            fitParent: true,
+            minimumScaleSpans: {
+                Pressure: 200,
+                '°C': 2.0,
+            },
             fields: [
                 { key: 'LayerHeight', id: 0 },
                 { key: 'Pressure', id: 6, overrideLabel: 'Force', overrideAxisLabel: 'Force', overrideUnit: 'g' },
@@ -93,6 +98,3 @@
 
 </script>
 <div id="uplot-1" class="uplot uplot-container"></div>
-<div style="text-align: center">
-<a class="pull-center" href="/analytic">See full analytics</a>
-</div>

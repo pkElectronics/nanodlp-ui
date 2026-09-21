@@ -59,6 +59,20 @@ function setUpCheckboxToggle($checkboxElem, $toggleSection) {
 	})
 }
 
+/* The resin editor's Enabled/Disabled bar is a two-state control: clicking a
+   side selects that state instead of blindly flipping the checkbox, then fires
+   change so the existing handlers (value 0/1, section visibility) still run. */
+$("#setup2 .c3d-resin-toggle").on("click", function (e) {
+	let side = e.target.closest ? e.target.closest(".c3d-resin-toggle-on, .c3d-resin-toggle-off") : null;
+	if (!side) return;
+	e.preventDefault();
+	let box = $(this).find("input[type=checkbox]")[0];
+	let wanted = side.classList.contains("c3d-resin-toggle-on");
+	if (!box || box.checked === wanted) return;
+	box.checked = wanted;
+	$(box).trigger("change");
+});
+
 setUpCheckboxToggle($("#PdEnableSimple"), $('.peel-detection-settings'));
 $("#PdEnableSimple").change(updatePeelDetectionSettingsVisibility);
 setUpCheckboxToggle($("#RlEnableSimple"));
@@ -88,17 +102,23 @@ function setEasyMode(enabled){
 		window.localStorage.setItem("ProfileEasyMode", "false");
 	}
 
-	updateEasyModeNavButtonText();
+	updateEasyModeControls();
 	updateEasyModeProfileFieldVisibility();
 }
 
-function updateEasyModeNavButtonText(){
-	let navButton = $("#easyModeNavButtonText");
+function updateEasyModeControls(){
+	let advanced = !isEasyModeEnabled();
+	$("#easyModeNavButtonText").text(advanced ? "Easy Mode" : "Advanced Mode");
 
-	if(isEasyModeEnabled()){
-		navButton.text("Advanced Mode");
-	}else {
-		navButton.text("Easy Mode");
+	// The switch in the form header is the same control as the navbar entry: it
+	// names the mode it switches to and shows which one is active.
+	let profileSwitch = $("#profileEasyModeSwitchBtn");
+	if (profileSwitch.length) {
+		profileSwitch
+			.text(advanced ? "Easy Mode" : "Advanced Mode")
+			.toggleClass("is-on", advanced)
+			.toggleClass("is-off", !advanced)
+			.attr("aria-checked", advanced ? "true" : "false");
 	}
 }
 
@@ -117,7 +137,7 @@ function updateEasyModeProfileFieldVisibility(){
 
 function setupEasyMode(){
 
-	updateEasyModeNavButtonText();
+	updateEasyModeControls();
 	updateEasyModeProfileFieldVisibility();
 
 	let navButton = $("#easyModeNavButtonText");
@@ -126,7 +146,7 @@ function setupEasyMode(){
 	});
 
 	$("#profileEasyModeSwitchBtn").click(function () {
-		setEasyMode(false);
+		setEasyMode(!isEasyModeEnabled());
 	});
 }
 
@@ -489,24 +509,31 @@ function update_channel() {
 		url: "/static/channel",
 		cache: false,
 		success: function (result) {
-			channel = result;
-			$("#channel").html("Current Software Channel: " + result);
+			channel = result.trim();
+			$("#channel").text(channel);
+			mark_active_channel(channel);
 			update_changelog();
 		},
 		error: function (result) {
 			channel = "stable";
-			$("#channel").html("Current Software Channel: " + channel);
+			$("#channel").text(channel);
+			mark_active_channel(channel);
 			update_changelog();
 		}
 	});
+}
+// The page's labels live in the template now, so the JS only writes the value.
+function mark_active_channel(name) {
+	$(".c3d-channel-btn").removeClass("is-active");
+	$("#btn-" + name).addClass("is-active");
 }
 function update_printertype() {
 	$.ajax({
 		url: "/static/printer_type",
 		cache: false,
 		success: function (result) {
-			printer_type = result;
-			$("#printer_type").html("Printer Type: " + result);
+			printer_type = result.trim();
+			$("#printer_type").text(printer_type);
 			update_changelog();
 			aegis_checkbox_init();
 		}
@@ -518,11 +545,11 @@ function update_image_version() {
 		url: "/static/image_version",
 		cache: false,
 		success: function (result) {
-			image_version = result;
-			$("#image_version").html("Image Version: " + result);
+			image_version = result.trim();
+			$("#image_version").text(image_version);
 			parts = image_version.split('+');
 			version_str = parts[1];
-			$("#version_str").html("Upgrade from Version: " + parts[1]);
+			$("#version_str").text(parts[1]);
 			update_changelog();
 		}
 	});
@@ -555,18 +582,30 @@ function update_changelog(){
 					version_str.html("Update Available");
 					version_str.addClass("label");
 					version_str.addClass("label-success");
+					set_update_state("available", "Update available");
 				}
 				else{
 					version_str.html("Build: "+parts[1]);
+					set_update_state("current", "Up to date");
 				}
 			},
 			error: function( result){
 				console.error('Error: ${result}');
+				set_update_state("error", "Could not reach the update server");
 			}
 
 		});
 
 	}
+}
+
+// The header chip on the upgrade page: checking -> available | current | error.
+function set_update_state(state, text) {
+	$("#dashboard-software-update").toggleClass("hidden", state !== "available");
+	let chip = $("#update-state");
+	if (chip.length === 0) return;
+	chip.removeClass("is-checking is-available is-current is-error").addClass("is-" + state);
+	$("#update-state-text").text(text);
 }
 
 async function changeUpdateChannel(channel) {
@@ -583,9 +622,9 @@ async function changeUpdateChannel(channel) {
 
 		const text = document.getElementById(`btn-${channel}`);
 		toastr.success(`Channel updated to ${text.innerText}!`);
-		if (confirm('A reboot is required for the channel change to take effect. Reboot now?')) {
+		c3dConfirm('A reboot is required for the channel change to take effect. Reboot now?', function(){
 			window.location.href = '/printer/restart';
-		}
+		});
 	} catch (err) {
 		toastr.error('Failed to switch channels.')
 	}
@@ -594,14 +633,24 @@ async function changeUpdateChannel(channel) {
 const url_progress = "/athena-update/athena_progress.txt";
 const url_message = "/athena-update/athena_message.txt";
 
+function render_update_progress(value) {
+	let progress = Number.parseFloat(String(value).replace(/[\r\n%]+/g, ""));
+	if (!Number.isFinite(progress)) return;
+	progress = Math.max(0, Math.min(100, progress));
+	let label = Math.round(progress) + "%";
+
+	$('#theBar').width(progress + "%");
+	$('#theBar').attr('aria-valuenow', progress);
+	$('#update-progress-percent').text(label);
+}
+
 function open_update_modal(){
 	let update_status_helper = "";
 
 	let ajax_error_cnt = 0;
 
-	$('#theBar').width(5+"%");
-	$('#theBar').html(5+"%");
-	$('#progress-message').html("Launching updater");
+	render_update_progress(0);
+	$('#progress-message').text("Launching updater");
 
 	var counterBack = setInterval(function()
 	{
@@ -611,10 +660,7 @@ function open_update_modal(){
 				if(update_status_helper === ""){
 					update_status_helper = "running";
 				}
-				result = result.replace(/[\r\n]+/gm, "") + "%";
-
-				$('#theBar').width(result)
-				$('#theBar').html(result);
+				render_update_progress(result);
 			},
 			error: function( result){
 				if(update_status_helper === "running"){
@@ -625,7 +671,7 @@ function open_update_modal(){
 				ajax_error_cnt++;
 
 				if(ajax_error_cnt >= 20){
-					$('#progress-message').html("Connection to the updater seems to have failed, please reload this page");
+					$('#progress-message').text("Update status is temporarily unavailable. Please reload this page if it does not return.");
 				}
 
 			}});
@@ -633,7 +679,7 @@ function open_update_modal(){
 		$.ajax({
 			url: url_message,
 			success: function( result ) {
-				$('#progress-message').html(result);
+				$('#progress-message').text(result);
 			},
 
 		});
@@ -981,7 +1027,7 @@ function fetch_resin_target(){
 		if(data == 0){
 			$("#navbar-resin-target-text").text("Heater is Off");
 		}else{
-			$("#navbar-resin-target-text").text("Target :"+data+"°C");
+			$("#navbar-resin-target-text").text("Target: "+data+"°C");
 		}
 
 	});
@@ -1181,6 +1227,21 @@ async function runGcode(gcode) {
 	});
 }
 
+/* The disk cards carry a meter under their value; the endpoint already reports
+   the used percentage per volume, so the bar needs no unit parsing. */
+function set_disk_meter(fillId, trackId, usageId, stat){
+	let fill = document.getElementById(fillId);
+	if (!fill || !stat) return;
+	let percent = parseFloat(stat["Use%"]);
+	if (isNaN(percent)) return;
+	percent = Math.max(0, Math.min(100, percent));
+	fill.style.width = percent + "%";
+	let track = document.getElementById(trackId);
+	if (track) track.setAttribute("aria-valuenow", Math.round(percent));
+	let usage = document.getElementById(usageId);
+	if (usage) usage.textContent = Math.round(percent) + "% used";
+}
+
 function setup_diskspace(json){
 	if(json.hasOwnProperty("nvme0n1p1")){
 		console.log("Printer has SSD installed");
@@ -1192,29 +1253,30 @@ function setup_diskspace(json){
 		let ssd_storage_text = $("#ssd-freespace-text");
 		let ssd_storage_value = $("#ssd-freespace-value");
 
-		emmc_storage_text.html("Free Disk Space (System)");
+		emmc_storage_text.html("Disk Usage (System)");
 
-		if("root" in json){
-			emmc_storage_value.html(json.root.Used + " of "+json.root.Size);
-		}else{
-			emmc_storage_value.html(json.mmcblk0p2.Avail + " of "+json.mmcblk0p2.Size);
+		let system_disk = ("root" in json) ? json.root : json.mmcblk0p2;
+		if(system_disk){
+			emmc_storage_value.html(system_disk.Used + " of "+system_disk.Size);
+			set_disk_meter("emmc-freespace-meter", "emmc-freespace-meter-track", "emmc-freespace-usage", system_disk);
 		}
-		
+
 		ssd_storage_container.removeClass("hidden");
-		ssd_storage_text.html("Free Disk Space (Jobs)");
-		ssd_storage_value.html(json.nvme0n1p1.Avail + " of "+json.nvme0n1p1.Size);
+		ssd_storage_text.html("Disk Usage (SSD Storage)");
+		ssd_storage_value.html(json.nvme0n1p1.Used + " of "+json.nvme0n1p1.Size);
+		set_disk_meter("ssd-freespace-meter", "ssd-freespace-meter-track", "ssd-freespace-usage", json.nvme0n1p1);
 
 	}else{
 		console.log("No SSD Installed, skipping");
 	}
 }
 
-async function updateIdWithAnalytic(elemId, analyticId) {
+async function updateIdWithAnalytic(elemId, analyticId, formatter) {
 	const elementById = document.getElementById(elemId);
 	const analyticValue = await getAnalytic(analyticId);
 
 	if (elementById) {
-		elementById.innerHTML = analyticValue;
+		elementById.textContent = formatter ? formatter(analyticValue) : analyticValue;
 	}
 	return analyticValue;
 }
@@ -1237,29 +1299,80 @@ $(document).ready(function () {
 
 })
 
-// Dashboard live Z-position updater
+// Restore the production Dashboard Z readout. The existing NanoDLP endpoint is
+// read-only and is only polled when the Dashboard readout is present.
 function setupDashboardZPosition() {
-    const zPosition = $("#dashboard-z-position");
+	const zPosition = $("#dashboard-z-position");
+	if (!zPosition.length) return;
 
-    // athena.js is loaded on every Athena page. Only poll on the Dashboard.
-    if (!zPosition.length) {
-        return;
-    }
+	function updateDashboardZPosition() {
+		$.getJSON("/z-axis/info")
+			.done(function (data) {
+				const z = Number.parseFloat(data && data["current-height-mm"]);
+				zPosition.text(Number.isFinite(z) ? z.toFixed(2) : "--");
+			})
+			.fail(function () {
+				zPosition.text("--");
+			});
+	}
 
-    function updateDashboardZPosition() {
-        $.getJSON("/z-axis/info")
-            .done(function (data) {
-                const z = parseFloat(data["current-height-mm"]);
-                if (!isNaN(z)) {
-                    zPosition.text(z.toFixed(2) + " mm");
-                }
-            });
-    }
-
-    updateDashboardZPosition();
-    setInterval(updateDashboardZPosition, 1500);
+	updateDashboardZPosition();
+	setInterval(updateDashboardZPosition, 1500);
 }
 
-$(document).ready(function () {
-    setupDashboardZPosition();
-});
+$(document).ready(setupDashboardZPosition);
+
+/* The New Job drop zone wraps the real #ZipFile input: the input keeps its layout
+   (main.js gates #browser_slice on :visible) and sits transparent on top, so the
+   native picker, drag-and-drop and the size checks in main.js all keep working.
+   This only mirrors the chosen file into the zone and wires the clear button. */
+function setup_upload_dropzone(){
+	let zone = document.getElementById("zip-dropzone");
+	let input = document.getElementById("ZipFile");
+	if (!zone || !input) return;
+
+	let picked = document.getElementById("zip-dropzone-picked");
+	let clear = document.getElementById("clear-ZipFile");
+
+	function human_size(bytes){
+		let units = ["B", "KB", "MB", "GB"];
+		let i = 0;
+		let value = bytes;
+		while (value >= 1024 && i < units.length - 1) { value /= 1024; i++; }
+		return (i === 0 ? value : value.toFixed(1)) + " " + units[i];
+	}
+
+	function render(){
+		let file = input.files && input.files[0];
+		if (file){
+			picked.textContent = file.name + " \u00b7 " + human_size(file.size);
+			picked.hidden = false;
+			zone.classList.add("has-file");
+			if (clear) clear.classList.remove("hide");
+		} else {
+			picked.textContent = "";
+			picked.hidden = true;
+			zone.classList.remove("has-file");
+			if (clear) clear.classList.add("hide");
+		}
+	}
+
+	input.addEventListener("change", render);
+	if (clear) clear.addEventListener("click", function(){
+		input.value = "";
+		render();
+		/* mirror the "no file" branch of file_size_limit_apply() without firing a
+		   change event, which would dereference a missing file there */
+		$(".upload-disable").find('button[type="submit"]').prop("disabled", false);
+		$("#largeFile").addClass("hide");
+	});
+	["dragenter", "dragover"].forEach(function(type){
+		zone.addEventListener(type, function(){ zone.classList.add("is-dragover"); });
+	});
+	["dragleave", "dragend", "drop"].forEach(function(type){
+		zone.addEventListener(type, function(){ zone.classList.remove("is-dragover"); });
+	});
+	render();
+}
+
+$(document).ready(setup_upload_dropzone);

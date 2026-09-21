@@ -202,9 +202,9 @@ async function setupAegisPolling() {
 }
 
 async function getAegisValues() {
-    const fanRpm = await updateIdWithAnalytic('aegis-fan-rpm', 21);
-    const outletValue = await updateIdWithAnalytic('aegis-fan-voc-outlet', 27);
-    const inletValue = await updateIdWithAnalytic('aegis-fan-voc-inlet', 26);
+    const fanRpm = await updateIdWithAnalytic('aegis-fan-rpm', 21, value => formatAegisValue(value, 0));
+    const outletValue = await updateIdWithAnalytic('aegis-fan-voc-outlet', 27, value => formatAegisValue(value, 1));
+    const inletValue = await updateIdWithAnalytic('aegis-fan-voc-inlet', 26, value => formatAegisValue(value, 1));
 
     await setAegisStatus(inletValue);
     await setAegisIndicator(inletValue, 'aegis-fan-voc-inlet-status')
@@ -213,6 +213,17 @@ async function getAegisValues() {
     return {
         fanRpm, outletValue, inletValue
     }
+}
+
+function tinted(color) {
+    const r = parseInt(color.slice(1, 3), 16);
+    const g = parseInt(color.slice(3, 5), 16);
+    const b = parseInt(color.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, 0.13)`;
+}
+function paintStatus(el, color) {
+    el.style.borderColor = color;
+    el.style.backgroundColor = tinted(color);
 }
 
 async function setAegisStatus(inletValue) {
@@ -226,7 +237,7 @@ async function setAegisStatus(inletValue) {
             }else {
                 aegisStatusElem.innerText = 'Filtration Cycle Running';
             }
-            aegisStatusElem.style.borderColor = '#fff';
+            paintStatus(aegisStatusElem, '#8ab4f8');
             return;
         }
     }
@@ -235,7 +246,7 @@ async function setAegisStatus(inletValue) {
 
     if (isVocCritical) {
         aegisStatusElem.innerText = 'VOC Level Critical';
-        aegisStatusElem.style.borderColor = '#d9534f';
+        paintStatus(aegisStatusElem, '#d9534f');
         return;
     }
 
@@ -243,7 +254,7 @@ async function setAegisStatus(inletValue) {
 
     if (isVocWarning) {
         aegisStatusElem.innerText = 'VOC Level Warning';
-        aegisStatusElem.style.borderColor = '#f0ad4e';
+        paintStatus(aegisStatusElem, '#f0ad4e');
         return;
     }
 
@@ -251,13 +262,13 @@ async function setAegisStatus(inletValue) {
     if (replaceFilter) {
         if (replaceFilter['filter_needs_replacement']) {
             aegisStatusElem.innerText = 'Filter needs replacement';
-            aegisStatusElem.style.borderColor = '#d9534f';
+            paintStatus(aegisStatusElem, '#d9534f');
             return;
         }
     }
 
     aegisStatusElem.innerText = 'VOC Level Ok';
-    aegisStatusElem.style.borderColor = '#fff';
+    paintStatus(aegisStatusElem, '#2eb67d');
 }
 
 function setAegisIndicator(value, elemId) {
@@ -303,4 +314,12 @@ async function isAegisAvailable() {
     const aegisAvailable = await fetch(`${BASE_URL}/athena-iot/aegis/available`);
     const result = await aegisAvailable.json();
     return result.available
+}
+
+function formatAegisValue(value, decimalPlaces) {
+    if (value === null || value === undefined || String(value).trim() === '') return '--';
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) return '--';
+    const factor = 10 ** decimalPlaces;
+    return (Math.round((numericValue + Number.EPSILON) * factor) / factor).toFixed(decimalPlaces);
 }

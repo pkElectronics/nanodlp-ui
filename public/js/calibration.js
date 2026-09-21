@@ -64,7 +64,7 @@ function onCalibrationModelChange(calibrationModelId) {
 
     const img = document.getElementById('calibration-model-image');
     if (img) {
-        img.src = `/static/shots/calibration-images/${calibrationModelId}.png`;
+        img.src = `/static/shots/calibration-images/${calibrationModelId}.png?v=athena-wp6`;
     }
 }
 
@@ -168,6 +168,6 @@ async function setUpSlicerPoller() {
 }
 
 async function getCalibrationOptions() {
-    const response = await fetch("/static/config/calibrationConfig.json");
+    const response = await fetch("/static/config/calibrationConfig.json?v=athena-wp6");
     return await response.json();
 }

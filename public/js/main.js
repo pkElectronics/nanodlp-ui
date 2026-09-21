@@ -6,6 +6,18 @@ const BASE_URL = DEV_MODE ? 'http://192.168.4.160' : '';
 var favicon;
 var percentage;
 
+// Capture the product/printer suffix once, before status updates mutate the tab title.
+// Some redesigned templates provide only the product name while others include a
+// page prefix. Page-only titles are not valid printer suffixes and are omitted.
+var initial_document_title = (document.title || '').trim();
+var base_title_suffix = (function(initialTitle){
+	if (!initialTitle || /(^|\s)undefined($|\s)/i.test(initialTitle)) return '';
+	var separator = ' - ';
+	var separatorIndex = initialTitle.indexOf(separator);
+	if (separatorIndex >= 0) return initialTitle.slice(separatorIndex + separator.length).trim();
+	return /(NanoDLP|Athena|Concepts3D)/i.test(initialTitle) ? initialTitle : '';
+})(initial_document_title);
+
 
 $(function(){
 	// Run for index page
@@ -112,16 +124,14 @@ function settings_init() {
         var page = window.location.hash.substr(1);
         if ($("#scategory").val()==page) return;
         if (window.location.hash.length>2){
-            select_setting();
+            if (!select_setting()) select_first_setting();
         } else {
-            settings_close();
+            select_first_setting();
         }
     });
-    if (window.location.hash.length>2){
-        select_setting();
-    }
     axis_height();
     oem_lock();
+    if (window.location.hash.length<=2 || !select_setting()) select_first_setting();
 }
 
 function axis_height(){	
@@ -137,16 +147,30 @@ function axis_height_calc(){
 }
 
 function select_setting(){
-	$(".setting-cat").each(function(){
-		if ("#"+$(this).data("related")==window.location.hash){
-			$(this).trigger("click");
-		}
-	});
+    var selected = false;
+    $("#setup .setting-cat:visible").each(function(){
+        if ("#"+$(this).data("related")==window.location.hash){
+            selected = true;
+            $(this).trigger("click");
+            return false;
+        }
+    });
+    return selected;
+}
+
+function select_first_setting(){
+    var first = $("#setup .setting-cat:visible").first();
+    if (first.length==0) return false;
+    first.trigger("click");
+    return true;
 }
 
 function settings_open(t){
     console.log(t)
     var cl = $(t).data("related");
+	$("#setup .setting-cat").removeClass("is-active").attr("aria-selected", "false");
+	$(t).addClass("is-active").attr("aria-selected", "true");
+    $("#settings-panel-title").text($.trim($(t).find("h4").first().text()));
     $("#scategory").val(cl);
     $("."+cl).show();
     window.location = "#"+cl;
@@ -157,6 +181,7 @@ function settings_open(t){
 
 function settings_close(){
     $("#scategory").val("");
+	$("#setup .setting-cat").removeClass("is-active").attr("aria-selected", "false");
     $(".i_option").hide();
     window.location = "#";
     $(".selected-cat").html("");
@@ -273,9 +298,58 @@ function update_upload_progress(){
 	});
 }
 
+/* ---------- Designed confirm dialog ----------
+   A bootstrap modal replaces the native confirm(), so prompts match the rest
+   of the UI. c3dConfirm(message, onOk) never blocks: the caller continues in
+   the callback. If the dialog is not in the DOM it falls back to confirm(). */
+function c3dConfirm(message, onOk){
+	var $m = $("#c3d-confirm-modal");
+	if (!$m.length || !$.fn.modal) {
+		if (window.confirm(message)) onOk();
+		return;
+	}
+	$m.find(".c3d-confirm-text").text(message || "");
+	$m.data("c3d-on-ok", onOk);
+	$m.modal("show");
+}
+
+/* Do what the element would have done by itself: follow the link, submit the
+   form it belongs to, or replay the click for handlers we do not own. */
+function c3dRunAction(el){
+	var $el = $(el);
+	if (el.tagName === "A" && $el.attr("href") && $el.attr("href") !== "#") {
+		window.location.href = $el.attr("href");
+		return;
+	}
+	var form = $el.attr("form") ? document.getElementById($el.attr("form")) : $el.closest("form")[0];
+	if (form) {
+		if (typeof form.requestSubmit === "function") form.requestSubmit(el.type === "submit" ? el : undefined);
+		else form.submit();
+		return;
+	}
+	el.dataset.c3dConfirmed = "1";
+	$el.trigger("click");
+}
+
+$(function(){
+	$("#c3d-confirm-modal").on("click", ".c3d-confirm-ok", function(){
+		var $m = $("#c3d-confirm-modal");
+		var fn = $m.data("c3d-on-ok");
+		$m.data("c3d-on-ok", null);
+		$m.modal("hide");
+		if (typeof fn === "function") fn();
+	});
+});
+
 function confirm_init(){
 	$("body").delegate(".ask","click",function(e){
-		return confirm($("#"+$(this).data("ask")).text());
+		var el = this, $el = $(el);
+		if (el.dataset.c3dConfirmed === "1") { delete el.dataset.c3dConfirmed; return true; }
+		var textEl = document.getElementById($el.data("ask") || "");
+		var text = textEl ? textEl.textContent.trim() : "";
+		if (!text) return true;
+		e.preventDefault();
+		c3dConfirm(text, function(){ c3dRunAction(el); });
 	});
 }
 
@@ -285,7 +359,7 @@ function plates_init(){
 		else $(this).parents("form").find(".resume").addClass("hide");
 	}).on("click",".print-from-middle",function(e){
 		e.preventDefault();
-		$(this).parents("td").find("form").removeClass("hide").find("input").focus();
+		$(this).closest("td, .c3d-job-row").find("form").removeClass("hide").find("input").focus();
 	});
 	update_plates_resume();
 }
@@ -420,7 +494,9 @@ function repair_init(){
 function jobs_action_init(){
 	$("body").delegate(".resume","click",function(e){
 		var t=$(this);
-		return confirm(t.data("confirm").replace("[LayerID]",t.parents("form").find("input").val()));
+		e.preventDefault();
+		var msg = (t.data("confirm") || "").replace("[LayerID]", t.parents("form").find("input").val());
+		c3dConfirm(msg, function(){ c3dRunAction(t[0]); });
 	}).delegate(".cancel-slicing","click",function(e){
 		$.get("/slicer/cancel");
 	});
@@ -452,6 +528,57 @@ function sortable_table_init(){
 		if (!this.asc){rows = rows.reverse()}
 		for (var i = 0; i < rows.length; i++){table.append(rows[i])}
 	})
+	$("html").delegate('#c3d-jobs-sort .c3d-chip','click',function(e){
+		e.preventDefault();
+		var mode = $(this).data("sort");
+		if ($(this).hasClass("is-active")) {
+			localStorage.removeItem('plates-sort');
+			applyJobSort(null);
+		} else {
+			localStorage.setItem('plates-sort', mode);
+			applyJobSort(mode);
+		}
+	});
+}
+
+// Job list sorting: rows carry data-idx (server order) plus the sortable fields.
+function applyJobSort(mode){
+	var list = $("#plates.c3d-job-list");
+	if (list.length === 0) return;
+	var rows = list.children(".c3d-job-row").toArray();
+	var m = /^(id|name|lastprint|layers)(?:-(asc|desc))?$/.exec(mode || "");
+	if (!m) {
+		rows.sort(function(a, b){ return (+a.getAttribute("data-idx")) - (+b.getAttribute("data-idx")); });
+	} else {
+		var desc = m[2] === "desc";
+		rows.sort(function(a, b){
+			if (m[1] === "name") {
+				var av = $(a).find(".c3d-job-name").text().trim().toLowerCase();
+				var bv = $(b).find(".c3d-job-name").text().trim().toLowerCase();
+				return av < bv ? -1 : av > bv ? 1 : 0;
+			}
+			var key = "sort" + m[1].charAt(0).toUpperCase() + m[1].slice(1);
+			return (parseFloat($(a).data(key)) || 0) - (parseFloat($(b).data(key)) || 0);
+		});
+		if (desc) rows.reverse();
+	}
+	for (var i = 0; i < rows.length; i++){list.append(rows[i])}
+	setJobSortChips(mode);
+}
+
+function setJobSortChips(mode){
+	var m = /^(id|name|lastprint|layers)(?:-(asc|desc))?$/.exec(mode || "");
+	var active = m ? m[0] : null;
+	$("#c3d-jobs-sort .c3d-chip").each(function(){
+		$(this).toggleClass("is-active", $(this).data("sort") === active);
+	});
+}
+
+function decorateJobsCount(){
+	var count = document.getElementById("c3d-jobs-count");
+	if (!count) return;
+	var list = $("#plates.c3d-job-list");
+	count.textContent = list.length > 0 ? "(" + list.children(".c3d-job-row").length + ")" : "";
 }
 
 function comparer(index) {
@@ -537,24 +664,29 @@ function inputs_init(){
 	}).delegate("a.ajax","click",function(e){
 		e.preventDefault();
 		var t = $(this);
-		if (!confirm_action(t)) return;
-		$.ajax({
-			url: t.attr('href')
-		}).always(function(d){
-			if (t.data("ajax")){
-				document.location.href = t.data("ajax");
-			}
+		confirm_action(t, function(){
+			$.ajax({
+				url: t.attr('href')
+			}).always(function(d){
+				if (t.data("ajax")){
+					document.location.href = t.data("ajax");
+				}
+			});
 		});
 	});
 }
 
-function confirm_action(t){
-	if (t.data("confirm")){
-		var txt = $("#"+t.data("confirm")).text();
-		if (txt=="") txt=t.data("confirm");
-		return confirm(txt);
+/* Returns true when it already ran onOk (nothing to ask). */
+function confirm_action(t, onOk){
+	var key = t.data("confirm");
+	if (!key){
+		if (typeof onOk === "function") onOk();
+		return true;
 	}
-	return true;
+	var txt = $("#"+key).text();
+	if (txt=="") txt=key;
+	c3dConfirm(txt, onOk);
+	return false;
 }
 
 function favicon_init(){
@@ -620,6 +752,7 @@ update_status.problem = 0;
 update_status.once = false;
 update_status.play_once = false;
 function update_status(){
+	if ($('#stat').length>0) update_printer_temperatures();
 	$.ajax({
 		url: BASE_URL + '/status',
 		dataType: 'json',
@@ -658,6 +791,7 @@ function update_status(){
 				$(".dashboard").hide();
 			}
 			hideElemIfPresent('machine-status')
+			$('body').removeClass('c3d-printing');
 		} else {
 			last_value('layer',data['LayerID']);
 			last_value('started',data['started']);
@@ -677,6 +811,7 @@ function update_status(){
 				$(".printing-obj").css('display','inline-block');
 			}
 			showElemIfPresent('machine-status')
+			$('body').addClass('c3d-printing');
 			layer_progress(data['PrevLayerTime'],data['LayerStartTime']);
 			update_stat();
 		}
@@ -723,6 +858,30 @@ async function update_stat(){
 
 var charts_data=[];
 
+function update_temperature_metric(key,value){
+	var parsed = parseFloat(value);
+	if (!Number.isFinite(parsed)) {
+		$('#'+key).text('--');
+		return;
+	}
+	$('#'+key).text(parsed.toFixed(1));
+	if (!charts_data[key]) charts_data[key]=[];
+	charts_data[key].push(parsed);
+	if (charts_data[key].length>120) charts_data[key].shift();
+	$('#'+key+'_chart').sparkline(charts_data[key], {"width": '80px',"height":"16px", "fillColor":false,"minSpotColor":false,"maxSpotColor":false,'lineColor':'#8ab4f8'});
+}
+
+function update_printer_temperatures(){
+	$.each([
+		{key:'chamber_temp',url:'/analytic/value/22'},
+		{key:'uv_temp',url:'/analytic/value/8'}
+	],function(_,metric){
+		$.ajax({url:BASE_URL+metric.url,dataType:'json',type:'GET',timeout:1200})
+			.done(function(value){update_temperature_metric(metric.key,value);})
+			.fail(function(){update_temperature_metric(metric.key,null);});
+	});
+}
+
 function change_stats(data,keys){
 	$.each(keys,function(k,v){
 		if (data[v]=="") return;
@@ -730,12 +889,22 @@ function change_stats(data,keys){
 			charts_data[v]=[];
 		}
 		$("#"+v).html(data[v]);
+		var meter = document.getElementById(v+"_meter");
+		if (meter) {
+			var percent = parseFloat(data[v]);
+			if (!isNaN(percent)) {
+				percent = Math.max(0, Math.min(100, percent));
+				meter.style.width = percent + "%";
+				var track = document.getElementById(v+"_meter_track");
+				if (track) track.setAttribute("aria-valuenow", Math.round(percent));
+			}
+		}
 		charts_data[v+"_counter"]++;
 		if (parseFloat(data[v]) != charts_data[v][charts_data[v].length-1]||charts_data[v].length<2||charts_data[v+"_counter"]>30){
 			charts_data[v+"_counter"]=0;
 			charts_data[v].push(parseFloat(data[v]));
 			if (charts_data[v].length>120) charts_data[v].shift();
-			$("#"+v+"_chart").sparkline(charts_data[v], {"width": '80px',"height":"16px", "fillColor":false,"minSpotColor":false,"maxSpotColor":false,'lineColor':'#5bc0de'});
+			$("#"+v+"_chart").sparkline(charts_data[v], {"width": '80px',"height":"16px", "fillColor":false,"minSpotColor":false,"maxSpotColor":false,'lineColor':'#8ab4f8'});
 		}
 	});
 }
@@ -906,7 +1075,9 @@ function current_status_display(){
 }
 
 function title_update(title){
-	document.title = title + ' - ' + $('title').text().split('-')[1];
+	var statusTitle = title == null ? '' : String(title).trim();
+	if (/^undefined$/i.test(statusTitle)) statusTitle = '';
+	document.title = [statusTitle,base_title_suffix].filter(function(part){ return part !== ''; }).join(' - ');
 }
 
 var last_frame_key='';
@@ -990,6 +1161,31 @@ function tooltip_display(selector,timeout){
 	$("#tip").css({"top":(selector.pageY - xOffset) + "px","left":(selector.pageX + yOffset) + "px"}).fadeIn("fast");
 }
 
+var TERMINAL_AUTOSCROLL_KEY='terminal-autoscroll';
+
+function terminal_autoscroll_pref(){
+	var saved=null;
+	try { saved=localStorage.getItem(TERMINAL_AUTOSCROLL_KEY); } catch(e) {}
+	return saved!='0';
+}
+
+function terminal_autoscroll_paint(){
+	var on=terminal_autoscroll_pref();
+	$('#terminal-autoscroll')
+		.toggleClass('is-on',on)
+		.toggleClass('is-off',!on)
+		.attr('aria-checked',on?'true':'false');
+}
+
+function terminal_at_bottom(el){
+	/* The log keeps growing while you read it, so stick to the end unless the
+	   user scrolled away from it. clientHeight, not outerHeight: outerHeight
+	   counts the 1px borders and then never equals scrollHeight - scrollTop.
+	   Small slack, because scrollTop and the heights can differ by a fraction
+	   of a pixel even when the view is at the bottom. */
+	return el.scrollHeight - el.scrollTop - el.clientHeight <= 32;
+}
+
 function terminal_init(){
 	if ($('#terminal').length==0) return;
 	$("html").delegate('.terminal a','click',function(e){
@@ -998,16 +1194,29 @@ function terminal_init(){
 		$("#gcode").val("").focus();
 		$('#terminal').scrollTop($('#terminal')[0].scrollHeight);
 	});
+	$('#terminal-autoscroll').on('click',function(){
+		var on=!terminal_autoscroll_pref();
+		try { localStorage.setItem(TERMINAL_AUTOSCROLL_KEY,on?'1':'0'); } catch(e) {}
+		terminal_autoscroll_paint();
+		if (on) {
+			var el=$('#terminal')[0];
+			if (el) el.scrollTop=el.scrollHeight;
+		}
+	});
+	terminal_autoscroll_paint();
+	terminal_fetch();
 	setInterval(function(){terminal_fetch();}, 1000);
 }
 
 function terminal_fetch(){
+	var el=$('#terminal')[0];
+	if (!el) return;
 	$.get("/term-io").done(function(data){
 		if (data=="") return;
 		if (data==$("#terminal").html()) return;
-		var currentBottom=$('#terminal').scrollTop()+$('#terminal').outerHeight()==$('#terminal')[0].scrollHeight;
+		var stick=terminal_autoscroll_pref() && terminal_at_bottom(el);
 		$("#terminal").html(data);
-		if (currentBottom) $('#terminal').scrollTop($('#terminal')[0].scrollHeight);
+		if (stick) el.scrollTop=el.scrollHeight;
 	});
 }
 
@@ -1023,6 +1232,10 @@ function search_init(){
 	if (savedSearch) {
 		$('#search').val(savedSearch);
 	}
+
+	// Restore job sort order from localStorage on page load
+	applyJobSort(localStorage.getItem('plates-sort'));
+	decorateJobsCount();
 
 	// Apply both filters if they exist
 	if (savedFilter || savedSearch) {
@@ -1078,16 +1291,22 @@ function search_init(){
 	});
 }
 
+// Job items on the current page: list rows on /plates, table rows on /plate/advanced
+function platesItems(){
+	var rows = $("#plates .c3d-job-row");
+	return rows.length > 0 ? rows : $("#plates tr:not(:first)");
+}
+
 // Helper function to apply both profile filter and search filter together
 function applyAllFilters(profileFilter, searchText) {
 	// First show all rows
-	$("#plates tr").show();
+	platesItems().show();
 	$("#clear-profile-filter").addClass("hide");
 	$("#clear-search").addClass("hide");
 	// Apply profile filter
 	if (profileFilter && profileFilter !== "") {
 		$("#clear-profile-filter").removeClass("hide");
-		$("#plates tr:not(:first)").each(function(){
+		platesItems().each(function(){
 			if ($(this).data("profile") != profileFilter) {
 				$(this).hide();
 			}
@@ -1097,7 +1316,7 @@ function applyAllFilters(profileFilter, searchText) {
 	// Apply search filter (only to visible rows)
 	if (searchText && searchText !== "") {
 		$("#clear-search").removeClass("hide");
-		$("#plates tr:not(:first):visible").each(function(){
+		platesItems().filter(":visible").each(function(){
 			var t = $(this);
 			if (t.text().toLowerCase().indexOf(searchText) === -1) {
 				t.hide();
@@ -1109,10 +1328,10 @@ function applyAllFilters(profileFilter, searchText) {
 // Helper function to apply profile filter
 function applyProfileFilter(filterValue) {
 	if (filterValue == "") {
-		$("#plates tr").show();
+		platesItems().show();
 		return;
 	}
-	$("#plates tr:not(:first)").each(function(){
+	platesItems().each(function(){
 		if ($(this).data("profile") != filterValue) {
 			$(this).hide();
 		} else {
@@ -1178,22 +1397,51 @@ $(document).ready(function() {
 	});
 });
 
-$("#expertModeCheckbox").click(function (e) {
-	e.preventDefault();
+var serviceModeTogglePending = false;
+
+function toggleServiceMode() {
+	if (serviceModeTogglePending) return;
+	serviceModeTogglePending = true;
 	$.ajax({
 		url: "/printer/view/toggle",
 		type: "GET",
 		dataType: "json",
-		complete: () => {
+		complete: function () {
 			window.location.reload(true);
 		},
- 	 });
+	});
+}
+
+$(document).on("click", "#serviceModeEntry", function (e) {
+	e.preventDefault();
+	$("#serviceModeWarningModal").modal("show");
 });
+
+$(document).on("click", "#serviceModeConfirm", function (e) {
+	e.preventDefault();
+	$(this).prop("disabled", true);
+	toggleServiceMode();
+});
+
+$(document).on("click", ".c3d-service-mode-leave", function (e) {
+	e.preventDefault();
+	toggleServiceMode();
+});
+
+$("#serviceModeWarningModal")
+	.on("shown.bs.modal", function () {
+		$("#serviceModeCancel").focus();
+	})
+	.on("keydown", function (e) {
+		if (e.which === 13 && !$(e.target).is("#serviceModeCancel")) e.preventDefault();
+	});
 
 function update_plates_list(){
 	$.get("/plates/list",function(plateDataHtml){
-		$("#plates-list").html(plateDataHtml + "</table>");
+		$("#plates-list").html(plateDataHtml);
 		update_plates_resume();
+		applyJobSort(localStorage.getItem('plates-sort'));
+		decorateJobsCount();
 
 		// Reapply filters after list update
 		var currentFilter = $('#plates-profile-search').val();
