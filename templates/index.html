@@ -11,6 +11,7 @@
         <div class="c3d-updates-popover" id="updates-popover" hidden>
             <div class="c3d-updates-popover-header"><translate>Latest News</translate></div>
             <div class="c3d-updates-list" id="updates-list"></div>
+            <div class="c3d-updates-popover-footer"><a href="/?news=1"><translate>View all news</translate></a></div>
         </div>
     </div>
 </div>
@@ -100,6 +101,16 @@
 <translate class="hide" id="restart-confirm">Are you sure you want to restart the printer?</translate>
 <translate class="hide" id="poweroff-confirm">Are you sure you want to power off the printer?</translate>
 
+<section class="c3d-news-page" id="c3d-news-page" hidden aria-labelledby="c3d-news-title">
+    <header class="c3d-news-header">
+        <div class="c3d-page-eyebrow"><translate>Latest updates</translate></div>
+        <h1 class="c3d-page-title" id="c3d-news-title"><translate>News &amp; Updates</translate></h1>
+        <p><translate>Latest Concepts3D printer news, software updates and announcements.</translate></p>
+    </header>
+    <div class="c3d-news-grid" id="c3d-news-list" aria-live="polite"></div>
+    <a class="btn c3d-ghost c3d-news-back" href="/"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> <translate>Back to Dashboard</translate></a>
+</section>
+
 {% endblock %}
 
 {% block js %}
@@ -112,5 +123,5 @@
     el.textContent = g;
 })();
 </script>
-<script src='/static/js/updates-feed.js?{{version}}(c3dv3)'></script>
+<script src='/static/js/updates-feed.js?{{version}}(c3dv4)'></script>
 {% endblock %}

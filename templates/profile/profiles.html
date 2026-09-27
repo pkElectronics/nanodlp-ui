@@ -57,22 +57,21 @@
                 <div class="c3d-resin-profile-name c3d-list-main">
                     {% if profile.ManufacturerLock %}<span class="glyphicon glyphicon-lock c3d-lock" title="Factory profile"></span>{% endif %}
                     <span class="c3d-list-title">{{profile.Title}}</span>
-                    {% if defaultProfile==profile.ProfileID %}<span class="c3d-badge c3d-badge--default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <translate>Default</translate></span>{% endif %}
                 </div>
-                <span class="c3d-resin-profile-mobile-meta c3d-list-meta"><translate>Layer</translate> {{profile.Depth|floatformat}} µm &nbsp;·&nbsp; <translate>Cure</translate> {{profile.CureTime|floatformat}} s</span>
             </div>
-            <span class="c3d-resin-profile-metric"><b><translate>Layer Height</translate></b><span>{{profile.Depth|floatformat}} µm</span></span>
-            <span class="c3d-resin-profile-metric"><b><translate>Normal Exposure</translate></b><span>{{profile.CureTime|floatformat}} s</span></span>
-            <span class="c3d-resin-profile-metric"><b><translate>Bottom Exposure</translate></b><span>{{profile.SupportCureTime|floatformat}} s</span></span>
-            <span class="c3d-resin-flex-spacer" aria-hidden="true"></span>
-            <div class="c3d-list-actions">
+            <span class="c3d-resin-profile-metrics c3d-list-meta"><translate>Layer</translate> {{profile.Depth|floatformat}} µm <span aria-hidden="true">·</span> <translate>Normal</translate> {{profile.CureTime|floatformat}} s <span aria-hidden="true">·</span> <translate>Bottom</translate> {{profile.SupportCureTime|floatformat}} s</span>
+            <div class="c3d-resin-default-column">
+                {% if defaultProfile==profile.ProfileID %}
+                <span class="btn c3d-resin-default-state" role="status"><translate>Default</translate></span>
+                {% else %}
+                <a class="btn c3d-resin-set-default tip" href="/profile/default/{{profile.ProfileID}}" title="Set Default" aria-label="Set Default"><translate>Set Default</translate></a>
+                {% endif %}
+            </div>
+            <div class="c3d-list-actions c3d-resin-icon-actions">
                 {% if !profile.ManufacturerLock %}
                 <a class="btn c3d-ghost c3d-btn-i tip" href="/profile/edit/{{profile.ProfileID}}"><span class="glyphicon glyphicon-pencil"></span><translate class="hide">Edit</translate></a>
                 {% else %}
                 <a class="btn c3d-ghost c3d-btn-i tip" href="#" disabled tabindex="-1" aria-disabled="true"><span class="glyphicon glyphicon-pencil"></span><translate class="hide">Edit</translate></a>
-                {% endif %}
-                {% if defaultProfile!=profile.ProfileID %}
-                <a class="btn c3d-ghost c3d-resin-set-default tip" href="/profile/default/{{profile.ProfileID}}" title="Set Default" aria-label="Set Default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><translate>Set Default</translate></a>
                 {% endif %}
                 <a class="btn c3d-ghost c3d-btn-i tip" href="/profile/clone/{{profile.ProfileID}}"><span class="glyphicon glyphicon-duplicate"></span><translate class="hide">Clone</translate></a>
                 <a class="btn c3d-ghost c3d-btn-i tip" href="/profile/compare/{{profile.ProfileID}}"><span class="glyphicon glyphicon-random"></span><translate class="hide">Compare</translate></a>
