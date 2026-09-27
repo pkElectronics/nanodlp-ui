@@ -1019,6 +1019,23 @@ body.c3d-printing #webcam-column .dashboard-panel { flex: 1 1 auto; }
   border-color: var(--brand-accent);
   background-color: color-mix(in srgb, var(--brand-accent), var(--df-surface-1) 82%);
 }
+.c3d-temp-presets .c3d-preset:not(.c3d-preset-active),
+.c3d-step-group .btn-movement:not(.btn-movement-active) {
+  color: var(--df-text-muted);
+  border-color: var(--df-border-subtle);
+  background-color: var(--df-surface-1);
+  box-shadow: none !important;
+}
+.c3d-temp-presets .c3d-preset:not(.c3d-preset-active):hover,
+.c3d-temp-presets .c3d-preset:not(.c3d-preset-active):focus,
+.c3d-step-group .btn-movement:not(.btn-movement-active):hover,
+.c3d-step-group .btn-movement:not(.btn-movement-active):focus {
+  color: var(--df-text-strong);
+  border-color: var(--df-border-strong);
+  background-color: var(--df-surface-2);
+  outline: none;
+  box-shadow: none !important;
+}
 .c3d-heater-row { margin-top: 10px; }
 .c3d-heater-row + .c3d-heater-row { margin-top: 8px; }
 .c3d-heater-btn {
