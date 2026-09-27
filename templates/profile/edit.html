@@ -934,10 +934,10 @@
 			</section>
 			</div>
 
-			<!-- Layer Details -->
-			<section class="c3d-resin-section">
-				<h2 class="c3d-resin-title"><span translate>Layer Details</span></h2>
-				<div class="c3d-resin-grid">
+			<div class="c3d-resin-work-layout">
+			<section class="c3d-resin-section c3d-resin-layer-settings">
+				<h2 class="c3d-resin-title"><span translate>Layer Settings</span></h2>
+				<div class="c3d-resin-grid c3d-resin-layer-details">
 					<div class="c3d-resin-field i_basic i_option">
 						<label for="DepthSimple" class="profile-help-label"><span><translate>Layer Thickness (<b>μm</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Height of each printed layer. Lower values increase Z detail but require more layers.">i</a></label>
 						<input class="form-control" value="{{profile.Depth}}" name="Depth" id="DepthSimple" step="0.01" type="number" required>
@@ -959,12 +959,6 @@
 						<input class="form-control" value="{{profile.CustomValues.UvPwmValue}}" name="UvPwmValuePercent" id="UvPwmValuePercentSimple" step="1" type="number" required min="0" max="100">
 					</div>
 				</div>
-			</section>
-
-			<div class="c3d-resin-motion-layout">
-			<!-- Exposure & Waiting -->
-			<section class="c3d-resin-section c3d-resin-exposure-panel">
-				<h2 class="c3d-resin-title"><span translate>Exposure &amp; Waiting</span></h2>
 				<div class="c3d-resin-table">
 					<div class="c3d-resin-table-row c3d-resin-table-head">
 						<div class="c3d-resin-table-cell"><span translate>Bottom Layer Settings</span></div>

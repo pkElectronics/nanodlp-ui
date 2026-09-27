@@ -673,14 +673,15 @@ a.c3d-badge:hover, a.c3d-badge:focus { text-decoration: none; color: var(--brand
 .c3d-list-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
 .c3d-list-actions .btn { margin: 0; min-height: 30px; padding: 4px 9px; font-size: 12px; }
 /* Structured resin rows keep profile names and exposure values in stable columns. */
-#c3d-resin-list .c3d-list-row { display: grid; grid-template-columns: minmax(220px, 2fr) repeat(3, minmax(105px, .8fr)) auto; gap: 12px; }
+#c3d-resin-list .c3d-list-row { display: grid; grid-template-columns: minmax(260px, 340px) 92px 118px 118px minmax(32px, 1fr) auto; gap: 10px; }
 #c3d-resin-list .c3d-resin-profile-cell { min-width: 0; }
 #c3d-resin-list .c3d-resin-profile-name { flex-wrap: nowrap; align-items: center; gap: 8px; }
 #c3d-resin-list .c3d-resin-profile-name .c3d-list-title { min-width: 0; }
 .c3d-resin-profile-metric { display: grid; gap: 2px; min-width: 0; color: var(--df-text-strong); font-size: 12px; }
 .c3d-resin-profile-metric b { color: var(--df-text-muted); font-size: 10px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; }
 .c3d-resin-profile-mobile-meta { display: none; }
-.c3d-resin-set-default { width: 30px; min-width: 30px; padding: 4px 0 !important; color: var(--df-success); }
+.c3d-resin-flex-spacer { min-width: 0; }
+.c3d-resin-set-default { min-height: 28px !important; padding: 4px 9px !important; border: 1px solid var(--brand-accent) !important; border-radius: 999px; color: var(--brand-accent) !important; font-size: 11px !important; font-weight: 700; white-space: nowrap; }
 /* ---------- Resin library: hero default, toolbar, chips ---------- */
 .c3d-list--hero { margin-bottom: 4px; }
 .c3d-list-row--default {
@@ -1413,11 +1414,11 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
 #plates .c3d-job-main .c3d-job-identity { order: 0; }
 #plates .c3d-job-main .c3d-job-metrics { order: 1; }
 #plates .c3d-job-main .c3d-job-flag, #plates .c3d-job-main .c3d-job-sub, #plates .c3d-job-main .c3d-job-resume, #plates .c3d-job-main .plate { order: 2; flex-basis: 100%; }
-.c3d-job-identity > .c3d-list-meta { display: block; margin-top: 2px; }
-#plates .c3d-job-sub { margin-top: 0; }
+.c3d-job-identity > .c3d-list-meta:not(.c3d-job-sub) { display: block; margin-top: 2px; }
+#plates .c3d-job-sub { margin-top: 5px; }
 .c3d-job-row .c3d-job-main { flex: 1 1 560px; }
 #plates .c3d-job-metrics { flex: 0 1 690px; grid-template-columns: repeat(5, minmax(94px, 1fr)); }
-.c3d-job-sub { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(100px, .6fr) minmax(220px, 1.2fr) auto; gap: 4px 18px; align-items: start; }
+.c3d-job-sub { display: grid; grid-template-columns: 122px 72px 176px auto; gap: 4px 10px; align-items: start; width: min(100%, 500px); }
 .c3d-job-sub-metric { display: grid; min-width: 0; line-height: 1.45; }
 .c3d-job-sub-metric b { color: var(--df-text-muted); font-size: 10px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; }
 /* Renders are RGBA with ~30% transparent side margins, so the thumb crops to the
@@ -1566,10 +1567,12 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
 @media (max-width: 1350px) {
   #plates .c3d-job-metrics { order: 2; flex-basis: 100%; grid-template-columns: repeat(5, minmax(72px, 1fr)); }
   #plates .c3d-job-actions { margin-left: auto; }
-  #c3d-resin-list .c3d-list-row { grid-template-columns: minmax(180px, 1.5fr) repeat(3, minmax(92px, .8fr)) auto; gap: 10px; }
+  #c3d-resin-list .c3d-list-row { grid-template-columns: minmax(220px, 280px) 82px 105px 105px minmax(24px, 1fr) auto; gap: 8px; }
 }
 @media (max-width: 991px) {
-  #c3d-resin-list .c3d-list-row { grid-template-columns: minmax(170px, 1fr) repeat(3, minmax(88px, .65fr)); }
+  #c3d-resin-list .c3d-list-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #c3d-resin-list .c3d-resin-flex-spacer { display: none; }
+  #c3d-resin-list .c3d-resin-profile-cell { grid-column: 1 / -1; }
   #c3d-resin-list .c3d-list-actions { grid-column: 1 / -1; }
   .c3d-resin-editor #setup2 .c3d-resin-details-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .c3d-resin-editor #setup2 .c3d-resin-description { grid-column: 1 / -1; }
@@ -1591,8 +1594,8 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   #plates .c3d-job-title-line { align-items: flex-start; }
   #plates .c3d-job-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 10px; }
   #plates .c3d-job-actions { flex: 1 1 100%; justify-content: flex-end; margin-left: 0; flex-wrap: wrap; }
-  #plates .c3d-job-sub { flex-basis: 100%; white-space: normal; }
-  .c3d-job-sub { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; }
+  #plates .c3d-job-sub { flex-basis: auto; white-space: normal; }
+  .c3d-job-sub { grid-template-columns: 120px 70px minmax(0, 1fr); gap: 6px 10px; width: 100%; max-width: 440px; }
   .c3d-print-result-info { flex-basis: calc(100% - 64px); }
   .c3d-print-result-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .c3d-print-result-actions { flex: 1 1 100%; margin-left: 0; }
@@ -2509,10 +2512,12 @@ body:has(.c3d-preview-layout) > br { display: none; }
    without dropping the grid. */
 .c3d-resin-form { display: grid; gap: 8px; }
 .c3d-resin-top-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 8px; }
-.c3d-resin-motion-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr); gap: 8px; align-items: start; }
-.c3d-resin-motion-layout > .c3d-resin-section { min-width: 0; }
-.c3d-resin-motion-layout .c3d-resin-lift-panel .c3d-resin-columns { grid-template-columns: minmax(0, 1fr); }
-.c3d-resin-motion-layout .c3d-resin-lift-panel .c3d-resin-column { display: contents; }
+.c3d-resin-top-layout:has(> .c3d-resin-section.advance_mode[style*="display: none"]) { grid-template-columns: minmax(0, 1fr); }
+.c3d-resin-top-layout:has(> .c3d-resin-section.advance_mode[style*="display: none"]) .c3d-resin-description { grid-column: 1 / -1; }
+.c3d-resin-work-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(280px, .85fr); gap: 8px; align-items: start; }
+.c3d-resin-work-layout > .c3d-resin-section { min-width: 0; }
+.c3d-resin-work-layout .c3d-resin-lift-panel .c3d-resin-columns { grid-template-columns: minmax(0, 1fr); }
+.c3d-resin-work-layout .c3d-resin-lift-panel .c3d-resin-column { display: contents; }
 .c3d-resin-section {
   display: grid;
   gap: 8px;
@@ -2528,6 +2533,8 @@ body:has(.c3d-preview-layout) > br { display: none; }
    it empty; the form column is capped, which is what keeps the tracks (and the
    inputs) at the same ~600px width the Machine Settings panel uses. */
 .c3d-resin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.c3d-resin-grid.c3d-resin-layer-details { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.c3d-resin-grid.c3d-resin-layer-details:has(> .advance_mode[style*="display: none"]) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .c3d-resin-details-controls { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 12px; }
 .c3d-resin-description { grid-column: 1 / span 3; }
 .c3d-resin-editor #setup2 .c3d-resin-details-controls #DescSimple { min-height: 8em; resize: vertical; }
@@ -2656,7 +2663,8 @@ body:has(.c3d-preview-layout) > br { display: none; }
   #c3d-resin-list .c3d-list-actions { grid-column: 1 / -1; }
   .c3d-resin-details-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .c3d-resin-top-layout { grid-template-columns: minmax(0, 1fr); }
-  .c3d-resin-motion-layout { grid-template-columns: minmax(0, 1fr); }
+  .c3d-resin-work-layout { grid-template-columns: minmax(0, 1fr); }
+  .c3d-resin-editor #setup2 .c3d-resin-grid.c3d-resin-layer-details { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .c3d-resin-description { grid-column: 1 / -1; }
   .c3d-resin-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
   .c3d-resin-table-cell,
@@ -2676,6 +2684,7 @@ body:has(.c3d-preview-layout) > br { display: none; }
   .c3d-resin-description { grid-column: auto; }
   .c3d-resin-table-row { grid-template-columns: minmax(0, 1fr); }
   .c3d-resin-top-layout { grid-template-columns: minmax(0, 1fr); }
+  .c3d-resin-editor #setup2 .c3d-resin-grid.c3d-resin-layer-details { grid-template-columns: minmax(0, 1fr); }
   .c3d-resin-grid,
   .c3d-resin-grid--three,
   .c3d-resin-columns,
