@@ -2831,7 +2831,7 @@ body:has(.c3d-preview-layout) > br { display: none; }
   color: var(--df-success) !important;
 }
 #c3d-resin-list .c3d-resin-icon-actions { gap: 5px; }
-#c3d-resin-list .c3d-resin-icon-actions .btn { width: 30px; min-width: 30px; min-height: 30px; padding: 4px; }
+#c3d-resin-list .c3d-resin-icon-actions .btn:not(.c3d-resin-set-default):not(.c3d-resin-default-state) { width: 30px; min-width: 30px; min-height: 30px; padding: 4px; }
 
 .c3d-resin-editor .c3d-resin-top-layout,
 .c3d-resin-editor .c3d-resin-work-layout { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
@@ -2901,7 +2901,7 @@ body:has(.c3d-preview-layout) > br { display: none; }
 @media (max-width: 430px) {
   #plates .c3d-job-actions { flex-wrap: wrap; }
   #c3d-resin-list .c3d-resin-icon-actions { gap: 3px; }
-  #c3d-resin-list .c3d-resin-icon-actions .btn { width: 28px; min-width: 28px; }
+  #c3d-resin-list .c3d-resin-icon-actions .btn:not(.c3d-resin-set-default):not(.c3d-resin-default-state) { width: 28px; min-width: 28px; }
 }
 .c3d-machine-settings > .starter-template { padding: 0; text-align: left; }
 .c3d-machine-form { margin: 0; }
