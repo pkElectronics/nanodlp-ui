@@ -59,15 +59,13 @@
                     <span class="c3d-list-title">{{profile.Title}}</span>
                 </div>
             </div>
-            <span class="c3d-resin-profile-metrics c3d-list-meta"><translate>Layer</translate> {{profile.Depth|floatformat}} µm <span aria-hidden="true">·</span> <translate>Normal</translate> {{profile.CureTime|floatformat}} s <span aria-hidden="true">·</span> <translate>Bottom</translate> {{profile.SupportCureTime|floatformat}} s</span>
-            <div class="c3d-resin-default-column">
+            <span class="c3d-resin-profile-metrics c3d-list-meta"><translate>Layer</translate>: {{profile.Depth|floatformat}} µm <span aria-hidden="true">·</span> <translate>Normal</translate>: {{profile.CureTime|floatformat}} s <span aria-hidden="true">·</span> <translate>Bottom</translate>: {{profile.SupportCureTime|floatformat}} s</span>
+            <div class="c3d-list-actions c3d-resin-icon-actions">
                 {% if defaultProfile==profile.ProfileID %}
                 <span class="btn c3d-resin-default-state" role="status"><translate>Default</translate></span>
                 {% else %}
                 <a class="btn c3d-resin-set-default tip" href="/profile/default/{{profile.ProfileID}}" title="Set Default" aria-label="Set Default"><translate>Set Default</translate></a>
                 {% endif %}
-            </div>
-            <div class="c3d-list-actions c3d-resin-icon-actions">
                 {% if !profile.ManufacturerLock %}
                 <a class="btn c3d-ghost c3d-btn-i tip" href="/profile/edit/{{profile.ProfileID}}"><span class="glyphicon glyphicon-pencil"></span><translate class="hide">Edit</translate></a>
                 {% else %}

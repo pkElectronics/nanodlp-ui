@@ -79,7 +79,7 @@
 				<div class="c3d-job-identity">
 					<div class="c3d-job-title-line"><span class="c3d-job-id">#{{row.PlateID}}</span><span class="c3d-list-title c3d-job-name tip">{{row.Path}}<translate class="hide">Uploaded on: {{row.UploadedOn}}</translate></span></div>
 					<div class="c3d-job-profile-line">
-						<span class="c3d-list-meta"><span class="glyphicon glyphicon-tint"></span> {% if !row.profileError %}<a href="/profile/edit/{{row.profileID}}">{{row.ProfileName}}</a>{% else %}<translate>Profile not found.</translate>{% endif %}</span>
+						<span class="c3d-list-meta c3d-job-profile-name"><span class="glyphicon glyphicon-tint"></span> {% if !row.profileError %}<a href="/profile/edit/{{row.profileID}}">{{row.ProfileName}}</a>{% else %}<translate>Profile not found.</translate>{% endif %}</span>
 						<div class="c3d-list-meta c3d-job-sub">
 							<span class="c3d-job-sub-metric c3d-job-layer-height">{{row.ZRes}}<translate>μm</translate></span>
 							<span class="c3d-job-sub-metric c3d-job-cost"><span class="glyphicon glyphicon-usd" aria-hidden="true"></span> {% if row.Price %}{{row.Price}}{% else %}-{% endif %}</span>
