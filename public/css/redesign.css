@@ -2970,11 +2970,15 @@ body:has(.c3d-preview-layout) > br { display: none; }
 .c3d-dragonfruit-grid h3 { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
 .c3d-dragonfruit-grid h3 .glyphicon { color: var(--brand-accent); margin-right: 6px; font-size: 16px; }
 .c3d-dragonfruit-grid p { margin: 0; line-height: 1.7; }
+.c3d-dragonfruit-grid .c3d-dragonfruit-windows-warning { margin-top: 12px; font-size: 13px; line-height: 1.5; }
 .c3d-dragonfruit-steps { padding-left: 22px; margin: 0; line-height: 1.7; }
 .c3d-dragonfruit-steps li + li { margin-top: 12px; }
 .c3d-dragonfruit-steps li::marker { color: var(--brand-accent); font-weight: 600; }
 .c3d-dragonfruit-athena { grid-column: 1 / -1; border-left: 3px solid var(--brand-accent); }
-.c3d-dragonfruit-note { margin: 22px 0 0; line-height: 1.6; }
+.c3d-dragonfruit-recommendation { margin-top: 18px; padding: 12px 16px; border-left: 3px solid var(--brand-accent); border-radius: var(--df-radius-sm); background: color-mix(in srgb, var(--brand-accent) 10%, var(--df-surface-0)); line-height: 1.5; }
+.c3d-dragonfruit-recommendation > strong { display: block; margin-bottom: 2px; color: var(--df-text-strong); }
+.c3d-dragonfruit-recommendation p { font-size: 14px; }
+.c3d-dragonfruit-note { margin: 12px 0 0; font-size: 13px; line-height: 1.5; }
 @media (max-width: 767px) {
   .c3d-dragonfruit-modal .modal-dialog { width: calc(100% - 16px); margin: 8px auto; }
   .c3d-dragonfruit-modal .modal-content { max-height: calc(100vh - 16px); }

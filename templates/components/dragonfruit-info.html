@@ -4,23 +4,35 @@
     <div class="c3d-dragonfruit-grid">
         <section class="c3d-card" aria-labelledby="dragonfruit-get-heading">
             <h3 id="dragonfruit-get-heading"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> <translate>Get DragonFruit</translate></h3>
-            <p><translate>DragonFruit runs on your computer. Download and install it there to get started.</translate></p>
+            <p><translate>DragonFruit runs on your computer. Download and install it to get started.</translate></p>
             <div>
                 <a class="btn c3d-ghost c3d-ghost-gold" href="https://dragonfruit-slicer.com" target="_blank" rel="noopener noreferrer"><translate>Download DragonFruit</translate></a>
             </div>
+            <!-- Remove this isolated note once the Windows DragonFruit installer is signed. -->
+            <p class="c3d-dragonfruit-windows-warning text-muted"><translate>Windows: An unsigned application warning may appear. Select More info and allow the installer to run.</translate></p>
         </section>
         <section class="c3d-card" aria-labelledby="dragonfruit-start-heading">
-            <h3 id="dragonfruit-start-heading"><span class="glyphicon glyphicon-list" aria-hidden="true"></span> <translate>Getting Started</translate></h3>
+            <h3 id="dragonfruit-start-heading"><span class="glyphicon glyphicon-list" aria-hidden="true"></span> <translate>Connect Your Athena</translate></h3>
             <ol class="c3d-dragonfruit-steps">
-                <li><translate>Download and install DragonFruit.</translate></li>
-                <li><translate>Launch DragonFruit.</translate></li>
-                <li><translate>Athena-specific setup and profile instructions will be added here later.</translate></li>
+                <li><translate>Launch DragonFruit. Select <strong>Concepts3D</strong>, then choose your Athena printer model.</translate></li>
+                <li><translate>Select the correct <strong>LCD resolution</strong>, shown in the WebUI navbar.</translate></li>
+                <li><translate>Make sure your printer is powered on and connected to the same local network as your computer.</translate></li>
+                <li><translate>Use <strong>Auto Detect</strong> to find the printer, or enter its <strong>IP address</strong> manually.</translate></li>
             </ol>
         </section>
         <section class="c3d-card c3d-dragonfruit-athena" aria-labelledby="dragonfruit-athena-heading">
-            <h3 id="dragonfruit-athena-heading"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> <translate>Slicing for Athena</translate></h3>
-            <p><translate>Athena slicing instructions are being updated and will be available here shortly.</translate></p>
+            <h3 id="dragonfruit-athena-heading"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> <translate>Slice &amp; Send to Athena</translate></h3>
+            <ol class="c3d-dragonfruit-steps">
+                <li><translate>Prepare your model, orientation, supports, hollowing, drain holes and raft as needed.</translate></li>
+                <li><translate>Select <strong>Export</strong>.</translate></li>
+                <li><translate>Confirm the correct Athena printer and <strong>Material / resin profile</strong>. Configure <strong>Anti-Aliasing</strong> if supported.</translate></li>
+                <li><translate>Select <strong>Slice &amp; Upload</strong> to slice the job and send it directly to the printer.</translate></li>
+            </ol>
+            <div class="c3d-dragonfruit-recommendation">
+                <strong><translate>Recommended: Slice &amp; Upload</translate></strong>
+                <p><translate>For normal printing, use Slice &amp; Upload. The uploaded job will appear on the WebUI Jobs page and printer touchscreen.</translate></p>
+            </div>
+            <p class="c3d-dragonfruit-note text-muted"><translate><strong>Slice to File</strong> saves a <strong>.nanodlp</strong> file for manual or USB transfer. <strong>Slice &amp; Print</strong> uploads the job and immediately starts the printer, so use it only when the printer is fully prepared to print.</translate></p>
         </section>
     </div>
-    <p class="c3d-dragonfruit-note text-muted"><translate>Existing sliced jobs can still be uploaded to the printer from the Jobs page.</translate></p>
 </div>
