@@ -30,6 +30,7 @@
 	var MAX_ENTRIES = 400;          // L2 cap; oldest entries are pruned
 	var MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000;
 	var CONCURRENCY = 3;            // canvas + encode work in flight
+	var DB_VERSION = 2;              // discard pre-WP13 entries keyed only by render URL
 
 	var SELECTOR = '#plates-list img.threed, #plates-list img.c3d-print-result-thumb';
 
@@ -51,6 +52,11 @@
 		return src;
 	}
 
+	function isVersioned(url) {
+		var query = (url.split('?')[1] || '').split('#')[0];
+		return query.trim().length > 0;
+	}
+
 	/* A list refresh replaces every row, so queued elements can be detached or
 	   re-pointed at a newer render before their load settles. Such an element
 	   must not write into the cache. */
@@ -66,15 +72,11 @@
 	}
 
 	function show(img, url) {
-		/* Only a slot that is still empty may go pending: swapping the src of an
-		   image that is already painted (render -> downscaled blob) must not
-		   blank it, and must not flash the spinner. */
-		var painted = img.complete && img.naturalWidth > 0;
 		if (img.getAttribute('src') !== url) {
-			if (!painted) {
-				img.classList.remove('c3d-thumb-ready');
-				img.classList.add('c3d-thumb-pending');
-			}
+			/* A row may be reused for a different render. Hide the prior bitmap
+			   immediately so it cannot be mistaken for the current job. */
+			img.classList.remove('c3d-thumb-ready');
+			img.classList.add('c3d-thumb-pending');
 			img.setAttribute('src', url);
 		}
 		img.classList.remove('hide', 'retry');
@@ -124,9 +126,12 @@
 				reject(new Error('indexedDB unavailable'));
 				return;
 			}
-			var req = indexedDB.open('nanodlp-job-thumbs', 1);
+			var req = indexedDB.open('nanodlp-job-thumbs', DB_VERSION);
 			req.onupgradeneeded = function () {
 				var d = req.result;
+				if (req.oldVersion > 0 && req.oldVersion < DB_VERSION && d.objectStoreNames.contains('thumbs')) {
+					d.deleteObjectStore('thumbs');
+				}
 				var store = d.objectStoreNames.contains('thumbs')
 					? req.transaction.objectStore('thumbs')
 					: d.createObjectStore('thumbs', { keyPath: 'url' });
@@ -217,7 +222,7 @@
 				cache.set(url, objectUrl);
 				evictL1();
 				assign(url, objectUrl);
-				idbPut(url, blob);
+				if (isVersioned(url)) idbPut(url, blob);
 			}
 			pump();
 		};
@@ -281,7 +286,7 @@
 	function resolveThumb(url) {
 		if (resolving.has(url)) return;
 		resolving.add(url);
-		idbGet(url).then(function (blob) {
+		(isVersioned(url) ? idbGet(url) : Promise.resolve(null)).then(function (blob) {
 			resolving.delete(url);
 			if (blob) {
 				var objectUrl = URL.createObjectURL(blob);

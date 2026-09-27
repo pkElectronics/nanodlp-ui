@@ -11,10 +11,17 @@
 		<span class="c3d-job-thumb-spin"></span>
 	</span>
 	<div class="c3d-print-result-info">
-		<div class="c3d-print-result-head">
+		<div class="c3d-print-result-identity">
 			<span class="glyphicon glyphicon-question-sign c3d-print-result-icon"></span>
 			<span class="c3d-print-result-name">{{PrintResult.Path}}</span>
-			<span class="c3d-list-meta">{{PrintResult.ProfileName}} ({{PrintResult.TotalSolidArea}}ml) &nbsp;·&nbsp; <span class="glyphicon glyphicon-usd"></span>{{PrintResult.Price}} &nbsp;·&nbsp; {{PrintResult.LayersCount}} <translate>Layers</translate> &nbsp;·&nbsp; {{PrintResult.LayerThickness}} &nbsp;·&nbsp; {{PrintResult.PrintTime}} &nbsp;·&nbsp; {{PrintResult.supportCureTime}}s / {% if !PrintResult.cureTimes %}{{PrintResult.cureTime}}{% else %}{{PrintResult.cureTimes}}{% endif %}s &nbsp;·&nbsp; {{PrintResult.Date}}</span>
+			<span class="c3d-print-result-profile">{{PrintResult.ProfileName}}</span>
+		</div>
+		<div class="c3d-print-result-metrics">
+			<span><b><translate>Resin Used</translate></b>{{PrintResult.TotalSolidArea}}ml</span>
+			<span><b><translate>Print Time</translate></b>{{PrintResult.PrintTime}}</span>
+			<span><b><translate>Layers</translate></b>{{PrintResult.LayersCount}}</span>
+			<span><b><translate>Size</translate></b>{{PrintResult.LayerThickness}}</span>
+			<span class="c3d-print-result-secondary"><span class="glyphicon glyphicon-usd"></span>{{PrintResult.Price}} · {{PrintResult.supportCureTime}}s / {% if !PrintResult.cureTimes %}{{PrintResult.cureTime}}{% else %}{{PrintResult.cureTimes}}{% endif %}s · {{PrintResult.Date}}</span>
 		</div>
 	</div>
 	{% if PrintResult.Status == 0 %}
@@ -69,10 +76,17 @@
 		</div>
 		<div class="c3d-job-main">
 			<div class="c3d-list-main">
-				<span class="c3d-job-id">#{{row.PlateID}}</span>
-				<span class="c3d-list-title c3d-job-name tip">{{row.Path}}<translate class="hide">Uploaded on: {{row.UploadedOn}}</translate></span>
-				<span class="c3d-list-meta"><span class="glyphicon glyphicon-tint"></span> {% if !row.profileError %}<a href="/profile/edit/{{row.profileID}}">{{row.ProfileName}}</a>{% else %}<translate>Profile not found.</translate>{% endif %}</span>
-				<span class="c3d-list-meta">{{row.LayersCount}} <translate>Layers</translate> &nbsp;·&nbsp; {{row.TotalSolidArea}}ml &nbsp;·&nbsp; {{row.PrintTime}}</span>
+				<div class="c3d-job-identity">
+					<div class="c3d-job-title-line"><span class="c3d-job-id">#{{row.PlateID}}</span><span class="c3d-list-title c3d-job-name tip">{{row.Path}}<translate class="hide">Uploaded on: {{row.UploadedOn}}</translate></span></div>
+					<span class="c3d-list-meta"><span class="glyphicon glyphicon-tint"></span> {% if !row.profileError %}<a href="/profile/edit/{{row.profileID}}">{{row.ProfileName}}</a>{% else %}<translate>Profile not found.</translate>{% endif %}</span>
+				</div>
+				<div class="c3d-job-metrics">
+					<span><b><translate>Resin Used</translate></b>{{row.TotalSolidArea}}ml</span>
+					<span><b><translate>Print Time</translate></b>{{row.PrintTime}}</span>
+					<span><b><translate>Layers</translate></b>{{row.LayersCount}}</span>
+					<span><b><translate>Size</translate></b>{{row.XSize}}×{{row.YSize}}×{{row.ZSize}}<translate>mm</translate></span>
+					<span><b><translate>Last Printed</translate></b>{% if row.LastPrint>0 %}{% if row.LastPrint/60/60/24>0 %}{{row.LastPrint/60/60/24}} <translate>days ago</translate>{% else %}{{row.LastPrint/60/60}} <translate>hours ago</translate>{% endif %}{% else %}-{% endif %}</span>
+				</div>
 				{% if !row.Processed %}
 				<span class="c3d-job-flag c3d-job-flag-warn req-not-processed"><span class="glyphicon glyphicon-exclamation-sign"></span> <translate>The job is not sliced yet.</translate></span>
 				{% endif %}
@@ -112,20 +126,10 @@
 				{% endif %}
 			</div>
 			<div class="c3d-list-meta c3d-job-sub">
-				<span class="glyphicon glyphicon-move"></span> {{row.XSize}}x{{row.YSize}}x{{row.ZSize}}<translate>mm</translate> / {{row.XRes}}x{{row.YRes}}x{{row.ZRes}}<translate>μm</translate>
+				<span class="glyphicon glyphicon-move"></span> {{row.XRes}}x{{row.YRes}}x{{row.ZRes}}<translate>μm</translate>
 				&nbsp;·&nbsp; <span class="glyphicon glyphicon-usd"></span> {{row.Price}}
 				&nbsp;·&nbsp; <span class="glyphicon glyphicon-time"></span> <translate>Cure Time</translate> {{row.supportCureTime}}s / {% if !row.cureTimes %}{{row.cureTime}}{% else %}{{row.cureTimes}}{% endif %}s
 				{% if row.StopLayers %}&nbsp;·&nbsp; <span class="glyphicon glyphicon-stop"></span> <translate>Stop Layers</translate> {{row.StopLayers}}{% endif %}
-				&nbsp;·&nbsp; <span class="glyphicon glyphicon-print"></span> <translate>Last Print</translate>:
-				{% if row.LastPrint>0 %}
-					{% if row.LastPrint/60/60/24>0 %}
-						{{ row.LastPrint/60/60/24}} <translate>days ago</translate>
-					{% else %}
-						{{ row.LastPrint/60/60}} <translate>hours ago</translate>
-					{% endif %}
-				{% else %}
-				-
-				{% endif %}
 			</div>
 			{% if !row.profileError %}
 			<form action="/printer/start/{{ row.PlateID }}" method="post" class="c3d-job-resume {% if row.PlateID == status.PlateID && status.ResumeID<row.LayersCount %}{% else %}hide{% endif %}">
@@ -188,6 +192,7 @@
 						class="glyphicon glyphicon-play"></span> &nbsp; <translate>Print from Middle</translate></a></li>
 					<li><a href="/plate/edit/{{ row.PlateID }}"><span
 						class="glyphicon glyphicon-pencil"></span> &nbsp; <translate>Edit</translate></a></li>
+					<li><a href="/static/editor/" class="c3d-nanosupport-editor"><span class="glyphicon glyphicon-edit"></span> &nbsp; <translate>3D Editor</translate></a></li>
 					<li id="show-more-timelapse-{{ row.PlateID }}" style="display: none">
 						<a href="/custom/timelapse?plateid={{ row.PlateID }}">
 							<span class="glyphicon glyphicon-camera"></span> &nbsp; <translate>Timelapse</translate>

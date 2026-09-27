@@ -2,15 +2,22 @@ toastr.options = {
 	"positionClass": "toast-top-center",
 }
 //************** Resin Profile Functions  */
-$("#DwEnableSimple").change(function () {
-	if ($(this).is(":checked")) {
-		$("#WaitBeforePrintSimple").val(0).prop("disabled", true);
-		$("#SupportWaitBeforePrintSimple").val(0).prop("disabled", true);
+function applyDynamicWaitState(userChanged) {
+	const enabled = $("#DwEnableSimple").is(":checked");
+	const normalWait = $("#WaitBeforePrintSimple");
+	const bottomWait = $("#SupportWaitBeforePrintSimple");
+	if (enabled) {
+		normalWait.val(0).prop("disabled", true);
+		bottomWait.val(0).prop("disabled", true);
 	} else {
-		$("#WaitBeforePrintSimple").prop("disabled", false);
-		$("#SupportWaitBeforePrintSimple").prop("disabled", false);
+		if (userChanged) {
+			bottomWait.val(30);
+			normalWait.val(1);
+		}
+		normalWait.prop("disabled", false);
+		bottomWait.prop("disabled", false);
 	}
-});
+}
 
 $("#setup2").submit(function(){
 	$("#CdEnableSimple").prop("checked", true);
@@ -73,10 +80,42 @@ $("#setup2 .c3d-resin-toggle").on("click", function (e) {
 	$(box).trigger("change");
 });
 
+$(document).on("click", "a.c3d-nanosupport-editor", function (e) {
+	e.preventDefault();
+	const target = this.href;
+	const preferenceKey = "c3dNanoSupportWarningDismissed";
+	let warningDismissed = false;
+	try { warningDismissed = window.localStorage.getItem(preferenceKey) === "true"; } catch (storageError) { /* storage may be unavailable */ }
+	if (warningDismissed) {
+		window.open(target, "_blank", "noopener");
+		return;
+	}
+	$("#c3d-nanosupport-warning").remove();
+	const modal = $(
+		'<div class="modal fade c3d-confirm-modal" id="c3d-nanosupport-warning" tabindex="-1" role="dialog" aria-labelledby="c3d-nanosupport-title">' +
+		'<div class="modal-dialog" role="document"><div class="modal-content">' +
+		'<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="c3d-nanosupport-title">Open NanoSupport 3D Editor?</h4></div>' +
+		'<div class="modal-body"><p>The built-in 3D Editor is a legacy preparation tool intended for smaller models and basic workflows.</p><p>The build volume shown in the editor may not match Athena II, and the editor is not recommended for very large files (around 500 MB or more) or complex multi-model jobs.</p><label class="c3d-editor-warning-check"><input type="checkbox" id="c3d-nanosupport-dismiss"> Don\'t show this warning again on this device</label></div>' +
+		'<div class="modal-footer"><button type="button" class="btn c3d-ghost" data-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="c3d-nanosupport-open">Open Editor</button></div>' +
+		'</div></div></div>'
+	);
+	$("body").append(modal);
+	modal.find("#c3d-nanosupport-open").on("click", function () {
+		if (modal.find("#c3d-nanosupport-dismiss").is(":checked")) {
+			try { window.localStorage.setItem(preferenceKey, "true"); } catch (storageError) { /* still open the editor */ }
+		}
+		window.open(target, "_blank", "noopener");
+		modal.modal("hide");
+	});
+	modal.on("hidden.bs.modal", function () { modal.remove(); });
+	modal.modal("show");
+});
+
 setUpCheckboxToggle($("#PdEnableSimple"), $('.peel-detection-settings'));
 $("#PdEnableSimple").change(updatePeelDetectionSettingsVisibility);
 setUpCheckboxToggle($("#RlEnableSimple"));
-setUpCheckboxToggle($("#DwEnableSimple"));
+setUpCheckboxToggle($("#DwEnableSimple"), $('.dynamic-wait-settings'));
+$("#DwEnableSimple").on("change", function () { applyDynamicWaitState(true); });
 setUpCheckboxToggle($("#CdEnableSimple"), $('.crash-detection-settings'));
 setUpCheckboxToggle($("#PreheatMixSimple"));
 
@@ -395,9 +434,8 @@ $(document).ready(function(){
 		}else{
 			dwEnable.prop('checked', true);
 			dwEnable.prop('value', "0");
-			$("#WaitBeforePrintSimple").val(0).prop("disabled", true);
-			$("#SupportWaitBeforePrintSimple").val(0).prop("disabled", true);
 		}
+		applyDynamicWaitState(false);
 	}
 	const preheatMixEnable = $("#PreheatMixSimple");
 	loadInitialCheckboxState(preheatMixEnable);

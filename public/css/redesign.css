@@ -1220,6 +1220,18 @@ body.c3d-printing #webcam-column .dashboard-panel { flex: 1 1 auto; }
 /* Webcam: let the feed keep its native portrait sizing; center it in the tall card */
 #webcam-column .dashboard-panel > .panel-body { justify-content: center; }
 #webcam-column #livestream-container { margin: 0 auto; }
+/* Short dashboard viewports need a scrollable natural-height row; preserve the
+   existing one-screen flex sizing when there is room for the full dashboard. */
+@media (max-height: 1050px), (max-width: 991px) {
+  body:not(.c3d-printing) .c3d-dash-row { align-items: flex-start; height: auto !important; min-height: 0 !important; overflow: visible !important; }
+  body:not(.c3d-printing) .c3d-dash-row > #control-column,
+  body:not(.c3d-printing) .c3d-dash-row > #webcam-column { min-height: 0; }
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row { flex: 0 0 auto; height: auto !important; min-height: 360px; }
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row > [class*="col-"],
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row .dashboard-panel { flex: 0 0 auto; min-height: 360px; }
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row .dashboard-panel > .panel-body { min-height: 300px; overflow: visible; }
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row #uplot-1 { min-height: 260px; }
+}
 @media (max-width: 991px) {
   .c3d-dash-row { flex-direction: column; }
   .c3d-dash-row > #control-column,
@@ -1381,6 +1393,19 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   border-bottom-right-radius: var(--df-radius-lg);
 }
 .c3d-job-main { flex: 1 1 380px; min-width: 0; }
+.c3d-job-identity { flex: 1 1 230px; min-width: 180px; }
+.c3d-job-title-line { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.c3d-job-title-line .c3d-job-name { min-width: 0; }
+.c3d-job-metrics { display: grid; grid-template-columns: repeat(5, minmax(82px, 1fr)); gap: 4px 12px; flex: 2 1 510px; min-width: 0; }
+.c3d-job-metrics > span, .c3d-print-result-metrics > span { min-width: 0; color: var(--df-text-strong); font-size: 12px; line-height: 1.35; }
+.c3d-job-metrics b, .c3d-print-result-metrics b { display: block; color: var(--df-text-muted); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+#plates .c3d-job-main { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 16px; }
+#plates .c3d-job-main .c3d-list-main { display: contents; }
+#plates .c3d-job-main .c3d-job-identity { order: 0; }
+#plates .c3d-job-main .c3d-job-metrics { order: 1; }
+#plates .c3d-job-main .c3d-job-flag, #plates .c3d-job-main .c3d-job-sub, #plates .c3d-job-main .c3d-job-resume, #plates .c3d-job-main .plate { order: 2; flex-basis: 100%; }
+.c3d-job-identity > .c3d-list-meta { display: block; margin-top: 2px; }
+#plates .c3d-job-sub { margin-top: 0; }
 /* Renders are RGBA with ~30% transparent side margins, so the thumb crops to the
    model (cover) instead of letterboxing it inside a black box. */
 .c3d-job-thumb {
@@ -1495,7 +1520,11 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   border-radius: 8px;
 }
 .c3d-print-result-info { flex: 1 1 300px; min-width: 0; }
-.c3d-print-result-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.c3d-print-result-identity { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.c3d-print-result-profile { display: block; flex-basis: 100%; margin-left: 22px; color: var(--df-text-muted); font-size: 12px; }
+.c3d-print-result-metrics { display: grid; grid-template-columns: repeat(4, minmax(76px, auto)); gap: 4px 12px; margin-top: 5px; }
+.c3d-print-result-secondary { grid-column: 1 / -1; color: var(--df-text-muted) !important; font-size: 11px !important; }
+.c3d-print-result-head { display: block; }
 .c3d-print-result-icon { color: var(--c3d-info); font-size: 13px; }
 .c3d-print-result-name { font-size: 15px; font-weight: 700; color: var(--df-text-strong); overflow-wrap: anywhere; }
 .c3d-print-result-actions {
@@ -1518,6 +1547,25 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   white-space: nowrap;
 }
 .c3d-print-result-actions .btn-group { display: flex; }
+.c3d-editor-warning-check { display: flex; align-items: center; gap: 8px; margin-top: 18px; color: var(--df-text-muted); font-size: 13px; font-weight: 500; }
+.c3d-editor-warning-check input { margin: 0; }
+@media (max-width: 1350px) {
+  #plates .c3d-job-metrics { order: 2; flex-basis: 100%; grid-template-columns: repeat(5, minmax(72px, 1fr)); }
+  #plates .c3d-job-actions { margin-left: auto; }
+}
+@media (max-width: 767px) {
+  #plates .c3d-job-row { align-items: flex-start; gap: 8px; }
+  #plates .c3d-job-thumb { flex-basis: 48px; width: 48px; height: 48px; }
+  #plates .c3d-job-main { flex: 1 1 calc(100% - 64px); gap: 8px; }
+  #plates .c3d-job-identity { flex-basis: 100%; min-width: 0; }
+  #plates .c3d-job-title-line { align-items: flex-start; }
+  #plates .c3d-job-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 10px; }
+  #plates .c3d-job-actions { flex: 1 1 100%; justify-content: flex-end; margin-left: 0; flex-wrap: wrap; }
+  #plates .c3d-job-sub { flex-basis: 100%; white-space: normal; }
+  .c3d-print-result-info { flex-basis: calc(100% - 64px); }
+  .c3d-print-result-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .c3d-print-result-actions { flex: 1 1 100%; margin-left: 0; }
+}
 .c3d-job-id { font-size: 12px; font-weight: 700; color: var(--df-text-muted); }
 #plates .c3d-job-sub { white-space: normal; line-height: 1.7; }
 #plates .c3d-job-sub .glyphicon { font-size: 11px; }
