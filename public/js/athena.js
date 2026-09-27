@@ -435,6 +435,7 @@ $(document).ready(function(){
 			dwEnable.prop('checked', true);
 			dwEnable.prop('value', "0");
 		}
+		loadInitialCheckboxState(dwEnable, $('.dynamic-wait-settings'));
 		applyDynamicWaitState(false);
 	}
 	const preheatMixEnable = $("#PreheatMixSimple");

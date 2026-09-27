@@ -20,7 +20,7 @@
 			<span><b><translate>Resin Used</translate></b>{{PrintResult.TotalSolidArea}}ml</span>
 			<span><b><translate>Print Time</translate></b>{{PrintResult.PrintTime}}</span>
 			<span><b><translate>Layers</translate></b>{{PrintResult.LayersCount}}</span>
-			<span><b><translate>Size</translate></b>{{PrintResult.LayerThickness}}</span>
+			<span><b><translate>Layer Height</translate></b>{{PrintResult.LayerThickness}}</span>
 			<span class="c3d-print-result-secondary"><span class="glyphicon glyphicon-usd"></span>{{PrintResult.Price}} · {{PrintResult.supportCureTime}}s / {% if !PrintResult.cureTimes %}{{PrintResult.cureTime}}{% else %}{{PrintResult.cureTimes}}{% endif %}s · {{PrintResult.Date}}</span>
 		</div>
 	</div>
