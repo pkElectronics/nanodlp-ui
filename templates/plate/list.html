@@ -126,10 +126,10 @@
 				{% endif %}
 			</div>
 			<div class="c3d-list-meta c3d-job-sub">
-				<span class="glyphicon glyphicon-move"></span> {{row.XRes}}x{{row.YRes}}x{{row.ZRes}}<translate>μm</translate>
-				&nbsp;·&nbsp; <span class="glyphicon glyphicon-usd"></span> {{row.Price}}
-				&nbsp;·&nbsp; <span class="glyphicon glyphicon-time"></span> <translate>Cure Time</translate> {{row.supportCureTime}}s / {% if !row.cureTimes %}{{row.cureTime}}{% else %}{{row.cureTimes}}{% endif %}s
-				{% if row.StopLayers %}&nbsp;·&nbsp; <span class="glyphicon glyphicon-stop"></span> <translate>Stop Layers</translate> {{row.StopLayers}}{% endif %}
+				<span class="c3d-job-sub-metric"><b><translate>Resolution</translate></b><span><span class="glyphicon glyphicon-move"></span> {{row.XRes}}x{{row.YRes}}x{{row.ZRes}}<translate>μm</translate></span></span>
+				<span class="c3d-job-sub-metric"><b><translate>Cost</translate></b><span><span class="glyphicon glyphicon-usd"></span> {% if row.Price %}{{row.Price}}{% else %}-{% endif %}</span></span>
+				<span class="c3d-job-sub-metric"><b><translate>Cure Time</translate></b><span><span class="glyphicon glyphicon-time"></span> {% if row.supportCureTime %}{{row.supportCureTime}}{% else %}-{% endif %}s / {% if row.cureTimes %}{{row.cureTimes}}{% elif row.cureTime %}{{row.cureTime}}{% else %}-{% endif %}s</span></span>
+				{% if row.StopLayers %}<span class="c3d-job-sub-metric"><b><translate>Stop Layers</translate></b><span><span class="glyphicon glyphicon-stop"></span> {{row.StopLayers}}</span></span>{% endif %}
 			</div>
 			{% if !row.profileError %}
 			<form action="/printer/start/{{ row.PlateID }}" method="post" class="c3d-job-resume {% if row.PlateID == status.PlateID && status.ResumeID<row.LayersCount %}{% else %}hide{% endif %}">

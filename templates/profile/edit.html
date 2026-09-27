@@ -884,10 +884,11 @@
 
 			<input type="hidden" name="ResinID" value="{{profile.ResinID}}">
 
+			<div class="c3d-resin-top-layout">
 			<!-- Details -->
 			<section class="c3d-resin-section">
 				<h2 class="c3d-resin-title"><span translate>Details</span></h2>
-				<div class="c3d-resin-grid">
+				<div class="c3d-resin-grid c3d-resin-details-controls">
 					<div class="c3d-resin-field i_basic i_option">
 						<label for="TitleSimple" class="profile-help-label"><span translate>Name</span><a class="help" data-toggle="tooltip" data-placement="top" title="A name to identify this resin profile.">i</a></label>
 						<input class="form-control" value="{{profile.Title}}" name="Title" id="TitleSimple" required>
@@ -910,9 +911,9 @@
 							</span>
 						</label>
 					</div>
-					<div class="c3d-resin-field c3d-resin-field--wide i_basic i_option">
+					<div class="c3d-resin-field c3d-resin-field--wide c3d-resin-description i_basic i_option">
 						<label for="DescSimple" class="profile-help-label"><span translate>Description</span><a class="help" data-toggle="tooltip" data-placement="top" title="Notes about the resin, recommended uses, or profile settings.">i</a></label>
-						<textarea class="form-control" name="Desc" id="DescSimple" rows="2">{{profile.Desc}}</textarea>
+						<textarea class="form-control" name="Desc" id="DescSimple" rows="5">{{profile.Desc}}</textarea>
 					</div>
 				</div>
 			</section>
@@ -920,7 +921,7 @@
 			<!-- Physical Properties -->
 			<section class="c3d-resin-section advance_mode">
 				<h2 class="c3d-resin-title"><span translate>Physical Properties</span></h2>
-				<div class="c3d-resin-grid">
+				<div class="c3d-resin-grid c3d-resin-physical-grid">
 					<div class="c3d-resin-field i_basic i_option">
 						<label for="ViscositySimple" class="profile-help-label"><span><translate>Viscosity (<b>cP / mPa·s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Enter the resin viscosity at room temperature from the manufacturer datasheet or specifications, usually in cP or mPa·s. It is used to adjust lift and retract motion for how easily the resin flows.">i</a></label>
 						<input class="form-control" value="{{profile.CustomValues.Viscosity}}" name="Viscosity" id="ViscositySimple" step="1" type="number">
@@ -931,6 +932,7 @@
 					</div>
 				</div>
 			</section>
+			</div>
 
 			<!-- Layer Details -->
 			<section class="c3d-resin-section">

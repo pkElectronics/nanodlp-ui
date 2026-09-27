@@ -53,15 +53,20 @@
     <div class="c3d-list" id="c3d-resin-list">
         {% for profile in profiles %}
         <div class="c3d-list-row {% if defaultProfile==profile.ProfileID %}c3d-list-row--default{% endif %}" data-idx="{{forloop.Counter}}" data-depth="{{profile.Depth}}" data-cure="{{profile.CureTime}}">
-            <div class="c3d-list-main">
-                {% if profile.ManufacturerLock %}<span class="glyphicon glyphicon-lock c3d-lock" title="Factory profile"></span>{% endif %}
-                <span class="c3d-list-title">{{profile.Title}}</span>
-                {% if defaultProfile==profile.ProfileID %}<span class="c3d-badge c3d-badge--default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <translate>Default</translate></span>{% endif %}
-                <span class="c3d-list-meta"><translate>Layer</translate> {{profile.Depth|floatformat}} µm &nbsp;·&nbsp; <translate>Cure</translate> {{profile.CureTime|floatformat}} s</span>
+            <div class="c3d-resin-profile-cell">
+                <div class="c3d-resin-profile-name c3d-list-main">
+                    {% if profile.ManufacturerLock %}<span class="glyphicon glyphicon-lock c3d-lock" title="Factory profile"></span>{% endif %}
+                    <span class="c3d-list-title">{{profile.Title}}</span>
+                    {% if defaultProfile==profile.ProfileID %}<span class="c3d-badge c3d-badge--default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <translate>Default</translate></span>{% endif %}
+                </div>
+                <span class="c3d-resin-profile-mobile-meta c3d-list-meta"><translate>Layer</translate> {{profile.Depth|floatformat}} µm &nbsp;·&nbsp; <translate>Cure</translate> {{profile.CureTime|floatformat}} s</span>
             </div>
+            <span class="c3d-resin-profile-metric"><b><translate>Layer Height</translate></b><span>{{profile.Depth|floatformat}} µm</span></span>
+            <span class="c3d-resin-profile-metric"><b><translate>Normal Exposure</translate></b><span>{{profile.CureTime|floatformat}} s</span></span>
+            <span class="c3d-resin-profile-metric"><b><translate>Bottom Exposure</translate></b><span>{{profile.SupportCureTime|floatformat}} s</span></span>
             <div class="c3d-list-actions">
                 {% if defaultProfile!=profile.ProfileID %}
-                <a class="c3d-badge c3d-badge--set tip" href="/profile/default/{{profile.ProfileID}}"><span class="glyphicon glyphicon-ok"></span> <translate>Set default</translate><translate class="hide">Set default resin profile</translate></a>
+                <a class="btn c3d-ghost c3d-resin-set-default tip" href="/profile/default/{{profile.ProfileID}}" title="Set as default" aria-label="Set as default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span><translate class="hide">Set as default</translate></a>
                 {% endif %}
                 {% if !profile.ManufacturerLock %}
                 <a class="btn c3d-ghost c3d-btn-i tip" href="/profile/edit/{{profile.ProfileID}}"><span class="glyphicon glyphicon-pencil"></span><translate class="hide">Edit</translate></a>
