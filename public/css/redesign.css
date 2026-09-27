@@ -2536,6 +2536,8 @@ body:has(.c3d-preview-layout) > br { display: none; }
 .c3d-resin-grid.c3d-resin-layer-details { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
 .c3d-resin-grid.c3d-resin-layer-details:has(> .advance_mode[style*="display: none"]) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .c3d-resin-details-controls { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 12px; }
+.c3d-resin-editor #setup2 .c3d-resin-details-controls > .c3d-resin-field { justify-content: flex-start; }
+.c3d-resin-editor #setup2 .c3d-resin-details-controls > .c3d-resin-field:not(.c3d-resin-field--wide) > .profile-help-label { min-height: 2.8em; }
 .c3d-resin-description { grid-column: 1 / span 3; }
 .c3d-resin-editor #setup2 .c3d-resin-details-controls #DescSimple { min-height: 8em; resize: vertical; }
 .c3d-resin-editor #setup2 .c3d-resin-physical-grid { grid-template-columns: minmax(0, 1fr); }
@@ -2680,6 +2682,7 @@ body:has(.c3d-preview-layout) > br { display: none; }
   #c3d-resin-list .c3d-list-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   #c3d-resin-list .c3d-resin-profile-cell,
   #c3d-resin-list .c3d-list-actions { grid-column: 1 / -1; }
+  .c3d-resin-editor #setup2 .c3d-resin-details-controls { grid-template-columns: minmax(0, 1fr); }
   .c3d-resin-details-controls { grid-template-columns: minmax(0, 1fr); }
   .c3d-resin-description { grid-column: auto; }
   .c3d-resin-table-row { grid-template-columns: minmax(0, 1fr); }
