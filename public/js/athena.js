@@ -394,25 +394,37 @@ function waitForLocalDiagnosticMarker(token) {
 $('#DownloadDiagnosticLogsButton').click(async function () {
 	const button = this;
 	button.disabled = true;
-	let token;
+	let pollPromise;
 
 	try {
-		token = createLocalDiagnosticToken();
+		const token = createLocalDiagnosticToken();
 		$('#diagnostic-download-notification').modal({ backdrop: 'static', keyboard: false });
 		$('#diagnostic-download-notification').modal('show');
 
-		await $.ajax({
+		// Start polling before awaiting /gcode; NanoDLP may keep the request open
+		// until the Exec command exits, even after the marker is available.
+		pollPromise = waitForLocalDiagnosticMarker(token);
+		const execPromise = $.ajax({
 			url: '/gcode',
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			method: 'POST',
 			data: new URLSearchParams({
-				'gcode': `[[Exec /home/pi/athena-debug-submission.sh --local ${token}]]`
+				'gcode': `[[Exec /bin/bash /home/pi/athena-debug-submission.sh --local ${token}]]`
 			}).toString()
 		});
-
-		await waitForLocalDiagnosticMarker(token);
+		// Observe the command request immediately so a fast failure is surfaced,
+		// while marker polling remains independent of a long-running response.
+		const execFailurePromise = execPromise.then(
+			() => new Promise(() => {}),
+			error => Promise.reject(new Error(error.responseText || 'NanoDLP could not start diagnostic collection.'))
+		);
+		await Promise.race([pollPromise, execFailurePromise]);
 		toastr.success('Diagnostic logs downloaded locally. No data was uploaded.');
 	} catch (error) {
+		if (pollPromise) {
+			// Avoid leaving a rejected background poll unhandled if /gcode fails first.
+			pollPromise.catch(() => {});
+		}
 		toastr.error(error.message || 'The printer could not prepare diagnostic logs.', 'Diagnostic download failed');
 	} finally {
 		$('#diagnostic-download-notification').modal('hide');

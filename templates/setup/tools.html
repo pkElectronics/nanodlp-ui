@@ -108,8 +108,24 @@
                 <a href="/debug/performance/trace" class="btn c3d-ghost c3d-tool-action" translate>Tracing</a>
                 <a href="/debug/sampling" class="btn c3d-ghost c3d-tool-action ajax" data-confirm="sampling-confirm" translate>Sample Stack</a>
                 <a href="/debug/stack" class="btn c3d-ghost c3d-tool-action" translate>View Stack</a>
+                <button id="DownloadDiagnosticLogsButton" type="button" class="btn c3d-ghost c3d-tool-action">Download Diagnostic Logs</button>
         </div>
     </section>
+</div>
+<div class="modal fade c3d-support-notification" id="diagnostic-download-notification" tabindex="-1" role="dialog" aria-labelledby="diagnostic-download-title" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="diagnostic-download-title"><translate>Preparing Diagnostic Logs</translate></h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-label="Collecting local diagnostic data" style="width: 100%"></div>
+                </div>
+                <p role="status"><translate>Diagnostic logs are being collected on this printer. No data is being uploaded.</translate></p>
+            </div>
+        </div>
+    </div>
 </div>
 {% if viewMode == 0 %}
 <div class="modal fade c3d-service-modal" id="serviceModeWarningModal" tabindex="-1" role="dialog" aria-labelledby="service-mode-modal-title" aria-describedby="service-mode-modal-description">
