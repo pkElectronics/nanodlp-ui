@@ -40,6 +40,7 @@ async function isCameraEnabled(src) {
 
 async function buildCameraStream(url) {
     const cameraEnabled = await isCameraEnabled(url);
+    setCameraMenuVisible(cameraEnabled);
 
     let style;
     if (cameraEnabled) {
@@ -465,6 +466,17 @@ const showElemIfPresent = (id) => {
     const $elem = document.getElementById(id);
     if ($elem)
         $elem.hidden = false;
+}
+
+const setCameraMenuVisible = (visible) => {
+    const cameraLink = document.querySelector('#navbar .navbar-nav > li.dropdown > .dropdown-menu a[href="/custom/webcam"]');
+    const cameraItem = cameraLink?.closest('li');
+    const cameraHeading = cameraItem?.previousElementSibling;
+
+    if (cameraItem)
+        cameraItem.hidden = !visible;
+    if (cameraHeading?.classList.contains('c3d-nav-group'))
+        cameraHeading.hidden = !visible;
 }
 
 const setBootstrapElemSizeIfPresent = (id, size) => {
