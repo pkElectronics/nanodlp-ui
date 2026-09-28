@@ -66,6 +66,13 @@
             </form>
         </section>
 
+        <section class="c3d-card c3d-support-local-diagnostics" aria-labelledby="local-diagnostics-heading">
+            <h2 id="local-diagnostics-heading"><translate>Diagnostic Logs</translate></h2>
+            <p><translate>Generate and download printer diagnostic logs locally. This package is not uploaded.</translate></p>
+            <p class="c3d-support-privacy"><translate>The package may contain printer configuration, resin profiles, job information, device identifiers, and system logs.</translate></p>
+            <button id="DownloadDiagnosticLogsButton" type="button" class="btn c3d-ghost c3d-ghost-gold"><translate>Download Diagnostic Logs</translate></button>
+        </section>
+
         <section class="c3d-card c3d-support-connectivity" aria-labelledby="support-connectivity-heading">
             <h2 id="support-connectivity-heading"><translate>Connectivity</translate></h2>
             <p><translate>Cloud Connectivity is required to use your printer in the Athena Mobile App. When enabled, printer data is transmitted to servers operated by Concepts3D in Europe or by partners globally.</translate></p>
@@ -127,6 +134,22 @@
                     <div id="anotherbar" class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-label="Collecting and sending diagnostic data" style="width: 100%"></div>
                 </div>
                 <p role="status"><translate>Diagnostic data is being collected and sent. Thank you for your patience.</translate></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade c3d-support-notification" id="diagnostic-download-notification" tabindex="-1" role="dialog" aria-labelledby="diagnostic-download-title" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="diagnostic-download-title"><translate>Preparing Diagnostic Logs</translate></h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-label="Collecting local diagnostic data" style="width: 100%"></div>
+                </div>
+                <p role="status"><translate>Diagnostic logs are being collected on this printer. No data is being uploaded.</translate></p>
             </div>
         </div>
     </div>

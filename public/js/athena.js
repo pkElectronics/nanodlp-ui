@@ -334,6 +334,92 @@ function ticketFailedHandler(interval) {
 		clearInterval(interval);
 }
 
+const LOCAL_DIAGNOSTIC_TIMEOUT_MS = 300000;
+const LOCAL_DIAGNOSTIC_POLL_MS = 1000;
+
+function createLocalDiagnosticToken() {
+	if (!window.crypto || typeof window.crypto.getRandomValues !== 'function') {
+		throw new Error('Secure random numbers are unavailable in this browser.');
+	}
+
+	const bytes = new Uint8Array(16);
+	window.crypto.getRandomValues(bytes);
+	return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function waitForLocalDiagnosticMarker(token) {
+	const readyUrl = `/static/tickets/${token}.ready`;
+	const errorUrl = `/static/tickets/${token}.error`;
+	const archiveUrl = `/static/tickets/athena-diagnostics-${token}.tar.gz`;
+	const deadline = Date.now() + LOCAL_DIAGNOSTIC_TIMEOUT_MS;
+
+	return new Promise((resolve, reject) => {
+		const poll = async () => {
+			try {
+				const errorResponse = await fetch(errorUrl, { cache: 'no-store' });
+				if (errorResponse.ok) {
+					const detail = (await errorResponse.text()).trim();
+					reject(new Error(detail || 'The printer could not collect diagnostic logs.'));
+					return;
+				}
+
+				const readyResponse = await fetch(readyUrl, { cache: 'no-store' });
+				if (readyResponse.ok) {
+					const download = document.createElement('a');
+					download.href = archiveUrl;
+					download.download = 'athena-diagnostics.tar.gz';
+					download.hidden = true;
+					document.body.appendChild(download);
+					download.click();
+					download.remove();
+					resolve();
+					return;
+				}
+
+				if (Date.now() >= deadline) {
+					reject(new Error('Diagnostic collection timed out. Check that the printer is online, then try again.'));
+					return;
+				}
+
+				window.setTimeout(poll, LOCAL_DIAGNOSTIC_POLL_MS);
+			} catch (error) {
+				reject(new Error('Could not check diagnostic collection status. Check the printer connection and try again.'));
+			}
+		};
+
+		poll();
+	});
+}
+
+$('#DownloadDiagnosticLogsButton').click(async function () {
+	const button = this;
+	button.disabled = true;
+	let token;
+
+	try {
+		token = createLocalDiagnosticToken();
+		$('#diagnostic-download-notification').modal({ backdrop: 'static', keyboard: false });
+		$('#diagnostic-download-notification').modal('show');
+
+		await $.ajax({
+			url: '/gcode',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			method: 'POST',
+			data: new URLSearchParams({
+				'gcode': `[[Exec /home/pi/athena-debug-submission.sh --local ${token}]]`
+			}).toString()
+		});
+
+		await waitForLocalDiagnosticMarker(token);
+		toastr.success('Diagnostic logs downloaded locally. No data was uploaded.');
+	} catch (error) {
+		toastr.error(error.message || 'The printer could not prepare diagnostic logs.', 'Diagnostic download failed');
+	} finally {
+		$('#diagnostic-download-notification').modal('hide');
+		button.disabled = false;
+	}
+});
+
 $("#BtnToggleHeater").click(async function(){
 	await updateMachineCustomValues((customValues) => {
 		const heaterEnable = customValues['HeaterEnable'];
