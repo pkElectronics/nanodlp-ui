@@ -1260,6 +1260,11 @@ body.c3d-printing #webcam-column .dashboard-panel { flex: 1 1 auto; }
   body:not(.c3d-printing) .c3d-dash-row { align-items: flex-start; height: auto !important; min-height: 0 !important; overflow: visible !important; }
   body:not(.c3d-printing) .c3d-dash-row > #control-column,
   body:not(.c3d-printing) .c3d-dash-row > #webcam-column { min-height: 0; }
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row { flex: 0 0 auto; height: auto !important; min-height: 360px; }
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row > [class*="col-"],
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row .dashboard-panel { flex: 0 0 auto; min-height: 360px; }
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row .dashboard-panel > .panel-body { min-height: 300px; overflow: visible; }
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row #uplot-1 { min-height: 260px; }
 }
 @media (max-width: 991px) {
   .c3d-dash-row { flex-direction: column; }
