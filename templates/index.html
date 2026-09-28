@@ -18,13 +18,13 @@
 
 <div class="c3d-dash-main">
     <div class="row row-marginless c3d-dash-row">
-        <div id="control-column" class="col-md-8 no-padding">
+        <div id="control-column" class="col-md-12 no-padding">
             <div id="machine-status" class="row row-marginless">
                 {% include "components/print-progress.html" %}
             </div>
 
             <div class="row control-row row-marginless display-flex">
-                <div id="heater-column" class="col-md-8 no-padding">
+                <div id="heater-column" class="col-md-6 no-padding">
                     <div class="panel panel-default dashboard-panel">
                         <div class="panel-heading">Environment Control</div>
                         <div class="panel-body">
@@ -32,7 +32,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="printer-control-column" class="col-md-4 no-padding">
+                <div id="printer-control-column" class="col-md-6 no-padding">
                     <div class="panel panel-default dashboard-panel">
                         <div class="panel-heading">Printer Control</div>
                         <div class="panel-body">
@@ -83,7 +83,7 @@
                 </div>
             </div>
         </div>
-        <div id="webcam-column" class="col-md-4 no-padding">
+        <div id="webcam-column" class="col-md-4 no-padding" hidden>
             <div class="panel panel-default dashboard-panel">
                 <div class="panel-heading c3d-panel-heading--split">
                     <span>Webcam</span>

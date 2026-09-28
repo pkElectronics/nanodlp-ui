@@ -43,6 +43,13 @@ async function buildCameraStream(url) {
 
     let style;
     if (cameraEnabled) {
+        // Start with the no-camera layout in the template, then reveal the
+        // webcam only after the source reports online to avoid load flicker.
+        showElemIfPresent('webcam-column')
+        setBootstrapElemSizeIfPresent('control-column', 8)
+        setBootstrapElemSizeIfPresent('heater-column', 8)
+        setBootstrapElemSizeIfPresent('printer-control-column', 4)
+
         const img = document.createElement('img');
 
         const livestreamContainer = document.getElementById('livestream-container');

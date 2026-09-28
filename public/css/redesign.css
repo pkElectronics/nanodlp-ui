@@ -166,6 +166,7 @@ a:hover, a:focus { color: var(--brand-accent); filter: brightness(1.08); }
   scrollbar-width: thin;
   scrollbar-color: var(--df-border-strong) transparent;
 }
+#navbar .navbar-nav > li.dropdown > .dropdown-menu [hidden] { display: none !important; }
 .navbar .dropdown-menu::-webkit-scrollbar { width: 10px; }
 .navbar .dropdown-menu::-webkit-scrollbar-track { background: transparent; }
 .navbar .dropdown-menu::-webkit-scrollbar-thumb {
@@ -1241,6 +1242,7 @@ body.c3d-printing #webcam-column .dashboard-panel { flex: 1 1 auto; }
    Gutter lives on the column (padding counts toward flex height) rather than
    on the panel, so the row height is exactly gutter + webcam panel. */
 #webcam-column { padding-top: 8px; }
+.c3d-dash-row > #webcam-column[hidden] { display: none !important; }
 .c3d-dash-row .dashboard-panel { margin: 8px 6px; }
 .pressure-row .dashboard-panel { margin: 4px 6px 0; }
 #webcam-column .dashboard-panel { flex: 0 0 auto; margin: 0 6px; }
