@@ -42,6 +42,10 @@ async function buildCameraStream(url) {
     const cameraEnabled = await isCameraEnabled(url);
     setCameraMenuVisible(cameraEnabled);
 
+    const dashboardRow = document.querySelector('.c3d-dash-row');
+    const controlColumn = document.getElementById('control-column');
+    const pressureRow = controlColumn?.querySelector('.pressure-row');
+
     let style;
     if (cameraEnabled) {
         // Start with the no-camera layout in the template, then reveal the
@@ -50,6 +54,9 @@ async function buildCameraStream(url) {
         setBootstrapElemSizeIfPresent('control-column', 8)
         setBootstrapElemSizeIfPresent('heater-column', 8)
         setBootstrapElemSizeIfPresent('printer-control-column', 4)
+        if (controlColumn && pressureRow && pressureRow.parentElement !== controlColumn) {
+            controlColumn.appendChild(pressureRow);
+        }
 
         const img = document.createElement('img');
 
@@ -80,6 +87,9 @@ async function buildCameraStream(url) {
         setBootstrapElemSizeIfPresent('control-column', 12)
         setBootstrapElemSizeIfPresent('heater-column', 6)
         setBootstrapElemSizeIfPresent('printer-control-column', 6)
+        if (dashboardRow && pressureRow && pressureRow.parentElement !== dashboardRow) {
+            dashboardRow.appendChild(pressureRow);
+        }
     }
 
 }

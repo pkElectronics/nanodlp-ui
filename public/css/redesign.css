@@ -1228,6 +1228,7 @@ body.c3d-printing #webcam-column .dashboard-panel { flex: 1 1 auto; }
 .c3d-dash-row > [class*="col-"] { display: flex; flex-direction: column; }
 .c3d-dash-row .dashboard-panel { flex: 1 1 auto; display: flex; flex-direction: column; }
 .c3d-dash-row .dashboard-panel > .panel-body { display: flex; flex-direction: column; }
+.c3d-dash-row > .pressure-row { width: 100%; }
 /* Reserve chart space before data arrives so the column height (and webcam)
    stays fixed from page load — no expand/shrink once the plot renders. */
 .pressure-row { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; }
@@ -1235,6 +1236,11 @@ body.c3d-printing #webcam-column .dashboard-panel { flex: 1 1 auto; }
 .pressure-row .dashboard-panel { flex: 1 1 0; min-height: 0; }
 .pressure-row .dashboard-panel > .panel-body { flex: 1 1 0; min-height: 0; overflow: hidden; }
 .pressure-row #uplot-1 { min-height: 0; margin-bottom: 4px; }
+.c3d-dash-row > .pressure-row { flex: 0 0 100%; width: 100%; }
+.c3d-dash-row > .pressure-row > #pressure-chart-column { width: 100%; }
+.c3d-dash-row > .pressure-row .dashboard-panel { min-height: 360px; }
+.c3d-dash-row > .pressure-row .dashboard-panel > .panel-body { min-height: 300px; overflow: visible; }
+.c3d-dash-row > .pressure-row #uplot-1 { min-height: 260px; width: 100%; }
 .c3d-dashboard-chart-action { flex: 0 0 auto; display: flex; justify-content: flex-end; min-height: 28px; }
 .c3d-dashboard-chart-action .btn { min-height: 28px; padding: 3px 9px; font-size: 11px; }
 /* Webcam keeps its natural content height (source of truth for the row),
