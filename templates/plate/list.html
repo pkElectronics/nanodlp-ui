@@ -104,12 +104,8 @@
 				</span>
 				{% endif %}
 				{% if row.IsFaulty %}
-				<span class="c3d-job-flag c3d-job-flag-danger"><span class="glyphicon glyphicon-alert"></span>
-					<a href="/plate/preview/{{ row.PlateID }}" translate>Source file contains faulty structure.</a>
-					{% if !row.Repaired %}
-					<a class="ask req-no-slicing btn c3d-ghost repair svg tip" href="/plate/repair-regenerate/{{ row.PlateID }}"
-					data-ask="regenerate-confirm"><span class="c3d-btn-i">{{ icon(repair_icon) }}<translate>Repair</translate></span></a>
-					{% endif %}
+				<span class="c3d-job-flag c3d-job-flag-warn"><span class="glyphicon glyphicon-alert"></span>
+					<a href="/plate/preview/{{ row.PlateID }}" translate>NanoDLP detected possible layer issues.</a>
 				</span>
 				{% endif %}
 				{% if row.IsOverhang %}
@@ -120,9 +116,11 @@
 				{% endif %}
 				{% if row.Corrupted==true %}
 				<span class="c3d-job-flag c3d-job-flag-danger"><span class="glyphicon glyphicon-alert"></span> <translate>This job is corrupt.</translate>
+					{% if row.Type=="stl" %}
 					<a class="ask req-no-slicing btn c3d-ghost" href="/plate/regenerate/{{ row.PlateID }}"
 					data-ask="regenerate-confirm"><span class="glyphicon glyphicon-refresh"></span> &nbsp; <translate>Re-slice</translate>
 					</a>
+					{% endif %}
 				</span>
 				{% endif %}
 			</div>
@@ -182,9 +180,6 @@
 				{% endif %}
 			{% endif %}
 			<a class="btn c3d-ghost c3d-icon-btn tip" href="/plate/preview/{{ row.PlateID }}"><span class="c3d-btn-i"><span class="glyphicon glyphicon-eye-open"></span><translate class="hide">Preview</translate></span></a>
-			{% if row.Type=="stl" && !row.Repaired %}
-			<a class="btn c3d-ghost c3d-icon-btn repair tip svg" href="/plate/repair/{{ row.PlateID }}">{{ icon(repair_icon) }}<translate class="hide">Repair</translate></a>
-			{% endif %}
 			<div class="btn-group c3d-job-more">
 				<button id="show-more-{{ row.PlateID }}" type="button" class="btn c3d-ghost-info c3d-icon-btn tip dropdown-toggle list-more-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<span class="c3d-btn-i"><span class="glyphicon glyphicon-option-vertical" style="pointer-events: none"></span><translate class="hide">More Options</translate></span>
@@ -203,13 +198,24 @@
 					<li id="show-more-timelapse-pending-{{ row.PlateID }}" class="disabled" style="display: none">
 						<span class="glyphicon glyphicon-camera"></span> &nbsp; <translate>Timelapse Processing...</translate>
 					</li>
-					{% if (row.Processed==true && row.Type && (( row.PlateID != status.PlateID or status.Printing == false))) or (row.Type && !autoSlice) %}
+					{% if (row.Processed==true && row.Type=="stl" && (( row.PlateID != status.PlateID or status.Printing == false))) or (row.Type=="stl" && !autoSlice) %}
 					<li><a class="ask req-no-slicing" href="/plate/regenerate/{{ row.PlateID }}"
 						data-ask="regenerate-confirm"><span class="glyphicon glyphicon-align-justify"></span> &nbsp; <translate>Re-slice</translate>
 					</a></li>
 					{% if row.Type=="stl" %}
 					<li><a class="ask req-no-slicing" href="/plate/regenerate-wasm/{{ row.PlateID }}"
 						data-ask="regenerate-confirm"><span class="glyphicon glyphicon-align-justify"></span> &nbsp; <translate>Re-slice Web</translate>
+					</a></li>
+					{% endif %}
+					{% endif %}
+					{% if row.Type=="stl" && !row.Repaired %}
+					{% if row.IsFaulty %}
+					<li><a class="ask req-no-slicing" href="/plate/repair-regenerate/{{ row.PlateID }}"
+						data-ask="regenerate-confirm"><span class="glyphicon glyphicon-wrench"></span> &nbsp; <translate>Repair &amp; Re-slice</translate>
+					</a></li>
+					{% else %}
+					<li><a class="req-no-slicing" href="/plate/repair/{{ row.PlateID }}"
+						><span class="glyphicon glyphicon-wrench"></span> &nbsp; <translate>Repair</translate>
 					</a></li>
 					{% endif %}
 					{% endif %}

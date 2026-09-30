@@ -1820,6 +1820,13 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   max-height: 92px;
   overflow-y: auto;
 }
+.c3d-preview-note.is-warning {
+  background-color: color-mix(in srgb, var(--df-warn), var(--df-surface-0) 92%);
+  border-color: color-mix(in srgb, var(--df-warn), var(--df-border-strong) 62%);
+  max-height: 92px;
+  overflow-y: auto;
+}
+.c3d-preview-note p { flex-basis: 100%; margin: 0; color: var(--df-text-muted); }
 .c3d-note-label { display: inline-flex; align-items: center; gap: 6px; color: var(--df-text-muted); font-weight: 600; }
 .c3d-preview-note .overhang {
   display: inline-flex;
