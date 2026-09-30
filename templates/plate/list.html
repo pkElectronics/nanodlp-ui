@@ -1,4 +1,3 @@
-{% set repair_icon = '<path d="M.102 2.223A3.004 3.004 0 0 0 3.78 5.897l6.341 6.252A3.003 3.003 0 0 0 13 16a3 3 0 1 0-.851-5.878L5.897 3.781A3.004 3.004 0 0 0 2.223.1l2.141 2.142L4 4l-1.757.364zm13.37 9.019.528.026.287.445.445.287.026.529L15 13l-.242.471-.026.529-.445.287-.287.445-.529.026L13 15l-.471-.242-.529-.026-.287-.445-.445-.287-.026-.529L11 13l.242-.471.026-.529.445-.287.287-.445.529-.026L13 11z"/>' %}
 {% macro icon(ic) %}
 <svg viewBox="0 0 16 16" class="bi" fill="currentColor" xmlns="http://www.w3.org/2000/svg">{{ic|safe}}</svg>
 {% endmacro %}
@@ -116,11 +115,9 @@
 				{% endif %}
 				{% if row.Corrupted==true %}
 				<span class="c3d-job-flag c3d-job-flag-danger"><span class="glyphicon glyphicon-alert"></span> <translate>This job is corrupt.</translate>
-					{% if row.Type=="stl" %}
 					<a class="ask req-no-slicing btn c3d-ghost" href="/plate/regenerate/{{ row.PlateID }}"
 					data-ask="regenerate-confirm"><span class="glyphicon glyphicon-refresh"></span> &nbsp; <translate>Re-slice</translate>
 					</a>
-					{% endif %}
 				</span>
 				{% endif %}
 			</div>
@@ -198,7 +195,7 @@
 					<li id="show-more-timelapse-pending-{{ row.PlateID }}" class="disabled" style="display: none">
 						<span class="glyphicon glyphicon-camera"></span> &nbsp; <translate>Timelapse Processing...</translate>
 					</li>
-					{% if (row.Processed==true && row.Type=="stl" && (( row.PlateID != status.PlateID or status.Printing == false))) or (row.Type=="stl" && !autoSlice) %}
+					{% if (row.Processed==true && row.Type && (( row.PlateID != status.PlateID or status.Printing == false))) or (row.Type && !autoSlice) %}
 					<li><a class="ask req-no-slicing" href="/plate/regenerate/{{ row.PlateID }}"
 						data-ask="regenerate-confirm"><span class="glyphicon glyphicon-align-justify"></span> &nbsp; <translate>Re-slice</translate>
 					</a></li>
