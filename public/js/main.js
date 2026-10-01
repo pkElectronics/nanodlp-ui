@@ -552,6 +552,14 @@ function applyJobSort(mode){
 	} else {
 		var desc = m[2] === "desc";
 		rows.sort(function(a, b){
+			if (m[1] === "lastprint") {
+				var av = parseFloat($(a).data("sortLastprint")) || 0;
+				var bv = parseFloat($(b).data("sortLastprint")) || 0;
+				if (av === 0 && bv !== 0) return 1;
+				if (bv === 0 && av !== 0) return -1;
+				if (av !== bv) return av - bv;
+				return (parseFloat($(b).data("sortId")) || 0) - (parseFloat($(a).data("sortId")) || 0);
+			}
 			if (m[1] === "name") {
 				var av = $(a).find(".c3d-job-name").text().trim().toLowerCase();
 				var bv = $(b).find(".c3d-job-name").text().trim().toLowerCase();
