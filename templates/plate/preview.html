@@ -46,9 +46,10 @@
 </div>
 {% endif %}
 {% if faulty||risky %}
-<div class="c3d-preview-note is-danger faulty-box">
+<div class="c3d-preview-note {% if risky %}is-danger{% else %}is-warning{% endif %} faulty-box">
 	{% if faulty %}
-	<span class="c3d-note-label"><span class="glyphicon glyphicon-alert"></span> <translate>Faulty layers:</translate></span>
+	<span class="c3d-note-label"><span class="glyphicon glyphicon-alert"></span> <translate>Possible layer issues detected:</translate></span>
+	<p><translate>Review the highlighted layers before printing. These detections may include false positives.</translate></p>
 	{% for fault in faulties %}
 	<a href="#" class="overhang">{{fault}}</a>
 	{% endfor %}

@@ -166,6 +166,7 @@ a:hover, a:focus { color: var(--brand-accent); filter: brightness(1.08); }
   scrollbar-width: thin;
   scrollbar-color: var(--df-border-strong) transparent;
 }
+#navbar .navbar-nav > li.dropdown > .dropdown-menu [hidden] { display: none !important; }
 .navbar .dropdown-menu::-webkit-scrollbar { width: 10px; }
 .navbar .dropdown-menu::-webkit-scrollbar-track { background: transparent; }
 .navbar .dropdown-menu::-webkit-scrollbar-thumb {
@@ -672,6 +673,16 @@ a.c3d-badge:hover, a.c3d-badge:focus { text-decoration: none; color: var(--brand
 .c3d-list-meta { font-size: 12px; color: var(--df-text-muted); white-space: nowrap; }
 .c3d-list-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
 .c3d-list-actions .btn { margin: 0; min-height: 30px; padding: 4px 9px; font-size: 12px; }
+/* Structured resin rows keep profile names and exposure values in stable columns. */
+#c3d-resin-list .c3d-list-row { display: grid; grid-template-columns: minmax(260px, 340px) 92px 118px 118px minmax(32px, 1fr) auto; gap: 10px; }
+#c3d-resin-list .c3d-resin-profile-cell { min-width: 0; }
+#c3d-resin-list .c3d-resin-profile-name { flex-wrap: nowrap; align-items: center; gap: 8px; }
+#c3d-resin-list .c3d-resin-profile-name .c3d-list-title { min-width: 0; }
+.c3d-resin-profile-metric { display: grid; gap: 2px; min-width: 0; color: var(--df-text-strong); font-size: 12px; }
+.c3d-resin-profile-metric b { color: var(--df-text-muted); font-size: 10px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; }
+.c3d-resin-profile-mobile-meta { display: none; }
+.c3d-resin-flex-spacer { min-width: 0; }
+.c3d-resin-set-default { min-height: 28px !important; padding: 4px 9px !important; border: 1px solid var(--brand-accent) !important; border-radius: 999px; color: var(--brand-accent) !important; font-size: 11px !important; font-weight: 700; white-space: nowrap; }
 /* ---------- Resin library: hero default, toolbar, chips ---------- */
 .c3d-list--hero { margin-bottom: 4px; }
 .c3d-list-row--default {
@@ -1009,6 +1020,23 @@ body.c3d-printing #webcam-column .dashboard-panel { flex: 1 1 auto; }
   border-color: var(--brand-accent);
   background-color: color-mix(in srgb, var(--brand-accent), var(--df-surface-1) 82%);
 }
+.c3d-temp-presets .c3d-preset:not(.c3d-preset-active),
+.c3d-step-group .btn-movement:not(.btn-movement-active) {
+  color: var(--df-text-muted);
+  border-color: var(--df-border-subtle);
+  background-color: var(--df-surface-1);
+  box-shadow: none !important;
+}
+.c3d-temp-presets .c3d-preset:not(.c3d-preset-active):hover,
+.c3d-temp-presets .c3d-preset:not(.c3d-preset-active):focus,
+.c3d-step-group .btn-movement:not(.btn-movement-active):hover,
+.c3d-step-group .btn-movement:not(.btn-movement-active):focus {
+  color: var(--df-text-strong);
+  border-color: var(--df-border-strong);
+  background-color: var(--df-surface-2);
+  outline: none;
+  box-shadow: none !important;
+}
 .c3d-heater-row { margin-top: 10px; }
 .c3d-heater-row + .c3d-heater-row { margin-top: 8px; }
 .c3d-heater-btn {
@@ -1207,6 +1235,11 @@ body.c3d-printing #webcam-column .dashboard-panel { flex: 1 1 auto; }
 .pressure-row .dashboard-panel { flex: 1 1 0; min-height: 0; }
 .pressure-row .dashboard-panel > .panel-body { flex: 1 1 0; min-height: 0; overflow: hidden; }
 .pressure-row #uplot-1 { min-height: 0; margin-bottom: 4px; }
+.c3d-dash-row.c3d-no-camera .pressure-row { flex: 0 0 auto; height: auto !important; min-height: 360px; }
+.c3d-dash-row.c3d-no-camera .pressure-row > [class*="col-"],
+.c3d-dash-row.c3d-no-camera .pressure-row .dashboard-panel { flex: 0 0 auto; min-height: 360px; }
+.c3d-dash-row.c3d-no-camera .pressure-row .dashboard-panel > .panel-body { min-height: 300px; overflow: visible; }
+.c3d-dash-row.c3d-no-camera .pressure-row #uplot-1 { min-height: 260px; width: 100%; }
 .c3d-dashboard-chart-action { flex: 0 0 auto; display: flex; justify-content: flex-end; min-height: 28px; }
 .c3d-dashboard-chart-action .btn { min-height: 28px; padding: 3px 9px; font-size: 11px; }
 /* Webcam keeps its natural content height (source of truth for the row),
@@ -1214,12 +1247,25 @@ body.c3d-printing #webcam-column .dashboard-panel { flex: 1 1 auto; }
    Gutter lives on the column (padding counts toward flex height) rather than
    on the panel, so the row height is exactly gutter + webcam panel. */
 #webcam-column { padding-top: 8px; }
+.c3d-dash-row > #webcam-column[hidden] { display: none !important; }
 .c3d-dash-row .dashboard-panel { margin: 8px 6px; }
 .pressure-row .dashboard-panel { margin: 4px 6px 0; }
 #webcam-column .dashboard-panel { flex: 0 0 auto; margin: 0 6px; }
 /* Webcam: let the feed keep its native portrait sizing; center it in the tall card */
 #webcam-column .dashboard-panel > .panel-body { justify-content: center; }
 #webcam-column #livestream-container { margin: 0 auto; }
+/* Short dashboard viewports need a scrollable natural-height row; preserve the
+   existing one-screen flex sizing when there is room for the full dashboard. */
+@media (max-height: 1050px), (max-width: 991px) {
+  body:not(.c3d-printing) .c3d-dash-row { align-items: flex-start; height: auto !important; min-height: 0 !important; overflow: visible !important; }
+  body:not(.c3d-printing) .c3d-dash-row > #control-column,
+  body:not(.c3d-printing) .c3d-dash-row > #webcam-column { min-height: 0; }
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row { flex: 0 0 auto; height: auto !important; min-height: 360px; }
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row > [class*="col-"],
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row .dashboard-panel { flex: 0 0 auto; min-height: 360px; }
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row .dashboard-panel > .panel-body { min-height: 300px; overflow: visible; }
+  body:not(.c3d-printing) .c3d-dash-row .pressure-row #uplot-1 { min-height: 260px; }
+}
 @media (max-width: 991px) {
   .c3d-dash-row { flex-direction: column; }
   .c3d-dash-row > #control-column,
@@ -1381,8 +1427,26 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   border-bottom-right-radius: var(--df-radius-lg);
 }
 .c3d-job-main { flex: 1 1 380px; min-width: 0; }
+.c3d-job-identity { flex: 1 1 230px; min-width: 180px; }
+.c3d-job-title-line { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.c3d-job-title-line .c3d-job-name { min-width: 0; }
+.c3d-job-metrics { display: grid; grid-template-columns: repeat(5, minmax(82px, 1fr)); gap: 4px 12px; flex: 2 1 510px; min-width: 0; }
+.c3d-job-metrics > span, .c3d-print-result-metrics > span { min-width: 0; color: var(--df-text-strong); font-size: 12px; line-height: 1.35; }
+.c3d-job-metrics b, .c3d-print-result-metrics b { display: block; color: var(--df-text-muted); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+#plates .c3d-job-main { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 16px; }
+#plates .c3d-job-main .c3d-list-main { display: contents; }
+#plates .c3d-job-main .c3d-job-identity { order: 0; }
+#plates .c3d-job-main .c3d-job-metrics { order: 1; }
+#plates .c3d-job-main .c3d-job-flag, #plates .c3d-job-main .c3d-job-sub, #plates .c3d-job-main .c3d-job-resume, #plates .c3d-job-main .plate { order: 2; flex-basis: 100%; }
+.c3d-job-identity > .c3d-list-meta:not(.c3d-job-sub) { display: block; margin-top: 2px; }
+#plates .c3d-job-sub { margin-top: 5px; }
+.c3d-job-row .c3d-job-main { flex: 1 1 560px; }
+#plates .c3d-job-metrics { flex: 0 1 690px; grid-template-columns: repeat(5, minmax(94px, 1fr)); }
+.c3d-job-sub { display: grid; grid-template-columns: 122px 72px 176px auto; gap: 4px 10px; align-items: start; width: min(100%, 500px); }
+.c3d-job-sub-metric { display: grid; min-width: 0; line-height: 1.45; }
+.c3d-job-sub-metric b { color: var(--df-text-muted); font-size: 10px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; }
 /* Renders are RGBA with ~30% transparent side margins, so the thumb crops to the
-   model (cover) instead of letterboxing it inside a black box. */
+   model inside the fixed thumbnail well. */
 .c3d-job-thumb {
   position: relative;
   display: flex;
@@ -1403,7 +1467,7 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   width: 100%;
   height: 100%;
   max-width: none;
-  object-fit: cover;
+  object-fit: contain;
   border: 0;
   border-radius: 0;
   background-color: transparent;
@@ -1420,6 +1484,19 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
   outline: 1px solid var(--df-border-strong);
 }
+.c3d-job-issue-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+  color: color-mix(in srgb, var(--brand-accent), var(--df-text-muted) 38%);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.c3d-job-issue-note a { color: inherit; text-decoration: none; }
+.c3d-job-issue-note a:hover,
+.c3d-job-issue-note a:focus { color: var(--brand-accent); text-decoration: underline; }
 /* Loading indicator: spins only while a render is in flight, then the well is
    filled by the image. The static glyph stays for jobs with no render at all. */
 .c3d-job-thumb-spin {
@@ -1495,7 +1572,11 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   border-radius: 8px;
 }
 .c3d-print-result-info { flex: 1 1 300px; min-width: 0; }
-.c3d-print-result-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.c3d-print-result-identity { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.c3d-print-result-profile { display: block; flex-basis: 100%; margin-left: 22px; color: var(--df-text-muted); font-size: 12px; }
+.c3d-print-result-metrics { display: grid; grid-template-columns: repeat(4, minmax(76px, auto)); gap: 4px 12px; margin-top: 5px; }
+.c3d-print-result-secondary { grid-column: 1 / -1; color: var(--df-text-muted) !important; font-size: 11px !important; }
+.c3d-print-result-head { display: block; }
 .c3d-print-result-icon { color: var(--c3d-info); font-size: 13px; }
 .c3d-print-result-name { font-size: 15px; font-weight: 700; color: var(--df-text-strong); overflow-wrap: anywhere; }
 .c3d-print-result-actions {
@@ -1518,6 +1599,44 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   white-space: nowrap;
 }
 .c3d-print-result-actions .btn-group { display: flex; }
+.c3d-editor-warning-check { display: flex; align-items: center; gap: 8px; margin-top: 18px; color: var(--df-text-muted); font-size: 13px; font-weight: 500; }
+.c3d-editor-warning-check input { margin: 0; }
+@media (max-width: 1350px) {
+  #plates .c3d-job-metrics { order: 2; flex-basis: 100%; grid-template-columns: repeat(5, minmax(72px, 1fr)); }
+  #plates .c3d-job-actions { margin-left: auto; }
+  #c3d-resin-list .c3d-list-row { grid-template-columns: minmax(220px, 280px) 82px 105px 105px minmax(24px, 1fr) auto; gap: 8px; }
+}
+@media (max-width: 991px) {
+  #c3d-resin-list .c3d-list-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #c3d-resin-list .c3d-resin-flex-spacer { display: none; }
+  #c3d-resin-list .c3d-resin-profile-cell { grid-column: 1 / -1; }
+  #c3d-resin-list .c3d-list-actions { grid-column: 1 / -1; }
+  .c3d-resin-editor #setup2 .c3d-resin-details-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .c3d-resin-editor #setup2 .c3d-resin-description { grid-column: 1 / -1; }
+  .c3d-resin-editor #setup2 .c3d-resin-physical-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 767px) {
+  #c3d-resin-list .c3d-list-row { grid-template-columns: minmax(0, 1fr) auto; }
+  #c3d-resin-list .c3d-resin-profile-cell { grid-column: 1 / -1; }
+  #c3d-resin-list .c3d-resin-profile-metric { grid-column: span 1; }
+  #c3d-resin-list .c3d-resin-profile-mobile-meta { display: none; }
+  #c3d-resin-list .c3d-list-actions { grid-column: 1 / -1; flex-wrap: wrap; }
+  #c3d-resin-list .c3d-resin-profile-metric:nth-of-type(1) { grid-column: 1; }
+  #c3d-resin-list .c3d-resin-profile-metric:nth-of-type(2) { grid-column: 2; }
+  #c3d-resin-list .c3d-resin-profile-metric:nth-of-type(3) { grid-column: 1; }
+  #plates .c3d-job-row { align-items: flex-start; gap: 8px; }
+  #plates .c3d-job-thumb { flex-basis: 48px; width: 48px; height: 48px; }
+  #plates .c3d-job-main { flex: 1 1 calc(100% - 64px); gap: 8px; }
+  #plates .c3d-job-identity { flex-basis: 100%; min-width: 0; }
+  #plates .c3d-job-title-line { align-items: flex-start; }
+  #plates .c3d-job-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 10px; }
+  #plates .c3d-job-actions { flex: 1 1 100%; justify-content: flex-end; margin-left: 0; flex-wrap: wrap; }
+  #plates .c3d-job-sub { flex-basis: auto; white-space: normal; }
+  .c3d-job-sub { grid-template-columns: 120px 70px minmax(0, 1fr); gap: 6px 10px; width: 100%; max-width: 440px; }
+  .c3d-print-result-info { flex-basis: calc(100% - 64px); }
+  .c3d-print-result-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .c3d-print-result-actions { flex: 1 1 100%; margin-left: 0; }
+}
 .c3d-job-id { font-size: 12px; font-weight: 700; color: var(--df-text-muted); }
 #plates .c3d-job-sub { white-space: normal; line-height: 1.7; }
 #plates .c3d-job-sub .glyphicon { font-size: 11px; }
@@ -1714,6 +1833,13 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   max-height: 92px;
   overflow-y: auto;
 }
+.c3d-preview-note.is-warning {
+  background-color: color-mix(in srgb, var(--df-warn), var(--df-surface-0) 92%);
+  border-color: color-mix(in srgb, var(--df-warn), var(--df-border-strong) 62%);
+  max-height: 92px;
+  overflow-y: auto;
+}
+.c3d-preview-note p { flex-basis: 100%; margin: 0; color: var(--df-text-muted); }
 .c3d-note-label { display: inline-flex; align-items: center; gap: 6px; color: var(--df-text-muted); font-weight: 600; }
 .c3d-preview-note .overhang {
   display: inline-flex;
@@ -2429,6 +2555,13 @@ body:has(.c3d-preview-layout) > br { display: none; }
    field wrapper, never on the grid itself, so jQuery can show/hide them
    without dropping the grid. */
 .c3d-resin-form { display: grid; gap: 8px; }
+.c3d-resin-top-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 8px; }
+.c3d-resin-top-layout:has(> .c3d-resin-section.advance_mode[style*="display: none"]) { grid-template-columns: minmax(0, 1fr); }
+.c3d-resin-top-layout:has(> .c3d-resin-section.advance_mode[style*="display: none"]) .c3d-resin-description { grid-column: 1 / -1; }
+.c3d-resin-work-layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(280px, .85fr); gap: 8px; align-items: start; }
+.c3d-resin-work-layout > .c3d-resin-section { min-width: 0; }
+.c3d-resin-work-layout .c3d-resin-lift-panel .c3d-resin-columns { grid-template-columns: minmax(0, 1fr); }
+.c3d-resin-work-layout .c3d-resin-lift-panel .c3d-resin-column { display: contents; }
 .c3d-resin-section {
   display: grid;
   gap: 8px;
@@ -2444,6 +2577,14 @@ body:has(.c3d-preview-layout) > br { display: none; }
    it empty; the form column is capped, which is what keeps the tracks (and the
    inputs) at the same ~600px width the Machine Settings panel uses. */
 .c3d-resin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.c3d-resin-grid.c3d-resin-layer-details { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.c3d-resin-grid.c3d-resin-layer-details:has(> .advance_mode[style*="display: none"]) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.c3d-resin-details-controls { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 12px; }
+.c3d-resin-editor #setup2 .c3d-resin-details-controls > .c3d-resin-field { justify-content: flex-start; }
+.c3d-resin-editor #setup2 .c3d-resin-details-controls > .c3d-resin-field:not(.c3d-resin-field--wide) > .profile-help-label { min-height: 2.8em; }
+.c3d-resin-description { grid-column: 1 / span 3; }
+.c3d-resin-editor #setup2 .c3d-resin-details-controls #DescSimple { min-height: 8em; resize: vertical; }
+.c3d-resin-editor #setup2 .c3d-resin-physical-grid { grid-template-columns: minmax(0, 1fr); }
 .c3d-resin-grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 /* Two stacked columns (lift | retract): the rows stay aligned and the card
    is still full in Easy Mode, where only the two speed fields are shown. */
@@ -2563,6 +2704,14 @@ body:has(.c3d-preview-layout) > br { display: none; }
   .c3d-resin-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 991px) {
+  #c3d-resin-list .c3d-list-row { grid-template-columns: minmax(0, 1fr) repeat(3, minmax(0, 1fr)); }
+  #c3d-resin-list .c3d-resin-profile-cell { grid-column: 1 / -1; }
+  #c3d-resin-list .c3d-list-actions { grid-column: 1 / -1; }
+  .c3d-resin-details-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .c3d-resin-top-layout { grid-template-columns: minmax(0, 1fr); }
+  .c3d-resin-work-layout { grid-template-columns: minmax(0, 1fr); }
+  .c3d-resin-editor #setup2 .c3d-resin-grid.c3d-resin-layer-details { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .c3d-resin-description { grid-column: 1 / -1; }
   .c3d-resin-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
   .c3d-resin-table-cell,
   .c3d-resin-editor #setup2 .c3d-resin-column .c3d-resin-field { display: block; }
@@ -2574,6 +2723,15 @@ body:has(.c3d-preview-layout) > br { display: none; }
   .c3d-resin-subgrid { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 640px) {
+  #c3d-resin-list .c3d-list-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #c3d-resin-list .c3d-resin-profile-cell,
+  #c3d-resin-list .c3d-list-actions { grid-column: 1 / -1; }
+  .c3d-resin-editor #setup2 .c3d-resin-details-controls { grid-template-columns: minmax(0, 1fr); }
+  .c3d-resin-details-controls { grid-template-columns: minmax(0, 1fr); }
+  .c3d-resin-description { grid-column: auto; }
+  .c3d-resin-table-row { grid-template-columns: minmax(0, 1fr); }
+  .c3d-resin-top-layout { grid-template-columns: minmax(0, 1fr); }
+  .c3d-resin-editor #setup2 .c3d-resin-grid.c3d-resin-layer-details { grid-template-columns: minmax(0, 1fr); }
   .c3d-resin-grid,
   .c3d-resin-grid--three,
   .c3d-resin-columns,
@@ -2597,6 +2755,198 @@ body:has(.c3d-preview-layout) > br { display: none; }
 /* Machine Settings keeps NanoDLP's form and category hooks while presenting
    them with the same panel and spacing grammar as the Athena UI. */
 .c3d-machine-settings { padding-bottom: 24px; }
+
+/* WP14.3 compact Jobs and Resin rows, plus the full News view. */
+#plates .c3d-job-row {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) minmax(390px, 560px) auto;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px 12px;
+}
+#plates .c3d-job-thumb { grid-column: 1; grid-row: 1; }
+#plates .c3d-job-main {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+}
+#plates .c3d-job-main .c3d-list-main { display: block; }
+#plates .c3d-job-identity { min-width: 0; }
+#plates .c3d-job-identity > .c3d-list-meta:not(.c3d-job-sub) { margin-top: 1px; white-space: normal; }
+#plates .c3d-job-profile-line { display: grid; grid-template-columns: minmax(190px, 1fr) minmax(0, 500px); align-items: center; gap: 8px; min-width: 0; }
+#plates .c3d-job-profile-name { display: block; min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#plates .c3d-job-profile-name a { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#plates .c3d-job-profile-line > .c3d-job-sub { min-width: 0; }
+#plates .c3d-job-sub {
+  display: grid;
+  grid-template-columns: 52px 58px minmax(0, 176px) minmax(170px, 1fr);
+  align-items: center;
+  gap: 2px 8px;
+  width: 100%;
+  max-width: 500px;
+  margin-top: 0;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+#plates .c3d-job-sub-metric {
+  display: block;
+  min-width: 0;
+  color: var(--df-text-muted);
+  font-size: 11px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#plates .c3d-job-sub-metric b { display: none; }
+#plates .c3d-job-stop-layers { grid-column: 1 / -1; }
+#plates .c3d-job-metrics {
+  display: grid;
+  grid-template-columns: 78px 84px 42px 84px minmax(118px, 132px);
+  justify-content: end;
+  align-self: center;
+  flex: none;
+  gap: 4px 8px;
+  grid-column: 3;
+  grid-row: 1;
+  width: max-content;
+  max-width: 100%;
+  margin-left: auto;
+  min-width: 0;
+}
+#plates .c3d-job-metrics > span { font-size: 11px; line-height: 1.3; overflow-wrap: anywhere; }
+#plates .c3d-job-metrics b { font-size: 9px; letter-spacing: .02em; }
+#plates .c3d-job-actions {
+  grid-column: 4;
+  grid-row: 1;
+  align-self: center;
+  gap: 3px;
+  flex-wrap: nowrap;
+  margin-left: 0;
+}
+#plates .c3d-job-actions .btn { margin: 1px; }
+
+#c3d-resin-list .c3d-list-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 400px) minmax(320px, 480px) minmax(0, 1fr) auto;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 14px;
+}
+#c3d-resin-list .c3d-resin-profile-cell { min-width: 0; }
+#c3d-resin-list .c3d-resin-profile-name { flex-wrap: nowrap; }
+#c3d-resin-list .c3d-resin-profile-metrics {
+  min-width: 0;
+  color: var(--df-text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+#c3d-resin-list .c3d-resin-profile-metrics > span { padding: 0 3px; color: var(--df-border-strong); }
+#c3d-resin-list .c3d-resin-default-column { display: flex; justify-content: flex-start; }
+#c3d-resin-list .c3d-resin-set-default,
+#c3d-resin-list .c3d-resin-default-state {
+  display: inline-flex;
+  width: 92px;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 4px 9px;
+  border: 1px solid var(--df-border-strong) !important;
+  border-radius: 999px;
+  background: var(--df-surface-1) !important;
+  color: var(--df-text-muted) !important;
+  font-size: 11px !important;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+#c3d-resin-list .c3d-resin-set-default:hover,
+#c3d-resin-list .c3d-resin-set-default:focus { color: var(--df-text-strong) !important; border-color: var(--df-text-muted) !important; }
+#c3d-resin-list .c3d-resin-default-state {
+  border-color: color-mix(in srgb, var(--df-success), transparent 48%) !important;
+  background: color-mix(in srgb, var(--df-success), var(--df-surface-1) 88%) !important;
+  color: var(--df-success) !important;
+}
+#c3d-resin-list .c3d-resin-icon-actions { gap: 5px; }
+#c3d-resin-list .c3d-resin-icon-actions .btn:not(.c3d-resin-set-default):not(.c3d-resin-default-state) { width: 30px; min-width: 30px; min-height: 30px; padding: 4px; }
+
+.c3d-resin-editor .c3d-resin-top-layout,
+.c3d-resin-editor .c3d-resin-work-layout { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.c3d-resin-editor .c3d-resin-top-layout:has(> .c3d-resin-section.advance_mode[style*="display: none"]) { grid-template-columns: minmax(0, 1fr); }
+
+.c3d-updates-popover-footer { padding: 10px 16px 12px; border-top: 1px solid var(--df-border-subtle); text-align: right; }
+.c3d-updates-popover-footer a { color: var(--brand-accent); font-size: 12px; font-weight: 600; }
+.c3d-news-page { max-width: 1080px; margin: 30px auto 42px; }
+.c3d-news-header { margin-bottom: 22px; }
+.c3d-news-header .c3d-page-eyebrow { margin-bottom: 6px; }
+.c3d-news-header .c3d-page-title { margin: 0 0 8px; }
+.c3d-news-header p { max-width: 680px; margin: 0; color: var(--df-text-muted); font-size: 15px; line-height: 1.6; }
+.c3d-news-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.c3d-news-card { min-width: 0; overflow: hidden; background: var(--df-surface-1); border: 1px solid var(--df-border-subtle); border-radius: var(--df-radius-lg); }
+.c3d-news-card-image { display: block; width: 100%; max-height: 260px; object-fit: cover; background: var(--df-surface-0); }
+.c3d-news-card-content { padding: 18px; }
+.c3d-news-card-date { margin-bottom: 7px; color: var(--df-text-muted); font-size: 11px; }
+.c3d-news-card-title { margin: 0 0 10px; color: var(--df-text-strong); font-size: 19px; line-height: 1.3; }
+.c3d-news-card-body { margin: 0; color: var(--df-text-muted); font-size: 14px; line-height: 1.65; white-space: pre-line; }
+.c3d-news-back { margin-top: 22px; }
+.c3d-dash-head[hidden],
+.c3d-dash-main[hidden],
+.c3d-news-page[hidden] { display: none !important; }
+
+@media (max-width: 1350px) {
+  #plates .c3d-job-row { grid-template-columns: 58px minmax(0, 1fr) auto; }
+  #plates .c3d-job-thumb { grid-row: 1 / span 2; }
+  #plates .c3d-job-main { grid-column: 2; grid-row: 1; }
+  #plates .c3d-job-metrics { grid-column: 2; grid-row: 2; }
+  #plates .c3d-job-actions { grid-column: 3; grid-row: 1 / span 2; }
+  #c3d-resin-list .c3d-list-row { grid-template-columns: minmax(190px, .9fr) minmax(220px, 1fr) minmax(0, 1fr) auto; gap: 8px; }
+}
+@media (max-width: 991px) {
+  #plates .c3d-job-row { grid-template-columns: 48px minmax(0, 1fr) auto; align-items: start; }
+  #plates .c3d-job-thumb { grid-column: 1; grid-row: 1 / span 2; width: 48px; height: 48px; }
+  #plates .c3d-job-main { grid-column: 2; grid-row: 1; }
+  #plates .c3d-job-metrics { grid-column: 2; grid-row: 2; grid-template-columns: 68px 72px 38px 72px minmax(104px, 1fr); margin-left: 0; width: 100%; }
+  #plates .c3d-job-metrics > span { white-space: nowrap; font-size: 10px; }
+  #plates .c3d-job-metrics b { display: inline; font-size: 9px; letter-spacing: 0; text-transform: none; }
+  #plates .c3d-job-metrics b::after { content: ": "; }
+  #plates .c3d-job-actions { grid-column: 3; grid-row: 2; justify-content: flex-end; flex-wrap: wrap; }
+  #c3d-resin-list .c3d-list-row { grid-template-columns: minmax(180px, .9fr) minmax(220px, 1fr) minmax(0, 1fr) auto; }
+  #c3d-resin-list .c3d-resin-profile-cell,
+  #c3d-resin-list .c3d-resin-profile-metrics,
+  #c3d-resin-list .c3d-list-actions { grid-column: auto; grid-row: auto; }
+  #c3d-resin-list .c3d-list-actions { flex-wrap: nowrap; margin-left: 0; }
+  .c3d-resin-editor .c3d-resin-top-layout,
+  .c3d-resin-editor .c3d-resin-work-layout { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 767px) {
+  #plates .c3d-job-row { gap: 7px 9px; }
+  #plates .c3d-job-profile-line { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  #plates .c3d-job-sub { grid-template-columns: 50px 56px minmax(0, 150px) minmax(120px, 1fr); gap: 2px 6px; width: 100%; max-width: none; }
+  #plates .c3d-job-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px 9px; }
+  #plates .c3d-job-metrics > span { white-space: normal; font-size: 10px; }
+  #plates .c3d-job-actions { grid-column: 2; grid-row: 3; justify-content: flex-start; }
+
+  #c3d-resin-list .c3d-list-row { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 10px; }
+  #c3d-resin-list .c3d-resin-profile-cell,
+  #c3d-resin-list .c3d-resin-profile-metrics { grid-column: 1 / -1; }
+  #c3d-resin-list .c3d-resin-profile-metrics { white-space: normal; }
+  #c3d-resin-list .c3d-resin-icon-actions { grid-column: 1 / -1; grid-row: 3; flex-wrap: nowrap; margin-left: 0; }
+  .c3d-news-page { margin: 22px 0 32px; }
+  .c3d-news-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .c3d-news-card-content { padding: 15px; }
+}
+@media (max-width: 430px) {
+  #plates .c3d-job-actions { flex-wrap: wrap; }
+  #c3d-resin-list .c3d-resin-icon-actions { gap: 3px; }
+  #c3d-resin-list .c3d-resin-icon-actions .btn:not(.c3d-resin-set-default):not(.c3d-resin-default-state) { width: 28px; min-width: 28px; }
+}
 .c3d-machine-settings > .starter-template { padding: 0; text-align: left; }
 .c3d-machine-form { margin: 0; }
 .c3d-settings-layout { display: grid; grid-template-columns: minmax(220px, 280px) minmax(0, 1fr); gap: 18px; margin: 0; align-items: start; }
@@ -2667,11 +3017,15 @@ body:has(.c3d-preview-layout) > br { display: none; }
 .c3d-dragonfruit-grid h3 { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
 .c3d-dragonfruit-grid h3 .glyphicon { color: var(--brand-accent); margin-right: 6px; font-size: 16px; }
 .c3d-dragonfruit-grid p { margin: 0; line-height: 1.7; }
+.c3d-dragonfruit-grid .c3d-dragonfruit-windows-warning { margin-top: 12px; font-size: 13px; line-height: 1.5; }
 .c3d-dragonfruit-steps { padding-left: 22px; margin: 0; line-height: 1.7; }
 .c3d-dragonfruit-steps li + li { margin-top: 12px; }
 .c3d-dragonfruit-steps li::marker { color: var(--brand-accent); font-weight: 600; }
-.c3d-dragonfruit-athena { grid-column: 1 / -1; border-left: 3px solid var(--brand-accent); }
-.c3d-dragonfruit-note { margin: 22px 0 0; line-height: 1.6; }
+.c3d-dragonfruit-athena { grid-column: 1 / -1; }
+.c3d-dragonfruit-recommendation { margin-top: 18px; padding: 12px 16px; border-radius: var(--df-radius-sm); background: color-mix(in srgb, var(--brand-accent) 10%, var(--df-surface-0)); line-height: 1.5; }
+.c3d-dragonfruit-recommendation > strong { display: block; margin-bottom: 2px; color: var(--df-text-strong); }
+.c3d-dragonfruit-recommendation p { font-size: 14px; }
+.c3d-dragonfruit-note { margin: 12px 0 0; font-size: 13px; line-height: 1.5; }
 @media (max-width: 767px) {
   .c3d-dragonfruit-modal .modal-dialog { width: calc(100% - 16px); margin: 8px auto; }
   .c3d-dragonfruit-modal .modal-content { max-height: calc(100vh - 16px); }

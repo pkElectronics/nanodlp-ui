@@ -53,15 +53,18 @@
     <div class="c3d-list" id="c3d-resin-list">
         {% for profile in profiles %}
         <div class="c3d-list-row {% if defaultProfile==profile.ProfileID %}c3d-list-row--default{% endif %}" data-idx="{{forloop.Counter}}" data-depth="{{profile.Depth}}" data-cure="{{profile.CureTime}}">
-            <div class="c3d-list-main">
-                {% if profile.ManufacturerLock %}<span class="glyphicon glyphicon-lock c3d-lock" title="Factory profile"></span>{% endif %}
-                <span class="c3d-list-title">{{profile.Title}}</span>
-                {% if defaultProfile==profile.ProfileID %}<span class="c3d-badge c3d-badge--default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <translate>Default</translate></span>{% endif %}
-                <span class="c3d-list-meta"><translate>Layer</translate> {{profile.Depth|floatformat}} µm &nbsp;·&nbsp; <translate>Cure</translate> {{profile.CureTime|floatformat}} s</span>
+            <div class="c3d-resin-profile-cell">
+                <div class="c3d-resin-profile-name c3d-list-main">
+                    {% if profile.ManufacturerLock %}<span class="glyphicon glyphicon-lock c3d-lock" title="Factory profile"></span>{% endif %}
+                    <span class="c3d-list-title">{{profile.Title}}</span>
+                </div>
             </div>
-            <div class="c3d-list-actions">
-                {% if defaultProfile!=profile.ProfileID %}
-                <a class="c3d-badge c3d-badge--set tip" href="/profile/default/{{profile.ProfileID}}"><span class="glyphicon glyphicon-ok"></span> <translate>Set default</translate><translate class="hide">Set default resin profile</translate></a>
+            <span class="c3d-resin-profile-metrics c3d-list-meta"><translate>Layer</translate>: {{profile.Depth|floatformat}} µm <span aria-hidden="true">·</span> <translate>Normal</translate>: {{profile.CureTime|floatformat}} s <span aria-hidden="true">·</span> <translate>Bottom</translate>: {{profile.SupportCureTime|floatformat}} s</span>
+            <div class="c3d-list-actions c3d-resin-icon-actions">
+                {% if defaultProfile==profile.ProfileID %}
+                <span class="btn c3d-resin-default-state" role="status"><translate>Default</translate></span>
+                {% else %}
+                <a class="btn c3d-resin-set-default tip" href="/profile/default/{{profile.ProfileID}}" title="Set Default" aria-label="Set Default"><translate>Set Default</translate></a>
                 {% endif %}
                 {% if !profile.ManufacturerLock %}
                 <a class="btn c3d-ghost c3d-btn-i tip" href="/profile/edit/{{profile.ProfileID}}"><span class="glyphicon glyphicon-pencil"></span><translate class="hide">Edit</translate></a>

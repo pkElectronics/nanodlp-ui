@@ -123,7 +123,6 @@ async function fetchHeatersEnabled() {
             hideElemIfPresent('heater-column')
             if (!document.getElementById('webcam-column')?.offsetParent) {
                 setBootstrapElemSizeIfPresent('printer-control-column', 6)
-                setBootstrapElemSizeIfPresent('pressure-chart-column', 6)
 
                 console.log('both heater and webcam are gone')
             }

@@ -2,15 +2,22 @@ toastr.options = {
 	"positionClass": "toast-top-center",
 }
 //************** Resin Profile Functions  */
-$("#DwEnableSimple").change(function () {
-	if ($(this).is(":checked")) {
-		$("#WaitBeforePrintSimple").val(0).prop("disabled", true);
-		$("#SupportWaitBeforePrintSimple").val(0).prop("disabled", true);
+function applyDynamicWaitState(userChanged) {
+	const enabled = $("#DwEnableSimple").is(":checked");
+	const normalWait = $("#WaitBeforePrintSimple");
+	const bottomWait = $("#SupportWaitBeforePrintSimple");
+	if (enabled) {
+		normalWait.val(0).prop("disabled", true);
+		bottomWait.val(0).prop("disabled", true);
 	} else {
-		$("#WaitBeforePrintSimple").prop("disabled", false);
-		$("#SupportWaitBeforePrintSimple").prop("disabled", false);
+		if (userChanged) {
+			bottomWait.val(30);
+			normalWait.val(1);
+		}
+		normalWait.prop("disabled", false);
+		bottomWait.prop("disabled", false);
 	}
-});
+}
 
 $("#setup2").submit(function(){
 	$("#CdEnableSimple").prop("checked", true);
@@ -73,10 +80,42 @@ $("#setup2 .c3d-resin-toggle").on("click", function (e) {
 	$(box).trigger("change");
 });
 
+$(document).on("click", "a.c3d-nanosupport-editor", function (e) {
+	e.preventDefault();
+	const target = this.href;
+	const preferenceKey = "c3dNanoSupportWarningDismissed";
+	let warningDismissed = false;
+	try { warningDismissed = window.localStorage.getItem(preferenceKey) === "true"; } catch (storageError) { /* storage may be unavailable */ }
+	if (warningDismissed) {
+		window.open(target, "_blank", "noopener");
+		return;
+	}
+	$("#c3d-nanosupport-warning").remove();
+	const modal = $(
+		'<div class="modal fade c3d-confirm-modal" id="c3d-nanosupport-warning" tabindex="-1" role="dialog" aria-labelledby="c3d-nanosupport-title">' +
+		'<div class="modal-dialog" role="document"><div class="modal-content">' +
+		'<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title" id="c3d-nanosupport-title">Open NanoSupport 3D Editor?</h4></div>' +
+		'<div class="modal-body"><p>The built-in 3D Editor is a legacy preparation tool intended for smaller models and basic workflows.</p><p>The build volume shown in the editor may not match Athena II, and the editor is not recommended for very large files (around 500 MB or more) or complex multi-model jobs.</p><label class="c3d-editor-warning-check"><input type="checkbox" id="c3d-nanosupport-dismiss"> Don\'t show this warning again on this device</label></div>' +
+		'<div class="modal-footer"><button type="button" class="btn c3d-ghost" data-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="c3d-nanosupport-open">Open Editor</button></div>' +
+		'</div></div></div>'
+	);
+	$("body").append(modal);
+	modal.find("#c3d-nanosupport-open").on("click", function () {
+		if (modal.find("#c3d-nanosupport-dismiss").is(":checked")) {
+			try { window.localStorage.setItem(preferenceKey, "true"); } catch (storageError) { /* still open the editor */ }
+		}
+		window.open(target, "_blank", "noopener");
+		modal.modal("hide");
+	});
+	modal.on("hidden.bs.modal", function () { modal.remove(); });
+	modal.modal("show");
+});
+
 setUpCheckboxToggle($("#PdEnableSimple"), $('.peel-detection-settings'));
 $("#PdEnableSimple").change(updatePeelDetectionSettingsVisibility);
 setUpCheckboxToggle($("#RlEnableSimple"));
-setUpCheckboxToggle($("#DwEnableSimple"));
+setUpCheckboxToggle($("#DwEnableSimple"), $('.dynamic-wait-settings'));
+$("#DwEnableSimple").on("change", function () { applyDynamicWaitState(true); });
 setUpCheckboxToggle($("#CdEnableSimple"), $('.crash-detection-settings'));
 setUpCheckboxToggle($("#PreheatMixSimple"));
 
@@ -295,6 +334,104 @@ function ticketFailedHandler(interval) {
 		clearInterval(interval);
 }
 
+const LOCAL_DIAGNOSTIC_TIMEOUT_MS = 300000;
+const LOCAL_DIAGNOSTIC_POLL_MS = 1000;
+
+function createLocalDiagnosticToken() {
+	if (!window.crypto || typeof window.crypto.getRandomValues !== 'function') {
+		throw new Error('Secure random numbers are unavailable in this browser.');
+	}
+
+	const bytes = new Uint8Array(16);
+	window.crypto.getRandomValues(bytes);
+	return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function waitForLocalDiagnosticMarker(token) {
+	const readyUrl = `/static/tickets/${token}.ready`;
+	const errorUrl = `/static/tickets/${token}.error`;
+	const archiveUrl = `/static/tickets/athena-diagnostics-${token}.tar.gz`;
+	const deadline = Date.now() + LOCAL_DIAGNOSTIC_TIMEOUT_MS;
+
+	return new Promise((resolve, reject) => {
+		const poll = async () => {
+			try {
+				const errorResponse = await fetch(errorUrl, { cache: 'no-store' });
+				if (errorResponse.ok) {
+					const detail = (await errorResponse.text()).trim();
+					reject(new Error(detail || 'The printer could not collect diagnostic logs.'));
+					return;
+				}
+
+				const readyResponse = await fetch(readyUrl, { cache: 'no-store' });
+				if (readyResponse.ok) {
+					const download = document.createElement('a');
+					download.href = archiveUrl;
+					download.download = 'athena-diagnostics.tar.gz';
+					download.hidden = true;
+					document.body.appendChild(download);
+					download.click();
+					download.remove();
+					resolve();
+					return;
+				}
+
+				if (Date.now() >= deadline) {
+					reject(new Error('Diagnostic collection timed out. Check that the printer is online, then try again.'));
+					return;
+				}
+
+				window.setTimeout(poll, LOCAL_DIAGNOSTIC_POLL_MS);
+			} catch (error) {
+				reject(new Error('Could not check diagnostic collection status. Check the printer connection and try again.'));
+			}
+		};
+
+		poll();
+	});
+}
+
+$('#DownloadDiagnosticLogsButton').click(async function () {
+	const button = this;
+	button.disabled = true;
+	let pollPromise;
+
+	try {
+		const token = createLocalDiagnosticToken();
+		$('#diagnostic-download-notification').modal({ backdrop: 'static', keyboard: false });
+		$('#diagnostic-download-notification').modal('show');
+
+		// Start polling before awaiting /gcode; NanoDLP may keep the request open
+		// until the Exec command exits, even after the marker is available.
+		pollPromise = waitForLocalDiagnosticMarker(token);
+		const execPromise = $.ajax({
+			url: '/gcode',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			method: 'POST',
+			data: new URLSearchParams({
+				'gcode': `[[Exec /bin/bash /home/pi/athena-debug-submission.sh --local ${token}]]`
+			}).toString()
+		});
+		// Observe the command request immediately so a fast failure is surfaced,
+		// while marker polling remains independent of a long-running response.
+		const execFailurePromise = execPromise.then(
+			() => new Promise(() => {}),
+			error => Promise.reject(new Error(error.responseText || 'NanoDLP could not start diagnostic collection.'))
+		);
+		await Promise.race([pollPromise, execFailurePromise]);
+		toastr.success('Diagnostic logs downloaded locally. No data was uploaded.');
+	} catch (error) {
+		if (pollPromise) {
+			// Avoid leaving a rejected background poll unhandled if /gcode fails first.
+			pollPromise.catch(() => {});
+		}
+		toastr.error(error.message || 'The printer could not prepare diagnostic logs.', 'Diagnostic download failed');
+	} finally {
+		$('#diagnostic-download-notification').modal('hide');
+		button.disabled = false;
+	}
+});
+
 $("#BtnToggleHeater").click(async function(){
 	await updateMachineCustomValues((customValues) => {
 		const heaterEnable = customValues['HeaterEnable'];
@@ -395,9 +532,9 @@ $(document).ready(function(){
 		}else{
 			dwEnable.prop('checked', true);
 			dwEnable.prop('value', "0");
-			$("#WaitBeforePrintSimple").val(0).prop("disabled", true);
-			$("#SupportWaitBeforePrintSimple").val(0).prop("disabled", true);
 		}
+		loadInitialCheckboxState(dwEnable, $('.dynamic-wait-settings'));
+		applyDynamicWaitState(false);
 	}
 	const preheatMixEnable = $("#PreheatMixSimple");
 	loadInitialCheckboxState(preheatMixEnable);

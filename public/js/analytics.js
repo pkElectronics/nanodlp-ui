@@ -254,7 +254,8 @@ function getSeries(axes) {
         series.push({
             key: element.Key,
             show: true,
-            spanGaps: true,
+            // Chart-only null rows mark global recording gaps; don't let uPlot bridge them.
+            spanGaps: false,
             label,
             scale: element.Type,
             value: (self, rawValue) => (rawValue != null ? rawValue.toFixed(element.Decimal) + unit : ""),
@@ -343,6 +344,24 @@ const backFillData = (data) => {
     });
 }
 
+/** Add chart-only null rows at long global timestamp gaps after sparse-series backfill. */
+const addChartGapMarkers = (data, maxGapSeconds = 300) => {
+    if (data.length === 0 || data[0].length < 2) return data;
+
+    const chartData = data.map(serie => serie.slice());
+    for (let idx = chartData[0].length - 1; idx > 0; idx--) {
+        const previousTimestamp = chartData[0][idx - 1];
+        const currentTimestamp = chartData[0][idx];
+        if (currentTimestamp - previousTimestamp <= maxGapSeconds) continue;
+
+        chartData[0].splice(idx, 0, (previousTimestamp + currentTimestamp) / 2);
+        for (let seriesIdx = 1; seriesIdx < chartData.length; seriesIdx++) {
+            chartData[seriesIdx].splice(idx, 0, null);
+        }
+    }
+    return chartData;
+};
+
 
 function buildChartFromData(name, dataResponse, exp, axes, chartConfigs) {
     if (dataResponse.length === 0) {
@@ -361,8 +380,10 @@ function buildChartFromData(name, dataResponse, exp, axes, chartConfigs) {
 
     if (exp) return downloadCSV(series, backFilledData);
 
+    const chartData = addChartGapMarkers(backFilledData);
+
     chartConfigs.forEach(chartConfig => {
-        renderSplitChart(series, backFilledData, chartConfig, name);
+        renderSplitChart(series, chartData, chartConfig, name);
     })
 
     addSaveLegendHandler()

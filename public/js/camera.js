@@ -40,9 +40,19 @@ async function isCameraEnabled(src) {
 
 async function buildCameraStream(url) {
     const cameraEnabled = await isCameraEnabled(url);
+    setCameraMenuVisible(cameraEnabled);
+
+    const dashboardRow = document.querySelector('.c3d-dash-row');
 
     let style;
     if (cameraEnabled) {
+        dashboardRow?.classList.remove('c3d-no-camera');
+        // Start with the no-camera layout in the template, then reveal the
+        // webcam only after the source reports online to avoid load flicker.
+        showElemIfPresent('webcam-column')
+        setBootstrapElemSizeIfPresent('control-column', 8)
+        setBootstrapElemSizeIfPresent('heater-column', 8)
+        setBootstrapElemSizeIfPresent('printer-control-column', 4)
         const img = document.createElement('img');
 
         const livestreamContainer = document.getElementById('livestream-container');
@@ -64,6 +74,7 @@ async function buildCameraStream(url) {
         await streamer.startStream(true);
 
     } else {
+        dashboardRow?.classList.add('c3d-no-camera');
         hideElemIfPresent('webcam-preview')
         setBootstrapElemSizeIfPresent('print-preview', 12)
 
@@ -458,6 +469,17 @@ const showElemIfPresent = (id) => {
     const $elem = document.getElementById(id);
     if ($elem)
         $elem.hidden = false;
+}
+
+const setCameraMenuVisible = (visible) => {
+    const cameraLink = document.querySelector('#navbar .navbar-nav > li.dropdown > .dropdown-menu a[href="/custom/webcam"]');
+    const cameraItem = cameraLink?.closest('li');
+    const cameraHeading = cameraItem?.previousElementSibling;
+
+    if (cameraItem)
+        cameraItem.hidden = !visible;
+    if (cameraHeading?.classList.contains('c3d-nav-group'))
+        cameraHeading.hidden = !visible;
 }
 
 const setBootstrapElemSizeIfPresent = (id, size) => {
