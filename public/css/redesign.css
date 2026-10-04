@@ -63,6 +63,7 @@ a:hover, a:focus { color: var(--brand-accent); filter: brightness(1.08); }
 
 /* ---------- Navbar (command bar) ---------- */
 .navbar { margin-bottom: 0; }
+.navbar.navbar-default { position: sticky; top: 0; z-index: 1030; }
 .navbar-default {
   min-height: 48px;
   background-color: var(--df-surface-0);

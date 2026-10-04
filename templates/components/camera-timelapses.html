@@ -1,16 +1,16 @@
 <div class="c3d-page-head"><h1 class="c3d-page-title"><translate>Camera &amp; Timelapses</translate></h1></div>
 <div class="c3d-camera-layout">
     <section class="c3d-card c3d-camera-panel" aria-labelledby="camera-heading">
-        <h2 id="camera-heading"><translate>Live camera</translate></h2>
+        <div class="c3d-camera-panel-heading c3d-panel-heading--split">
+            <h2 id="camera-heading"><translate>Live camera</translate></h2>
+            <button id="camera-led-on" type="button" class="c3d-panel-heading-action" title="Turn camera LED on for 10 seconds"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span>LED 10s</button>
+        </div>
         <div id="webcam-preview">
             <div class="video-container" id="livestream-container" style="width:100%; aspect-ratio:9/16; display:none">
                 <!-- Constructed once by camera.js, loaded by base.html. -->
             </div>
         </div>
         <p class="c3d-camera-unavailable text-muted" role="status"><translate>Camera unavailable. Check the camera connection and reload this page.</translate></p>
-        <button id="camera-led-on" type="button" class="btn btn-default btn-block">
-            <span class="glyphicon glyphicon-flash" aria-hidden="true"></span> <translate>Camera LED On (10s)</translate>
-        </button>
     </section>
     <section class="c3d-timelapse-panel" aria-labelledby="timelapse-heading">
     <h2 id="timelapse-heading"><translate>Timelapses</translate></h2>

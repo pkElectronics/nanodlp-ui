@@ -259,7 +259,7 @@ function getSeries(axes) {
             label,
             scale: element.Type,
             value: (self, rawValue) => (rawValue != null ? rawValue.toFixed(element.Decimal) + unit : ""),
-            stroke: (config && DARK_PALETTE[config.id]) ? DARK_PALETTE[config.id] : ("#" + ColourValues[key] + "cc"),
+            stroke: config?.stroke ?? ((config && DARK_PALETTE[config.id]) ? DARK_PALETTE[config.id] : ("#" + ColourValues[key] + "cc")),
             width: 1.5,
         });
     });
