@@ -1,6 +1,36 @@
 var preview_loop;
 function preview_init(){
-	if ($('#preview img').length==0) return;
+	var previewImage = $('#preview img');
+	if (previewImage.length==0) return;
+	$.getJSON('/json/db/machine.json').done(function(config){
+		var physicalWidth = Number(config.ProjectorWidth) * Number(config.XYRes);
+		var physicalHeight = Number(config.ProjectorHeight) * Number(config.YRes);
+		if (isFinite(physicalWidth) && physicalWidth > 0 && isFinite(physicalHeight) && physicalHeight > 0){
+			var ratio = physicalWidth / physicalHeight;
+			function sizePreviewImage(){
+				var preview = $('#preview');
+				var panel = preview.closest('.c3d-preview-canvas');
+				var maxWidth = preview.innerWidth();
+				var maxHeight = panel.height();
+				var displayWidth = Math.min(maxWidth, maxHeight * ratio);
+				if (!(displayWidth > 0)) return;
+				var displayHeight = displayWidth / ratio;
+				preview[0].style.height = displayHeight + 'px';
+				previewImage[0].style.aspectRatio = ratio;
+				previewImage[0].style.objectFit = 'fill';
+				previewImage[0].style.maxWidth = 'none';
+				previewImage[0].style.maxHeight = 'none';
+				previewImage[0].style.width = displayWidth + 'px';
+				previewImage[0].style.height = displayHeight + 'px';
+			}
+			sizePreviewImage();
+			if (window.ResizeObserver){
+				new ResizeObserver(sizePreviewImage).observe($('#preview')[0]);
+			} else {
+				$(window).on('resize.previewPhysicalRatio', sizePreviewImage);
+			}
+		}
+	});
 	$("body").delegate("#preview img","click",function(e){
 		window.open("/plate/preview/image/"+layer_url(),'Image');
 	}).delegate("#preview_layer","click",function(e){
