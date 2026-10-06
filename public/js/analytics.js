@@ -1,4 +1,4 @@
-let cachedData;
+const cachedDataByChart = new Map();
 
 let uplots = [];
 
@@ -372,11 +372,10 @@ function buildChartFromData(name, dataResponse, exp, axes, chartConfigs) {
     const processedData = processData(dataResponse, series);
     const backFilledData = backFillData(processedData);
 
-    if (JSON.stringify(cachedData) === JSON.stringify(dataResponse) && !exp) {
-        // exit if data hasn't changed from last time
-        return
-    }
-    cachedData = dataResponse;
+    const cacheKey = chartConfigs.map(config => config.uplotId).join('|');
+    const serializedResponse = JSON.stringify(dataResponse);
+    if (cachedDataByChart.get(cacheKey) === serializedResponse && !exp) return;
+    cachedDataByChart.set(cacheKey, serializedResponse);
 
     if (exp) return downloadCSV(series, backFilledData);
 

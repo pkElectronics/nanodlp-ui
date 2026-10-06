@@ -64,6 +64,12 @@
             setInterval(function () {
                 if ($("#range").val() != "0") getData(false);
             }, ANALYTICS_UPDATE_INTERVAL);
+            $("#range").on("change", function () {
+                latestRequestId++;
+                reqRunning = false;
+                cachedDataByChart.delete(CHART_CONFIGS.map(config => config.uplotId).join('|'));
+                getData(false);
+            });
             $("#download-csv").click(function () {
                 getData(true);
             });
@@ -72,19 +78,21 @@
         }
     }
 
-    let reqRunning;
+    let reqRunning = false;
+    let latestRequestId = 0;
     function getData(exp) {
         if (reqRunning) return;
         reqRunning = true;
+        const requestId = ++latestRequestId;
         const range = $("#range").val();
 
         $.getJSON(`${BASE_URL}/analytic/data/${range}`, function (response) {
-            if (response==null) return;
+            if (response == null || requestId !== latestRequestId) return;
 
             const axes = JSON.parse(decodeHTMLEntities(`{{axes|safe}}`));
             return buildChartFromData("Sensor reading", response, exp, axes, CHART_CONFIGS);
         }).always(function () {
-            reqRunning = false;
+            if (requestId === latestRequestId) reqRunning = false;
         });
     }
 </script>

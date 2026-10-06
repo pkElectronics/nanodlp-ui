@@ -51,19 +51,29 @@
 
         const axes = [{"Key":"LayerHeight","Name":"Layer Height","Type":"mm","Decimal":2},{"Key":"SolidArea","Name":"Solid Area","Type":"px","Decimal":0},{"Key":"AreaCount","Name":"Area Count","Type":"#","Decimal":0},{"Key":"LargestArea","Name":"Largest Area","Type":"px","Decimal":0},{"Key":"Speed","Name":"Speed","Type":"mm/s","Decimal":0},{"Key":"Cure","Name":"Cure Time","Type":"s","Decimal":2},{"Key":"Pressure","Name":"Pressure","Type":"Pressure","Decimal":2},{"Key":"TemperatureInside","Name":"Resin Temp","Type":"°C","Decimal":2},{"Key":"TemperatureOutside","Name":"UV Temp","Type":"°C","Decimal":2},{"Key":"LayerTime","Name":"Layer Time","Type":"s","Decimal":2},{"Key":"LiftHeight","Name":"Lift Height","Type":"mm","Decimal":2},{"Key":"TemperatureMCU","Name":"MCU Temp","Type":"°C","Decimal":2},{"Key":"TemperatureInsideTarget","Name":"Resin Temp Target","Type":"°C","Decimal":2},{"Key":"TemperatureOutsideTarget","Name":"UV Temp Target","Type":"°C","Decimal":2},{"Key":"TemperatureMCUTarget","Name":"MCU Temp Target","Type":"°C","Decimal":2},{"Key":"MCUFanRPM","Name":"MCU Fan RPM","Type":"RPM","Decimal":0},{"Key":"UVFanRPM","Name":"UV Fan RPM","Type":"RPM","Decimal":0},{"Key":"DynamicWait","Name":"Dynamic Wait Time","Type":"s","Decimal":2},{"Key":"TemperatureVat","Name":"VAT Temp","Type":"°C","Decimal":2},{"Key":"TemperatureVatTarget","Name":"VAT Temp Target","Type":"°C","Decimal":2},{"Key":"PTCFanRPM","Name":"PTC Fan RPM","Type":"RPM","Decimal":0},{"Key":"AEGISFanRPM","Name":"AEGIS Fan RPM","Type":"RPM","Decimal":0},{"Key":"TemperatureChamber","Name":"Chamber Temp","Type":"°C","Decimal":2},{"Key":"TemperatureChamberTarget","Name":"Chamber Temp Target","Type":"°C","Decimal":2},{"Key":"TemperaturePTC","Name":"PTC Temp","Type":"°C","Decimal":2},{"Key":"TemperaturePTCTarget","Name":"PTC Temp Target","Type":"°C","Decimal":2},{"Key":"VOCInlet","Name":"VOC Index Inlet","Type":"VOC","Decimal":0},{"Key":"VOCOutlet","Name":"VOC Index Outlet","Type":"VOC","Decimal":0}]
 
-        setInterval(async function () {
+        let requestRunning = false;
+        async function refreshDashboardChart() {
+            if (requestRunning) return;
+            requestRunning = true;
+            try {
+                const data = !hardCodeAnalytics ? await fetchData() : HARDCODED_ANALYTICS;
+                buildChartFromData(null, data, false, axes, CHART_CONFIGS);
+            } catch (err) {
+                // Keep the last valid chart visible and retry on the next interval.
+            } finally {
+                requestRunning = false;
+            }
+        }
 
-
-            const data = !hardCodeAnalytics ? await fetchData() : HARDCODED_ANALYTICS;
-            buildChartFromData(null, data, false, axes, CHART_CONFIGS)
-        }, ANALYTICS_UPDATE_INTERVAL)
+        refreshDashboardChart();
+        setInterval(refreshDashboardChart, ANALYTICS_UPDATE_INTERVAL);
     });
 
     let switchedTo10000 = false;  // persists across calls
 
     const fetchData = async () => {
         // Check printer status
-        const statusFetch = await fetch(`${BASE_URL}/status`);
+        const statusFetch = await fetch(`${BASE_URL}/status`, { cache: 'no-store' });
         const status = await statusFetch.json();
 
         let dataPointToFetch;
@@ -77,7 +87,7 @@
             dataPointToFetch = switchedTo10000 ? "10000" : "start";
         }
 
-        const response = await fetch(`${BASE_URL}/analytic/data/${dataPointToFetch}`);
+        const response = await fetch(`${BASE_URL}/analytic/data/${dataPointToFetch}`, { cache: 'no-store' });
         const data = await response.json();
 
         // If using "start" and dataset size exceeds 10k, switch permanently
