@@ -63,6 +63,7 @@ a:hover, a:focus { color: var(--brand-accent); filter: brightness(1.08); }
 
 /* ---------- Navbar (command bar) ---------- */
 .navbar { margin-bottom: 0; }
+.navbar.navbar-default { position: sticky; top: 0; z-index: 1030; }
 .navbar-default {
   min-height: 48px;
   background-color: var(--df-surface-0);
@@ -1475,6 +1476,7 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   transform-origin: left center;
 }
 #plates .c3d-job-row:hover { position: relative; z-index: 3; }
+#plates .c3d-job-thumb:hover { z-index: 10; }
 /* Hover preview: the same img, scaled up (source render is 1600px wide).
    pointer-events off so the row's own buttons stay reachable. */
 #plates .c3d-job-thumb:hover img.threed {
@@ -2759,11 +2761,15 @@ body:has(.c3d-preview-layout) > br { display: none; }
 /* WP14.3 compact Jobs and Resin rows, plus the full News view. */
 #plates .c3d-job-row {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) minmax(390px, 560px) auto;
+  grid-template-columns: 58px minmax(0, 1fr) minmax(390px, 560px) minmax(0, max-content);
   align-items: center;
   gap: 8px 12px;
   padding: 8px 12px;
 }
+#plates .c3d-job-row.slicing { z-index: 4; }
+#plates .c3d-job-slicing-status { grid-column: 1 / -1; grid-row: 2; min-width: 0; }
+#plates .c3d-job-slicing-status .details,
+#plates .c3d-job-slicing-status .alert { margin-bottom: 0; }
 #plates .c3d-job-thumb { grid-column: 1; grid-row: 1; }
 #plates .c3d-job-main {
   display: flex;
@@ -2830,6 +2836,7 @@ body:has(.c3d-preview-layout) > br { display: none; }
   margin-left: 0;
 }
 #plates .c3d-job-actions .btn { margin: 1px; }
+#plates .c3d-job-actions .start-after-slice > .btn { min-height: 30px; padding: 4px 6px; font-size: 11px; white-space: normal; }
 
 #c3d-resin-list .c3d-list-row {
   display: grid;

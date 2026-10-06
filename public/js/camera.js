@@ -6,6 +6,7 @@ $(document).ready(function () {
         runGcode('CAMERA_LED_ON')
     })
 
+    const url = (DEV_MODE ? BASE_URL : document.location.origin) + `/athena-camera`;
     if(document.getElementById('livestream-container') != null) {
         if (streamer == null) {
             let isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
@@ -15,12 +16,9 @@ $(document).ready(function () {
                 streamer = new Mjpegstreamer();
             }
         }
-        const url = (DEV_MODE ? BASE_URL : document.location.origin) + `/athena-camera`;
-
         streamer.url = url + '/stream';
-
-        buildCameraStream(url);
     }
+    buildCameraStream(url);
 })
 
 async function isCameraEnabled(src) {
@@ -42,6 +40,9 @@ async function buildCameraStream(url) {
     const cameraEnabled = await isCameraEnabled(url);
     setCameraMenuVisible(cameraEnabled);
 
+    const livestreamContainer = document.getElementById('livestream-container');
+    if (!livestreamContainer) return;
+
     const dashboardRow = document.querySelector('.c3d-dash-row');
 
     let style;
@@ -55,7 +56,6 @@ async function buildCameraStream(url) {
         setBootstrapElemSizeIfPresent('printer-control-column', 4)
         const img = document.createElement('img');
 
-        const livestreamContainer = document.getElementById('livestream-container');
         livestreamContainer.appendChild(img);
 
         style = streamer.webcamStyle;
@@ -472,14 +472,11 @@ const showElemIfPresent = (id) => {
 }
 
 const setCameraMenuVisible = (visible) => {
-    const cameraLink = document.querySelector('#navbar .navbar-nav > li.dropdown > .dropdown-menu a[href="/custom/webcam"]');
-    const cameraItem = cameraLink?.closest('li');
-    const cameraHeading = cameraItem?.previousElementSibling;
+    const cameraItem = document.getElementById('navbar-camera-item');
+    const cameraHeading = document.getElementById('navbar-camera-heading');
 
-    if (cameraItem)
-        cameraItem.hidden = !visible;
-    if (cameraHeading?.classList.contains('c3d-nav-group'))
-        cameraHeading.hidden = !visible;
+    if (cameraItem) cameraItem.hidden = !visible;
+    if (cameraHeading) cameraHeading.hidden = !visible;
 }
 
 const setBootstrapElemSizeIfPresent = (id, size) => {

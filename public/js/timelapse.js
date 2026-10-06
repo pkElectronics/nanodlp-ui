@@ -1,9 +1,17 @@
 const TIMELAPSE_STATUS_POLL_MS = 5000;
+const TIMELAPSE_PREVIEW_RETRY_MS = 5000;
+const TIMELAPSE_PREVIEW_MAX_RETRIES = 3;
+const TIMELAPSE_GALLERY_REFRESH_MAX_RETRIES = 2;
 
 let timelapsePollTimer = null;
 let timelapsePlateIdsToPoll = [];
 let allTimelapseEntries = [];
 let plateNameById = {};
+let previewRetryTimers = [];
+let galleryRefreshRetryCount = 0;
+let galleryRefreshInFlight = false;
+let galleryRefreshAgain = false;
+let galleryRefreshRetryTimer = null;
 
 $(document).ready(function () {
     if (!$('#timelapse-gallery').length) {
@@ -97,7 +105,7 @@ function openTimelapsePlayer(link, title) {
 }
 
 async function loadTimelapses() {
-    const response = await fetch(BASE_URL + '/athena-iot/control/timelapse_get_all', { method: 'GET' });
+    const response = await fetch(BASE_URL + '/athena-iot/control/timelapse_get_all', { method: 'GET', cache: 'no-store' });
     if (!response.ok) {
         throw new Error('Failed to load timelapses');
     }
@@ -210,6 +218,7 @@ function renderTimelapseCard(entry) {
     const plateId = escapeHtml(String(entry.plateId));
     const filename = escapeHtml(entry.filename);
     const previewfilename = escapeHtml(entry.previewfilename);
+    const previewRetryKey = escapeHtml(String(entry.plateId) + ':' + entry.filename);
     const plateName = escapeHtml(resolvePlateName(entry.plateId));
     const rawPlateName = resolvePlateName(entry.plateId);
     const videoTitle = rawPlateName ? `${rawPlateName} · ${label}` : label;
@@ -220,7 +229,7 @@ function renderTimelapseCard(entry) {
         '<div class="timelapse-card-body">' +
         '<button type="button" class="timelapse-thumbnail" aria-label="Play timelapse" data-video-link="' + BASE_URL + videoLink + '" data-video-title="' + escapeHtml(videoTitle) + '">' +
         '<span class="timelapse-preview-placeholder"><span class="glyphicon glyphicon-film" aria-hidden="true"></span>Preview unavailable</span>' +
-        (entry.previewlink ? '<img src="' + BASE_URL + previewLink + '" alt="">' : '') +
+        (entry.previewlink ? '<img src="' + BASE_URL + previewLink + '" alt="" data-preview-base="' + previewLink + '" data-preview-key="' + previewRetryKey + '" data-preview-retries="0">' : '') +
         '</button>' +
         '<p class="timelapse-card-title"><strong>' + (plateName || ('Plate ' + plateId)) + '</strong><br>' +
         '<small class="text-muted">ID ' + plateId + ' · ' + escapeHtml(label) + '</small></p>' +
@@ -310,6 +319,7 @@ function collectPlateIds(entries) {
 }
 
 function renderFilteredGallery() {
+    clearPreviewRetryTimers();
     const entries = getFilteredEntries();
     const gallery = $('#timelapse-gallery');
     gallery.empty();
@@ -325,14 +335,19 @@ function renderFilteredGallery() {
     showTimelapseEmpty(false);
     gallery.html(entries.map(renderTimelapseCard).join(''));
     gallery.find('.timelapse-thumbnail img').each(function () {
-        // Listen directly: image error events do not bubble. Handle cached failures too.
-        $(this).on('error', function () { $(this).hide(); });
-        if (this.complete && !this.naturalWidth) { $(this).hide(); }
+        // Keep the placeholder visible and retry transient generation/readiness failures.
+        $(this).on('error', function () { schedulePreviewRetry(this); });
+        if (this.complete && !this.naturalWidth) { schedulePreviewRetry(this); }
     });
     startEncodingStatusPoll(entries);
 }
 
 async function refreshTimelapseGallery() {
+    if (galleryRefreshInFlight) {
+        galleryRefreshAgain = true;
+        return;
+    }
+    galleryRefreshInFlight = true;
     $('#timelapse-load-error').hide();
     try {
         const [entries, plateNames] = await Promise.all([
@@ -342,14 +357,52 @@ async function refreshTimelapseGallery() {
 
         plateNameById = plateNames;
         allTimelapseEntries = sortTimelapses(entries);
+        galleryRefreshRetryCount = 0;
+        if (galleryRefreshRetryTimer) {
+            clearTimeout(galleryRefreshRetryTimer);
+            galleryRefreshRetryTimer = null;
+        }
         populatePlateFilter();
         renderFilteredGallery();
     } catch (err) {
-        toastr.error('Failed to load timelapses');
-        $('#timelapse-empty, #timelapse-gallery').hide();
-        $('#timelapse-load-error').show();
-        stopEncodingStatusPoll();
+        if (galleryRefreshRetryCount < TIMELAPSE_GALLERY_REFRESH_MAX_RETRIES) {
+            galleryRefreshRetryCount++;
+            galleryRefreshRetryTimer = setTimeout(refreshTimelapseGallery, TIMELAPSE_PREVIEW_RETRY_MS);
+        } else {
+            galleryRefreshRetryCount = 0;
+            toastr.error('Failed to load timelapses');
+            $('#timelapse-empty, #timelapse-gallery').hide();
+            $('#timelapse-load-error').show();
+            stopEncodingStatusPoll();
+        }
+    } finally {
+        galleryRefreshInFlight = false;
+        if (galleryRefreshAgain) {
+            galleryRefreshAgain = false;
+            refreshTimelapseGallery();
+        }
     }
+}
+
+function clearPreviewRetryTimers() {
+    previewRetryTimers.forEach(clearTimeout);
+    previewRetryTimers = [];
+}
+
+function schedulePreviewRetry(image) {
+    const retries = Number(image.getAttribute('data-preview-retries') || 0);
+    if (retries >= TIMELAPSE_PREVIEW_MAX_RETRIES) return;
+
+    image.setAttribute('data-preview-retries', String(retries + 1));
+    const timer = setTimeout(function () {
+        if (!document.documentElement.contains(image)) return;
+        const baseUrl = image.getAttribute('data-preview-base');
+        if (!baseUrl) return;
+        const url = new URL(baseUrl, window.location.origin);
+        url.searchParams.set('_timelapse_preview_retry', String(Date.now()));
+        image.src = url.toString();
+    }, TIMELAPSE_PREVIEW_RETRY_MS);
+    previewRetryTimers.push(timer);
 }
 
 async function startEncodingStatusPoll(entries) {
@@ -379,6 +432,7 @@ async function startEncodingStatusPoll(entries) {
         applyEncodingHint(stillProcessing);
         if (!stillProcessing.processing) {
             stopEncodingStatusPoll();
+            refreshTimelapseGallery();
         }
     }, TIMELAPSE_STATUS_POLL_MS);
 }

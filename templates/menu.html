@@ -11,7 +11,7 @@
     </a>
 </div>
 <div id="navbar" class="navbar-collapse collapse">
-    <ul class="nav navbar-nav">        
+    <ul class="nav navbar-nav" id="navbar-primary-nav">
         <li><a href="/"><span class="glyphicon glyphicon-home"></span><translate>Dashboard</translate></a></li>
         <li><a href="/plates"><span class="glyphicon glyphicon-tasks"></span><translate>Jobs</translate></a></li>
         <li><a href="/profiles"><span class="glyphicon glyphicon-tint"></span><translate>Resins</translate></a></li>
@@ -20,8 +20,8 @@
                 <span class="glyphicon glyphicon-wrench"></span><translate>System</translate><span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-                <li class="c3d-nav-group"><translate>Camera</translate></li>
-                <li><a href="/custom/webcam"><span class="glyphicon glyphicon-camera"></span><translate>Camera &amp; Timelapses</translate></a></li>
+                <li class="c3d-nav-group" id="navbar-camera-heading" hidden><translate>Camera</translate></li>
+                <li id="navbar-camera-item" hidden><a href="/custom/webcam"><span class="glyphicon glyphicon-camera"></span><translate>Camera &amp; Timelapses</translate></a></li>
 
                 <li class="c3d-nav-group"><translate>Monitoring</translate></li>
                 <li><a href="/analytic"><span class="c3d-nav-ico c3d-nav-ico--chart"></span><translate>Analytics Charts</translate></a></li>
