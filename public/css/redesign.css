@@ -1133,6 +1133,13 @@ body.c3d-printing #preview_layer { display: none !important; }
   border-left: 1px solid var(--df-border-subtle);
   padding-left: 24px;
 }
+@media (max-width: 767px) {
+  /* The columns stack here; the desktop divider must not inset VOC/AEGIS. */
+  .c3d-env-cols > #aegis-dashboard-container {
+    border-left: 0;
+    padding-left: 0;
+  }
+}
 
 /* ---------- AEGIS widget typography ---------- */
 #aegis-dashboard-container .aegis-row > span:first-child { color: var(--df-text-muted); }

@@ -7,7 +7,7 @@
 
 .u-label, .u-value, .u-title { color: var(--df-text-muted); }
 .u-series { color: var(--df-text-strong); font-size: 12px; }
-/* Full chart legends wrap by the width of each reading on desktop. */
+/* Keep each desktop legend centered while its readings retain natural widths. */
 .c3d-chart-legend { margin: 8px 10px 2px; }
 .c3d-chart-legend summary {
     width: max-content;
@@ -24,7 +24,7 @@
 .c3d-chart-legend .u-legend.u-inline tbody {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 3px 12px;
     text-align: left;
 }
@@ -46,6 +46,7 @@
 .pressure-row .u-legend.u-inline tbody {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 2px 12px;
     text-align: left;
 }
@@ -57,12 +58,35 @@
 
 @media (max-width: 767px) {
     .uplot { margin-bottom: 24px; overflow-x: hidden; }
-    .c3d-chart-legend .u-legend.u-inline tbody,
-    .pressure-row .u-legend.u-inline tbody { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 6px; }
-    .c3d-chart-legend .u-legend.u-inline tr,
-    .pressure-row .u-legend.u-inline tr { display: flex; flex-direction: column; align-items: flex-start; gap: 0; font-size: 11px; line-height: 1.25; }
-    .c3d-chart-legend .u-legend.u-inline .u-value,
-    .pressure-row .u-legend.u-inline .u-value { display: block; padding-left: 18px; }
-    .c3d-chart-legend .u-legend.u-inline .u-label,
-    .pressure-row .u-legend.u-inline .u-label { white-space: normal; overflow-wrap: anywhere; }
+    .c3d-chart-legend .u-legend.u-inline tbody { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 6px; }
+    .c3d-chart-legend .u-legend.u-inline tr { display: flex; flex-direction: column; align-items: flex-start; gap: 0; font-size: 11px; line-height: 1.25; }
+    .c3d-chart-legend .u-legend.u-inline .u-value { display: block; padding-left: 18px; }
+    .c3d-chart-legend .u-legend.u-inline .u-label { white-space: normal; overflow-wrap: anywhere; }
+
+    /* The dashboard has only three series, so keep their labels on one row. */
+    .pressure-row .u-legend.u-inline tbody {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2px;
+    }
+    .pressure-row .u-legend.u-inline tr {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        min-width: 0;
+        padding: 1px 0;
+        font-size: clamp(9px, 2.7vw, 11px);
+        line-height: 1.25;
+        text-align: center;
+    }
+    .pressure-row .u-legend.u-inline th,
+    .pressure-row .u-legend.u-inline td { text-align: center; }
+    .pressure-row .u-legend.u-inline .u-label { white-space: nowrap; }
+    .pressure-row .u-legend.u-inline .u-value {
+        display: block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
