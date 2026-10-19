@@ -20,6 +20,7 @@ var base_title_suffix = (function(initialTitle){
 
 
 $(function(){
+	init_footer_spacing();
 	// Run for index page
 	display_notification();
 	notification_close();
@@ -220,11 +221,24 @@ function dashboard_init() {
 	$.get(`https://dashboard.concepts3d.eu/dashboard.html`, function (data) {
 		$(".nanodlp-content").html("<br>"+data);
 	});
-	$("html").delegate('#change-preview','click',function(e){
-		$(this).parent().toggleClass("toggle");
+	$("html").delegate('#image_wrapper','click',function(e){
+		if (!$(this).find('#change-preview').length) return;
+		$(this).toggleClass("toggle");
+		$(this).attr('aria-label', $(this).hasClass('toggle') ? 'Show 3D preview' : 'Show layer preview');
 		last_frame_key="";
 		e.preventDefault();
 	});
+}
+
+function init_footer_spacing() {
+	var footer = document.querySelector('.c3d-footer');
+	if (!footer) return;
+	function updateSpacing() {
+		document.documentElement.style.setProperty('--c3d-footer-height', footer.getBoundingClientRect().height + 'px');
+	}
+	updateSpacing();
+	if (window.ResizeObserver) new ResizeObserver(updateSpacing).observe(footer);
+	else window.addEventListener('resize', updateSpacing);
 }
 
 function calibration_init() {
@@ -1117,6 +1131,7 @@ function image_display(path, layer_id, blackout) {
 			}).fail(function () {
 				$("#image_wrapper #change-preview").remove();
 				$("#image_wrapper").addClass("toggle");
+				$("#image_wrapper").attr('aria-label', 'Layer preview').prop('disabled', true);
 			});
 			return;
 		}

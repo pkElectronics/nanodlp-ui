@@ -20,13 +20,39 @@ const ColourValues = [
     "E00000", "00E000", "0000E0", "E0E000", "E000E0", "00E0E0", "E0E0E0",
 ];
 
-// Readable series colors on dark surfaces, indexed by metric id (see ALL_CHART_CONFIG)
-const DARK_PALETTE = [
-    "#f0ad4e", "#4dd0e1", "#66bb6a", "#ffa726", "#ab47bc", "#ec407a", "#d2a13e",
-    "#ef5350", "#26a69a", "#5c6bc0", "#ff7043", "#8d6e63", "#ffca28", "#29b6f6",
-    "#9ccc65", "#f06292", "#ba68c8", "#ff8a65", "#4db6ac", "#7986cb", "#ffb74d",
-    "#aed581", "#e57373", "#64b5f6", "#81c784", "#dce775", "#4dd0e1", "#f48fb1",
-];
+// The two full charts have different sets of simultaneous series. Keep a stable
+// color for each metric, with distinct hues within each chart. The community's
+// green/cyan/blue/red/purple/yellow/orange suggestions are softened for the UI.
+const SERIES_STYLES = {
+    LayerHeight: { stroke: '#83cf76' },
+    SolidArea: { stroke: '#dc81c9' },
+    AreaCount: { stroke: '#e47b69' },
+    LargestArea: { stroke: '#aa91d8' },
+    Speed: { stroke: '#b99b70' },
+    Cure: { stroke: '#67cad1' },
+    Pressure: { stroke: '#e8b55b' },
+    LayerTime: { stroke: '#78a6df' },
+    LiftHeight: { stroke: '#6352c9' },
+    DynamicWait: { stroke: '#d4cf72' },
+    TemperatureInside: { stroke: '#e77e77' },
+    TemperatureOutside: { stroke: '#a2e2cc' },
+    TemperatureMCU: { stroke: '#ce9d64' },
+    TemperatureInsideTarget: { stroke: '#e3e0c0', dash: [6, 3] },
+    TemperatureOutsideTarget: { stroke: '#c0d2e3', dash: [6, 3] },
+    TemperatureMCUTarget: { stroke: '#d2bce6', dash: [6, 3] },
+    MCUFanRPM: { stroke: '#6464ce' },
+    UVFanRPM: { stroke: '#64ce9d' },
+    TemperatureVat: { stroke: '#b9ce64' },
+    TemperatureVatTarget: { stroke: '#899cd2', dash: [6, 3] },
+    PTCFanRPM: { stroke: '#e2b3a2' },
+    AEGISFanRPM: { stroke: '#64ce64' },
+    TemperatureChamber: { stroke: '#ce648e' },
+    TemperatureChamberTarget: { stroke: '#c08ecc', dash: [6, 3] },
+    TemperaturePTC: { stroke: '#bbe2a2' },
+    TemperaturePTCTarget: { stroke: '#ce64b9', dash: [6, 3] },
+    VOCInlet: { stroke: '#55c6da', width: 2 },
+    VOCOutlet: { stroke: '#e7a5bc', width: 2 },
+};
 
 const ALL_CHART_CONFIG = [
     { key: 'LayerHeight', id: 0 },
@@ -55,8 +81,8 @@ const ALL_CHART_CONFIG = [
     { key: 'TemperatureChamberTarget', id: 23 },
     { key: 'TemperaturePTC', id: 24 },
     { key: 'TemperaturePTCTarget', id: 25 },
-    { key: 'VOCInlet', id: 26 },
-    { key: 'VOCOutlet', id: 27 },
+    { key: 'VOCInlet', id: 26, overrideLabel: 'VOC Score Inlet', overrideAxisLabel: 'VOC score', overrideUnit: '' },
+    { key: 'VOCOutlet', id: 27, overrideLabel: 'VOC Score Outlet', overrideAxisLabel: 'VOC score', overrideUnit: '' },
 ];
 
 function isNotAllNull(subArray) {
@@ -69,6 +95,8 @@ function renderChart(name, dataRows, series, chartConfig) {
 
     if (dataRows.length <= 1) return;
 
+    const mobileAxes = !!(chartConfig.mobileAxisScales && window.matchMedia && window.matchMedia('(max-width: 767px)').matches);
+    const seriesKeys = series.map(serie => serie.key || '').join('|');
     let plotHeight = getPlotHeight(chartConfig);
     const containerEl = $uplot[0];
     const parentEl = containerEl ? containerEl.parentElement : null;
@@ -86,7 +114,7 @@ function renderChart(name, dataRows, series, chartConfig) {
             containerEl.style.height = Math.round(inner) + 'px';
         }
     }
-    const axes = prepareAxis(series);
+    const axes = prepareAxis(series, chartConfig);
     let opts = {
         title: name,
         class: "my-chart",
@@ -139,7 +167,7 @@ function renderChart(name, dataRows, series, chartConfig) {
     }
 
     const plotToUpdate = uplots.find(plot => plot.id === uplotId);
-    if (plotToUpdate && plotToUpdate.seriesLength === series.length) {
+    if (plotToUpdate && plotToUpdate.seriesKeys === seriesKeys && plotToUpdate.mobileAxes === mobileAxes) {
 
         // Chart already exists, update the data and return so we don't rebuilt the whole HTML
         const w = $uplot.width();
@@ -147,21 +175,37 @@ function renderChart(name, dataRows, series, chartConfig) {
             plotToUpdate.uplot.setSize({ width: w, height: plotHeight });
         }
         plotToUpdate.uplot.setData(dataRows);
+        plotToUpdate.dataRows = dataRows;
+        plotToUpdate.series = series;
         return;
     }
 
+    if (plotToUpdate) plotToUpdate.uplot.destroy();
     $uplot.html('');
     opts = applyLegend(opts, uplotId);
     const newUplot = new uPlot(opts, dataRows, $uplot[0]);
+    if (chartConfig.collapsibleLegend) {
+        const legend = $uplot[0].querySelector('.u-legend');
+        if (legend) {
+            const details = document.createElement('details');
+            details.className = 'c3d-chart-legend';
+            details.open = !window.matchMedia('(max-width: 767px)').matches;
+            const summary = document.createElement('summary');
+            summary.textContent = `Chart series (${series.length - 1})`;
+            details.appendChild(summary);
+            legend.parentNode.insertBefore(details, legend);
+            details.appendChild(legend);
+        }
+    }
 
-    let newUplotReference = { id: uplotId, uplot: newUplot, seriesLength: series.length, chartConfig };
-    if (plotToUpdate && plotToUpdate.seriesLength !== series.length) {
-        // This was a legend update trigger so we want to set our uplot reference with the new series length
+    let newUplotReference = { id: uplotId, uplot: newUplot, seriesKeys, chartConfig, mobileAxes, name, dataRows, series };
+    if (plotToUpdate) {
         uplots = uplots.map(uplot => uplot.id === plotToUpdate.id ? newUplotReference : uplot)
     } else {
         // This was the initial build and we want to create the reference in the uplot list
        uplots.push(newUplotReference);
     }
+    addSaveLegendHandler();
 }
 
 function applyLegend(opts, uplotId) {
@@ -172,13 +216,16 @@ function applyLegend(opts, uplotId) {
     if (!savedValuesForUplotId) return opts;
 
     savedValuesForUplotId.forEach((element, index) => {
-        if (element.show === false && opts.series[index] !== undefined) opts.series[index].show = false;
+        const matchingSeries = element.key
+            ? opts.series.find(serie => serie.key === element.key)
+            : opts.series[index];
+        if (element.show === false && matchingSeries) matchingSeries.show = false;
     });
     return opts
 }
 
 function addSaveLegendHandler() {
-    $(".u-legend .u-series").click(function () {
+    $(".u-legend .u-series").off('click.c3dLegend').on('click.c3dLegend', function () {
         const cacheData = uplots.reduce((acc, uplot) => {
             return {...acc, [uplot.id]: uplot.uplot.series};
         }, {});
@@ -186,11 +233,17 @@ function addSaveLegendHandler() {
     });
 }
 
-function prepareAxis(series) {
+function prepareAxis(series, chartConfig) {
     let axes = [{}];
+    const mobileAxisScales = window.matchMedia && window.matchMedia('(max-width: 767px)').matches
+        ? chartConfig.mobileAxisScales : null;
     for (let seriesIdx = 1; seriesIdx < series.length; seriesIdx++) {
         const serie = series[seriesIdx];
         let scale = serie.scale;
+
+        // All series remain plotted; the live legend carries values for scales
+        // whose axis would leave too little room for the plot on a phone.
+        if (mobileAxisScales && !mobileAxisScales.includes(scale)) continue;
 
         const found = axes.some(axis => axis.scale === scale);
 
@@ -224,7 +277,7 @@ function prepareAxis(series) {
 }
 
 function determineDecimalPlaces(scale) {
-    let zeroPlaceScales = ["px", "Pressure", "RPM"];
+    let zeroPlaceScales = ["px", "Pressure", "RPM", "VOC"];
     let onePlaceScales = ["s", "mm", "°C"];
 
     if (zeroPlaceScales.includes(scale)) {
@@ -249,6 +302,7 @@ function getSeries(axes) {
 
     axes.forEach((element, key) => {
         const config = ALL_CHART_CONFIG.find(config => config.key === element.Key);
+        const style = SERIES_STYLES[element.Key] || {};
         const label = config?.overrideLabel ?? element.Name;
         const unit = config?.overrideUnit ?? element.Type;
         series.push({
@@ -259,8 +313,9 @@ function getSeries(axes) {
             label,
             scale: element.Type,
             value: (self, rawValue) => (rawValue != null ? rawValue.toFixed(element.Decimal) + unit : ""),
-            stroke: config?.stroke ?? ((config && DARK_PALETTE[config.id]) ? DARK_PALETTE[config.id] : ("#" + ColourValues[key] + "cc")),
-            width: 1.5,
+            stroke: style.stroke || ("#" + ColourValues[key] + "cc"),
+            dash: style.dash,
+            width: style.width || 1.5,
         });
     });
     return series;
@@ -385,7 +440,6 @@ function buildChartFromData(name, dataResponse, exp, axes, chartConfigs) {
         renderSplitChart(series, chartData, chartConfig, name);
     })
 
-    addSaveLegendHandler()
 }
 
 function renderSplitChart(series, backFilledData, chartConfig, name) {
@@ -418,13 +472,21 @@ function minimumSpanRange(minimumSpan) {
 
 function buildScaleOptions(chartConfig) {
     const constraints = chartConfig.minimumScaleSpans || {};
-    return Object.keys(constraints).reduce((scales, scaleName) => {
+    const scales = Object.keys(constraints).reduce((scales, scaleName) => {
         const minimumSpan = Number(constraints[scaleName]);
         if (Number.isFinite(minimumSpan) && minimumSpan > 0) {
             scales[scaleName] = { range: minimumSpanRange(minimumSpan) };
         }
         return scales;
     }, {});
+    const fixedRanges = chartConfig.fixedScaleRanges || {};
+    Object.keys(fixedRanges).forEach(scaleName => {
+        const range = fixedRanges[scaleName];
+        if (Array.isArray(range) && range.length === 2) {
+            scales[scaleName] = { range: range.slice() };
+        }
+    });
+    return scales;
 }
 
 let analyticsResizeTimer;
@@ -434,6 +496,11 @@ window.addEventListener('resize', function () {
         uplots.forEach(function (plot) {
             const container = document.querySelector(plot.id);
             if (!container) return;
+            const mobileAxes = !!(plot.chartConfig.mobileAxisScales && window.matchMedia('(max-width: 767px)').matches);
+            if (mobileAxes !== plot.mobileAxes) {
+                renderChart(plot.name, plot.dataRows, plot.series, plot.chartConfig);
+                return;
+            }
             plot.uplot.setSize({
                 width: $(container).width(),
                 height: getPlotHeight(plot.chartConfig),

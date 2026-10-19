@@ -1,8 +1,3 @@
-.u-legend.u-inline .u-value {
-    width: 150px;
-    text-align: left;
-}
-
 .uplot {
     background-color: var(--df-surface-0);
     width: 100%;
@@ -10,23 +5,60 @@
     border-radius: 10px;
 }
 
+.u-label, .u-value, .u-title { color: var(--df-text-muted); }
+.u-series { color: var(--df-text-strong); font-size: 12px; }
+.c3d-voc-scale-note { margin: -14px 4px 20px; color: var(--df-text-muted); font-size: 12px; }
+
+/* uPlot's default inline table needs explicit columns for many sensor series. */
+.c3d-chart-legend { margin: 8px 10px 2px; }
+.c3d-chart-legend summary {
+    width: max-content;
+    max-width: 100%;
+    padding: 5px 9px;
+    border: 1px solid var(--df-border-subtle);
+    border-radius: 6px;
+    color: var(--df-text-strong);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+}
+.c3d-chart-legend .u-legend.u-inline { display: block; width: 100%; margin-top: 7px; }
+.c3d-chart-legend .u-legend.u-inline tbody {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+    gap: 3px 10px;
+    text-align: left;
+}
+.c3d-chart-legend .u-legend.u-inline tr {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    margin: 0;
+    padding: 3px 5px;
+}
+.c3d-chart-legend .u-legend.u-inline th,
+.c3d-chart-legend .u-legend.u-inline td { display: block; padding: 0; min-width: 0; text-align: left; }
+.c3d-chart-legend .u-legend.u-inline .u-value { display: block; width: auto; padding-left: 18px; }
+.c3d-chart-legend .u-legend.u-inline .u-label { white-space: normal; overflow-wrap: anywhere; }
+
+/* The dashboard's three-series legend should stay visible and fit its card. */
+.pressure-row .u-legend.u-inline { display: block; width: 100%; }
+.pressure-row .u-legend.u-inline tbody {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2px 6px;
+    text-align: left;
+}
+.pressure-row .u-legend.u-inline tr { display: flex; flex-direction: column; min-width: 0; margin: 0; }
+.pressure-row .u-legend.u-inline th,
+.pressure-row .u-legend.u-inline td { display: block; min-width: 0; padding: 1px 2px; text-align: left; }
+.pressure-row .u-legend.u-inline .u-value { display: block; width: auto; padding-left: 18px; }
+.pressure-row .u-legend.u-inline .u-label { white-space: normal; overflow-wrap: anywhere; }
+
 @media (max-width: 767px) {
     .uplot { margin-bottom: 24px; overflow-x: hidden; }
-}
-
-.u-label, .u-value, .u-title {
-    color: var(--df-text-muted);
-}
-
-.u-series {
-    color: var(--df-text-strong);
-    font-size: small;
-}
-
-.u-legend.u-inline .u-value {
-    width: 100px;
-}
-
-.u-series {
-    font-size: small;
+    .c3d-chart-legend .u-legend.u-inline tbody { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 6px; }
+    .c3d-chart-legend .u-legend.u-inline tr { font-size: 11px; line-height: 1.25; }
+    .pressure-row .u-legend.u-inline tbody { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pressure-row .u-legend.u-inline tr { font-size: 11px; line-height: 1.2; }
 }
