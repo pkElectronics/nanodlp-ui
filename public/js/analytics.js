@@ -237,9 +237,11 @@ function prepareAxis(series, chartConfig) {
     let axes = [{}];
     const mobileAxisScales = window.matchMedia && window.matchMedia('(max-width: 767px)').matches
         ? chartConfig.mobileAxisScales : null;
-    for (let seriesIdx = 1; seriesIdx < series.length; seriesIdx++) {
-        const serie = series[seriesIdx];
-        let scale = serie.scale;
+    const orderedSeries = chartConfig.desktopAxisScales && !mobileAxisScales
+        ? chartConfig.desktopAxisScales.map(scale => series.find(serie => serie.scale === scale)).filter(Boolean)
+        : series.slice(1);
+    for (const serie of orderedSeries) {
+        const scale = serie.scale;
 
         // All series remain plotted; the live legend carries values for scales
         // whose axis would leave too little room for the plot on a phone.
@@ -255,8 +257,8 @@ function prepareAxis(series, chartConfig) {
             axes.push({
                     labelSize: 16,
                     gap: 8,
-                    size: 62,
-                    side: 3,
+                    size: scale === 'RPM' ? 72 : 62,
+                    side: chartConfig.axisSides?.[scale] ?? 3,
                     grid: {show: false},
                     label,
                     scale,
@@ -266,9 +268,11 @@ function prepareAxis(series, chartConfig) {
         }
     }
 
-    let halfOfAxisCount = parseInt(axes.length / 2) + 1;
-    for (let j = halfOfAxisCount; j < axes.length; j++) {
-        axes[j].side = 1;
+    if (!chartConfig.axisSides) {
+        let halfOfAxisCount = parseInt(axes.length / 2) + 1;
+        for (let j = halfOfAxisCount; j < axes.length; j++) {
+            axes[j].side = 1;
+        }
     }
     if (axes[1]) {
         axes[1].grid.show = true;
@@ -486,6 +490,43 @@ function buildScaleOptions(chartConfig) {
             scales[scaleName] = { range: range.slice() };
         }
     });
+    if (chartConfig.roundedRpmScale) {
+        // uPlot supplies the maximum from the visible time window, including
+        // historical points. Grow at once; only shrink after a stable interval.
+        const state = chartConfig.rpmScaleState || (chartConfig.rpmScaleState = {
+            ceiling: 1000, pending: null, since: 0, timer: null,
+        });
+        scales.RPM = { range: function (plot, _min, max) {
+            const target = Math.max(1000, Math.ceil(Math.max(0, Number.isFinite(max) ? max : 0) / 1000) * 1000);
+            if (target >= state.ceiling) {
+                state.ceiling = target;
+                state.pending = null;
+                clearTimeout(state.timer);
+                state.timer = null;
+            } else {
+                if (state.pending !== target) {
+                    state.pending = target;
+                    state.since = Date.now();
+                    clearTimeout(state.timer);
+                    state.timer = setTimeout(function () {
+                        state.timer = null;
+                        const current = uplots.find(entry => entry.id === chartConfig.uplotId);
+                        if (current && current.uplot === plot) {
+                            // Re-evaluate the visible window even when no new
+                            // samples arrive after a range selection.
+                            plot.setScale('RPM', { min: 0, max: state.pending });
+                        }
+                    }, 10000);
+                } else if (Date.now() - state.since >= 10000) {
+                    state.ceiling = target;
+                    state.pending = null;
+                    clearTimeout(state.timer);
+                    state.timer = null;
+                }
+            }
+            return [0, state.ceiling];
+        } };
+    }
     return scales;
 }
 

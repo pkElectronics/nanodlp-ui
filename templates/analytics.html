@@ -39,6 +39,9 @@
             height: 420,
             collapsibleLegend: true,
             mobileAxisScales: ['°C', 'VOC'],
+            desktopAxisScales: ['°C', 'VOC', 'RPM'],
+            axisSides: { '°C': 3, VOC: 1, RPM: 1 },
+            roundedRpmScale: true,
             // Athena's Klipper VOC score is clean at 100 and falls as air
             // quality worsens. Keep its full range visible during a print.
             fixedScaleRanges: { VOC: [0, 100] },
@@ -110,7 +113,6 @@
 
 <div id="uplot-1" class="uplot uplot-container"></div>
 <div id="uplot-2" class="uplot uplot-container"></div>
-<p class="c3d-voc-scale-note">VOC score: 100 is clean; lower readings indicate more VOCs.</p>
 <div class="row">
     <div class="col-xs-6 col-xs-offset-3">
         <div style="align-content: center; display: none" class="alert alert-info" id="chart-paused-warning">
