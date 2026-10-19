@@ -95,25 +95,30 @@ function renderChart(name, dataRows, series, chartConfig) {
 
     if (dataRows.length <= 1) return;
 
-    const mobileAxes = !!(chartConfig.mobileAxisScales && window.matchMedia && window.matchMedia('(max-width: 767px)').matches);
+    const isMobile = !!(window.matchMedia && window.matchMedia('(max-width: 767px)').matches);
+    const mobileAxes = !!(chartConfig.mobileAxisScales && isMobile);
     const seriesKeys = series.map(serie => serie.key || '').join('|');
     let plotHeight = getPlotHeight(chartConfig);
     const containerEl = $uplot[0];
     const parentEl = containerEl ? containerEl.parentElement : null;
-    if (chartConfig.fitParent === true && parentEl) {
+    // A naturally sized mobile card can grow with its legend. Fitting a fixed
+    // container height there makes overflow-x:hidden create a vertical scroller.
+    const fitParent = chartConfig.fitParent === true && parentEl &&
+        !(isMobile && !document.body.classList.contains('c3d-printing'));
+    if (fitParent) {
         const cs = getComputedStyle(parentEl);
         const pad = parseFloat(cs.paddingTop || 0) + parseFloat(cs.paddingBottom || 0);
         const plotCs = getComputedStyle(containerEl);
         const plotMargin = parseFloat(plotCs.marginTop || 0) + parseFloat(plotCs.marginBottom || 0);
         // uPlot renders its legend inside the container, so reserve that too
         const legendEl = containerEl.querySelector('.u-legend');
-        const legendH = legendEl ? legendEl.offsetHeight + 6 : 56;
+        const legendH = legendEl ? legendEl.offsetHeight + 8 : 58;
         const inner = parentEl.clientHeight - pad - plotMargin;
         if (inner - legendH > 150) {
-            plotHeight = Math.round(inner - legendH);
-            containerEl.style.height = Math.round(inner) + 'px';
+            plotHeight = Math.floor(inner - legendH - 2); // container border
         }
     }
+    if (containerEl) containerEl.style.height = '';
     const axes = prepareAxis(series, chartConfig);
     let opts = {
         title: name,
@@ -129,6 +134,21 @@ function renderChart(name, dataRows, series, chartConfig) {
             }
         },
         hooks: {
+            setSeries: [
+                (plot, seriesIndex, options) => {
+                    if (!options || options.show === undefined || !chartConfig.fixedScaleRanges?.VOC) return;
+                    const vocAxis = plot.axes.find(axis => axis.scale === 'VOC');
+                    if (!vocAxis) return;
+                    const visible = plot.series.some(serie => serie.scale === 'VOC' && serie.show !== false);
+                    if (vocAxis.show !== visible) {
+                        vocAxis.show = visible;
+                        // Axis width is part of uPlot's layout, so recalculate it.
+                        const width = plot.width;
+                        plot.setSize({ width: width - 1, height: plot.height });
+                        plot.setSize({ width, height: plot.height });
+                    }
+                }
+            ],
             setSelect: [
                 _ => {
                     // Chart has been zoomed in
@@ -183,6 +203,8 @@ function renderChart(name, dataRows, series, chartConfig) {
     if (plotToUpdate) plotToUpdate.uplot.destroy();
     $uplot.html('');
     opts = applyLegend(opts, uplotId);
+    const vocAxis = opts.axes.find(axis => axis.scale === 'VOC');
+    if (vocAxis) vocAxis.show = opts.series.some(serie => serie.scale === 'VOC' && serie.show !== false);
     const newUplot = new uPlot(opts, dataRows, $uplot[0]);
     if (chartConfig.collapsibleLegend) {
         const legend = $uplot[0].querySelector('.u-legend');

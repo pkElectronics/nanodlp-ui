@@ -598,6 +598,8 @@ input[type="range"].slider, input[type="range"] { accent-color: var(--brand-acce
 .c3d-jobs-page-head { display: block; }
 .c3d-jobs-page-head .c3d-page-actions { width: 100%; margin-top: 14px; align-items: center; }
 .c3d-jobs-primary-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.c3d-jobs-primary-actions > * { flex: 0 0 auto; }
+.c3d-jobs-secondary-actions { display: flex; flex-wrap: wrap; gap: 8px; max-width: 100%; }
 .c3d-jobs-more { margin-left: 0; }
 .c3d-jobs-more .dropdown-menu { right: 0; left: auto; }
 .c3d-unit { font-size: 0.6em; font-weight: 600; color: var(--df-text-muted); }
@@ -1670,6 +1672,9 @@ table#plates.table-bordered > tbody > tr > td { border-color: var(--df-border-su
   .c3d-resin-editor #setup2 .c3d-resin-physical-grid { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 767px) {
+  /* Keep all sort choices in one swipeable row without squeezing their labels. */
+  #c3d-jobs-sort { flex: 0 0 100%; min-width: 0; max-width: 100%; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; padding-bottom: 6px; scrollbar-width: thin; overscroll-behavior-inline: contain; touch-action: pan-x; }
+  #c3d-jobs-sort .c3d-chip { flex: 0 0 auto; white-space: nowrap; }
   #c3d-resin-list .c3d-list-row { grid-template-columns: minmax(0, 1fr) auto; }
   #c3d-resin-list .c3d-resin-profile-cell { grid-column: 1 / -1; }
   #c3d-resin-list .c3d-resin-profile-metric { grid-column: span 1; }
@@ -2558,6 +2563,41 @@ body:has(.c3d-preview-layout) > br { display: none; }
   .navbar-nav .open .dropdown-menu { position: static; float: none; width: auto; margin-top: 0; box-shadow: none; }
 }
 
+@media (max-width: 991px) {
+  /* The expanded menu presents printer details as one compact information block. */
+  .navbar-default #navbar .c3d-navbar-status {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px 8px;
+    margin: 8px 0 12px;
+    padding: 9px 15px 0;
+    border-top: 1px solid var(--df-border-subtle);
+  }
+  .navbar-default #navbar .c3d-navbar-status::before,
+  .navbar-default #navbar .c3d-navbar-status::after { display: none; content: none; }
+  .navbar-default #navbar .c3d-navbar-status > li { float: none; min-width: 0; }
+  .navbar-default #navbar .c3d-navbar-status > li:not(.c3d-navbar-info),
+  .navbar-default #navbar .c3d-navbar-status > .c3d-navbar-machine { grid-column: 1 / -1; }
+  .navbar-default #navbar .c3d-navbar-status > li.c3d-navbar-status-divider { display: block; }
+  .navbar-default #navbar .c3d-navbar-status > li.c3d-navbar-status-divider::after { display: none; }
+  .navbar-default #navbar .c3d-navbar-status > li > a.c3d-navbar-block {
+    align-items: flex-start;
+    min-height: 0;
+    padding: 7px 4px;
+    text-align: left;
+  }
+  .navbar-default #navbar .c3d-navbar-status .c3d-navbar-block-name {
+    display: block;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .navbar-default #navbar .c3d-navbar-status .c3d-navbar-block-sub { display: block; }
+}
+
+@media (max-width: 767px) {
+  body:not(.c3d-printing) .pressure-row #uplot-1 { flex: 0 0 auto; }
+}
+
 /* Recovered production resin editor, within the current Athena surfaces. */
 .c3d-resin-editor-name { margin: 6px 0 0; color: var(--df-text-muted); }
 /* The form is a capped column, so the page head is capped with it: a
@@ -2719,14 +2759,14 @@ body:has(.c3d-preview-layout) > br { display: none; }
 .c3d-resin-subhead .help { flex: 0 0 auto; }
 .c3d-resin-editor #setup2 .c3d-resin-subhead .easy_mode { display: flex; align-items: center; margin-left: auto; }
 .c3d-resin-editor #setup2 .c3d-resin-subhead .profile-peel-mode-readonly { margin: 0; }
-/* Bottom|Normal settings stay row-by-row comparable, label beside value: a
-   stacked label per row costs ~20px and this card has five rows. */
-.c3d-resin-table { display: grid; gap: 8px; }
-.c3d-resin-table-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; }
+/* Each layer type owns its heading and controls, including when columns stack. */
+.c3d-resin-table { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.c3d-resin-table-column { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 8px; min-width: 0; }
 .c3d-resin-table-cell { min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .c3d-resin-editor #setup2 .c3d-resin-table-cell > .profile-help-label { flex: 1 1 auto; margin: 0; }
 .c3d-resin-editor #setup2 .c3d-resin-table-cell > .form-control { flex: 0 0 112px; width: 112px; }
-.c3d-resin-table-head .c3d-resin-table-cell {
+.c3d-resin-table-heading {
+  margin: 0;
   padding-bottom: 6px;
   border-bottom: 1px solid var(--df-border-subtle);
   color: var(--df-text-muted);
@@ -2783,14 +2823,14 @@ body:has(.c3d-preview-layout) > br { display: none; }
   .c3d-resin-editor #setup2 .c3d-resin-details-controls { grid-template-columns: minmax(0, 1fr); }
   .c3d-resin-details-controls { grid-template-columns: minmax(0, 1fr); }
   .c3d-resin-description { grid-column: auto; }
-  .c3d-resin-table-row { grid-template-columns: minmax(0, 1fr); }
+  .c3d-resin-table { grid-template-columns: minmax(0, 1fr); }
+  .c3d-resin-table-column + .c3d-resin-table-column { margin-top: 8px; }
   .c3d-resin-top-layout { grid-template-columns: minmax(0, 1fr); }
   .c3d-resin-editor #setup2 .c3d-resin-grid.c3d-resin-layer-details { grid-template-columns: minmax(0, 1fr); }
   .c3d-resin-grid,
   .c3d-resin-grid--three,
   .c3d-resin-columns,
   .c3d-resin-editor #setup2 .c3d-resin-subcard .c3d-resin-grid { grid-template-columns: minmax(0, 1fr); }
-  .c3d-resin-table-row { grid-template-columns: minmax(0, 1fr); }
   .c3d-resin-bar { justify-content: space-between; }
 }
 .c3d-resin-editor #setup2 .profile-help-label .help,
