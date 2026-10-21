@@ -2607,6 +2607,24 @@ body:has(.c3d-preview-layout) > br { display: none; }
 .c3d-resin-editor .c3d-page-head { align-items: flex-end; }
 .c3d-resin-editor .c3d-page-actions { align-items: center; gap: 12px; }
 .c3d-resin-editor .c3d-page-actions .btn { margin: 0; }
+.c3d-resin-editor .c3d-resin-save {
+  background-color: var(--c3d-info);
+  border-color: var(--c3d-info);
+  color: var(--brand-accent-ink);
+}
+.c3d-resin-editor .c3d-resin-save:hover,
+.c3d-resin-editor .c3d-resin-save:focus {
+  background-color: color-mix(in srgb, var(--c3d-info), white 10%);
+  border-color: color-mix(in srgb, var(--c3d-info), white 10%);
+}
+.c3d-resin-editor .c3d-resin-save:active {
+  background-color: color-mix(in srgb, var(--c3d-info), black 12%);
+  border-color: color-mix(in srgb, var(--c3d-info), black 12%);
+}
+.c3d-resin-editor .c3d-resin-save:focus-visible {
+  outline: 2px solid var(--c3d-info);
+  outline-offset: 3px;
+}
 /* rule between the form actions and the way back */
 .c3d-resin-editor .c3d-page-action-divider {
   width: 1px;
