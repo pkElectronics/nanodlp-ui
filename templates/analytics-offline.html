@@ -2,8 +2,8 @@
 {% block head %}
 <link rel="stylesheet" href="/static/dependencies/uPlot/uPlot.min.css">
 <script src="/static/dependencies/uPlot/uPlot.iife.min.js"></script>
-<script src='/static/js/analytics.js'></script>
-<link href='/static/css/analytics.css' rel="stylesheet">
+<script src='/static/js/analytics.js?{{version}}(athenav2)'></script>
+<link href='/static/css/analytics.css?{{version}}(athenav2)' rel="stylesheet">
 
 {% endblock %}
 {% block content %}
@@ -21,6 +21,8 @@
     const CHART_CONFIGS = [
         {
             uplotId: '#uplot-1',
+            collapsibleLegend: true,
+            mobileAxisScales: ['Pressure', 's'],
             fields: [
                 { key: 'LayerHeight', id: 0 },
                 { key: 'SolidArea', id: 1 },
@@ -36,6 +38,12 @@
         },
         {
             uplotId: '#uplot-2',
+            collapsibleLegend: true,
+            mobileAxisScales: ['°C', 'VOC'],
+            desktopAxisScales: ['°C', 'VOC', 'RPM'],
+            axisSides: { '°C': 3, VOC: 1, RPM: 1 },
+            roundedRpmScale: true,
+            fixedScaleRanges: { VOC: [0, 100] },
             fields: [
                 { key: 'TemperatureInside', id: 7 },
                 { key: 'TemperatureOutside', id: 8 },

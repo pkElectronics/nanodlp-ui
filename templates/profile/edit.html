@@ -8,8 +8,8 @@
 		</div>
 		<div class="c3d-page-actions">
 			{% if viewMode == 0 %}
+			<button type="submit" form="setup2" class="btn c3d-resin-save" translate>Save</button>
 			<button type="button" class="c3d-toggle-pill is-off" id="profileEasyModeSwitchBtn" role="switch" aria-checked="false" data-toggle="tooltip" data-placement="bottom" title="Easy Mode shows the most commonly adjusted resin settings and is recommended for most users. Use Advanced Mode only when you need additional controls." translate>Advanced Mode</button>
-			<button type="submit" form="setup2" class="btn c3d-ghost c3d-ghost-gold" translate>Save</button>
 			<span class="c3d-page-action-divider" aria-hidden="true"></span>
 			{% endif %}
 			<a class="btn c3d-ghost c3d-btn-i" href="/profiles"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span><translate>Back</translate></a>
@@ -960,54 +960,46 @@
 					</div>
 				</div>
 				<div class="c3d-resin-table">
-					<div class="c3d-resin-table-row c3d-resin-table-head">
-						<div class="c3d-resin-table-cell"><span translate>Bottom Layer Settings</span></div>
-						<div class="c3d-resin-table-cell"><span translate>Normal Layer Settings</span></div>
-					</div>
-					<div class="c3d-resin-table-row">
+					<div class="c3d-resin-table-column">
+						<h3 class="c3d-resin-table-heading"><span translate>Bottom Layer Settings</span></h3>
 						<div class="c3d-resin-table-cell i_basic i_option">
 							<label for="SupportCureTimeSimple" class="profile-help-label"><span><translate>Bottom Exposure Time (<b>s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Exposure time used for the burn-in (bottom) layers.">i</a></label>
 							<input class="form-control" value="{{profile.SupportCureTime}}" name="SupportCureTime" id="SupportCureTimeSimple" min="1" max="60" step="0.01" type="number" required>
 						</div>
-						<div class="c3d-resin-table-cell i_basic i_option">
-							<label for="CureTimeSimple" class="profile-help-label"><span><translate>Exposure Time (<b>s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Exposure time used for normal layers.">i</a></label>
-							<input class="form-control" value="{{profile.CureTime}}" name="CureTime" id="CureTimeSimple" step="0.01" type="number" required min="0" max="20">
-						</div>
-					</div>
-					<div class="c3d-resin-table-row advance_mode">
-						<div class="c3d-resin-table-cell i_basic i_option">
+						<div class="c3d-resin-table-cell advance_mode i_basic i_option">
 							<label for="SupportWaitBeforePrintSimple" class="profile-help-label"><span><translate>Bottom Wait Before Print (<b>s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Manual settling delay before bottom exposure. Ignored when Dynamic Wait is enabled.">i</a></label>
 							<input class="form-control" value="{{profile.SupportWaitBeforePrint}}" name="SupportWaitBeforePrint" step="0.01" id="SupportWaitBeforePrintSimple" type="number" required min="0" max="60">
 						</div>
-						<div class="c3d-resin-table-cell i_basic i_option">
-							<label for="WaitBeforePrintSimple" class="profile-help-label"><span><translate>Wait Before Print (<b>s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Manual settling delay before normal exposure. Ignored when Dynamic Wait is enabled.">i</a></label>
-							<input class="form-control" value='{{profile.WaitBeforePrint}}' name="WaitBeforePrint" step="0.01" id="WaitBeforePrintSimple" type="number" required min="0" max="60">
-						</div>
-					</div>
-					<div class="c3d-resin-table-row advance_mode">
-						<div class="c3d-resin-table-cell i_basic i_option">
+						<div class="c3d-resin-table-cell advance_mode i_basic i_option">
 							<label for="SupportWaitAfterPrintSimple" class="profile-help-label"><span><translate>Bottom Wait After Print (<b>s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Delay after bottom-layer exposure before lift begins.">i</a></label>
 							<input class="form-control" value="{{profile.SupportWaitAfterPrint}}" name="SupportWaitAfterPrint" id="SupportWaitAfterPrintSimple" step="0.01" type="number" required min="0" max="60">
 						</div>
-						<div class="c3d-resin-table-cell i_basic i_option">
-							<label for="WaitAfterPrintSimple" class="profile-help-label"><span><translate>Wait After Print (<b>s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Delay after normal-layer exposure before lift begins.">i</a></label>
-							<input class="form-control" value="{{profile.WaitAfterPrint}}" name="WaitAfterPrint" id="WaitAfterPrintSimple" step="0.01" type="number" required min="0" max="60">
-						</div>
-					</div>
-					<div class="c3d-resin-table-row advance_mode">
-						<div class="c3d-resin-table-cell i_basic i_option">
+						<div class="c3d-resin-table-cell advance_mode i_basic i_option">
 							<label for="SupportTopWaitSimple" class="profile-help-label"><span><translate>Bottom Wait After Lift (<b>s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Delay at the top of the lift for burn-in layers.">i</a></label>
 							<input class="form-control" value="{{profile.SupportTopWait}}" name="SupportTopWait" step="0.01" id="SupportTopWaitSimple" type="number" required min="0" max="60">
 						</div>
 						<div class="c3d-resin-table-cell i_basic i_option">
-							<label for="TopWaitSimple" class="profile-help-label"><span><translate>Wait After Lift (<b>s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Delay at the top of the lift for normal layers.">i</a></label>
-							<input class="form-control" value="{{profile.TopWait}}" name="TopWait" step="0.01" id="TopWaitSimple" type="number" required min="0" max="60">
-						</div>
-					</div>
-					<div class="c3d-resin-table-row">
-						<div class="c3d-resin-table-cell i_basic i_option">
 							<label for="SupportWaitHeightSimple" class="profile-help-label"><span><translate>Bottom Lift Distance (<b>mm</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Lift distance used for the burn-in (bottom) layers.">i</a></label>
 							<input class="form-control" value="{{profile.SupportWaitHeight}}" name="SupportWaitHeight" step="0.001" id="SupportWaitHeightSimple" type="number" required min="0" max="60">
+						</div>
+					</div>
+					<div class="c3d-resin-table-column">
+						<h3 class="c3d-resin-table-heading"><span translate>Normal Layer Settings</span></h3>
+						<div class="c3d-resin-table-cell i_basic i_option">
+							<label for="CureTimeSimple" class="profile-help-label"><span><translate>Exposure Time (<b>s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Exposure time used for normal layers.">i</a></label>
+							<input class="form-control" value="{{profile.CureTime}}" name="CureTime" id="CureTimeSimple" step="0.01" type="number" required min="0" max="20">
+						</div>
+						<div class="c3d-resin-table-cell advance_mode i_basic i_option">
+							<label for="WaitBeforePrintSimple" class="profile-help-label"><span><translate>Wait Before Print (<b>s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Manual settling delay before normal exposure. Ignored when Dynamic Wait is enabled.">i</a></label>
+							<input class="form-control" value='{{profile.WaitBeforePrint}}' name="WaitBeforePrint" step="0.01" id="WaitBeforePrintSimple" type="number" required min="0" max="60">
+						</div>
+						<div class="c3d-resin-table-cell advance_mode i_basic i_option">
+							<label for="WaitAfterPrintSimple" class="profile-help-label"><span><translate>Wait After Print (<b>s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Delay after normal-layer exposure before lift begins.">i</a></label>
+							<input class="form-control" value="{{profile.WaitAfterPrint}}" name="WaitAfterPrint" id="WaitAfterPrintSimple" step="0.01" type="number" required min="0" max="60">
+						</div>
+						<div class="c3d-resin-table-cell advance_mode i_basic i_option">
+							<label for="TopWaitSimple" class="profile-help-label"><span><translate>Wait After Lift (<b>s</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Delay at the top of the lift for normal layers.">i</a></label>
+							<input class="form-control" value="{{profile.TopWait}}" name="TopWait" step="0.01" id="TopWaitSimple" type="number" required min="0" max="60">
 						</div>
 						<div class="c3d-resin-table-cell i_basic i_option">
 							<label for="WaitHeightSimple" class="profile-help-label"><span><translate>Normal Lift Distance (<b>mm</b>)</translate></span><a class="help" data-toggle="tooltip" data-placement="top" title="Lift distance used for normal layers.">i</a></label>

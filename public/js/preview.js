@@ -1,4 +1,7 @@
 var preview_loop;
+function preview_layer_unavailable(){
+	if (window.toastr) toastr.warning('Display Layer is unavailable while printing or printer status cannot be confirmed.');
+}
 function preview_init(){
 	var previewImage = $('#preview img');
 	if (previewImage.length==0) return;
@@ -35,19 +38,29 @@ function preview_init(){
 		window.open("/plate/preview/image/"+layer_url(),'Image');
 	}).delegate("#preview_layer","click",function(e){
 		e.preventDefault();
-		var t=$("#preview_range");
-		if (t.data("clicked")){
-			t.data("clicked",false);
-			$(this).find(".c3d-btn-label").text("Preview");
-			$.get("/projector/blank");
-		} else {
-			var btn = this;
-			confirm_action($(btn), function(){
-				$.get("/projector/display/"+"plates***"+t.data("plate")+"***"+t.val()+".png");
-				t.data("clicked",true);
-				$(btn).find(".c3d-btn-label").text("Close");
-			});
-		}
+		if ($('body').hasClass('c3d-printing')) { preview_layer_unavailable(); return; }
+		var btn = this;
+		// The print state can change after page load. Confirm it immediately
+		// before any projector request, including the blank/close action.
+		$.ajax({url: '/status', dataType: 'json', cache: false}).done(function(status){
+			if (!status || status.Printing) { preview_layer_unavailable(); return; }
+			var t=$("#preview_range");
+			if (t.data("clicked")){
+				t.data("clicked",false);
+				$(btn).find(".c3d-btn-label").text("Preview");
+				$.get("/projector/blank");
+			} else {
+				confirm_action($(btn), function(){
+					// Recheck after the confirmation dialog as printing may have started.
+					$.ajax({url: '/status', dataType: 'json', cache: false}).done(function(latestStatus){
+						if (!latestStatus || latestStatus.Printing) { preview_layer_unavailable(); return; }
+						$.get("/projector/display/"+"plates***"+t.data("plate")+"***"+t.val()+".png");
+						t.data("clicked",true);
+						$(btn).find(".c3d-btn-label").text("Close");
+					}).fail(preview_layer_unavailable);
+				});
+			}
+		}).fail(preview_layer_unavailable);
 	}).delegate("#preview_play", "click", function () {
 		$("#preview_play").addClass("hide");
 		$("#preview_stop").removeClass("hide");

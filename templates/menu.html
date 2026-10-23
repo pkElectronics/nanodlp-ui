@@ -44,7 +44,7 @@
         </li>
         <li><a href="/support"><span class="glyphicon glyphicon-question-sign"></span><translate>Support & Connectivity</translate></a></li>
     </ul>
-    <ul class="nav navbar-nav navbar-right">
+    <ul class="nav navbar-nav navbar-right c3d-navbar-status">
         {% if rampsReconnect %}
         <li>
             <a href="/ramps/reconnect"><span class="label label-danger"><span class="glyphicon glyphicon-transfer"></span>&nbsp; <translate>Controller Board: Reconnect</translate></span></a>
@@ -53,14 +53,14 @@
         {% if printerError %}
             <li><a class="svg error label label-danger" href="/printer">{{ icon(heart_icon) }}</a></li>
         {% endif %}
-        <li class="navbar-resin-temp c3d-navbar-status-divider" style="display:none">
+        <li class="navbar-resin-temp c3d-navbar-status-divider c3d-navbar-info" style="display:none">
             <a href="/" class="c3d-navbar-block">
                 <span class="c3d-navbar-block-name"><translate>Resin</translate> <span id="navbar-resin-temp-text"></span>°C</span>
                 <span class="c3d-navbar-block-sub" id="navbar-resin-target-text"></span>
             </a>
         </li>
         {% if os=="linux" %}
-        <li class="c3d-navbar-status-divider">
+        <li class="c3d-navbar-status-divider c3d-navbar-info">
             {% if network==1 %}
             <a href="/wifi" class="c3d-navbar-block">
                 <span class="c3d-navbar-block-name"><translate>Wired</translate></span>
@@ -80,7 +80,7 @@
             {% endif %}
         </li>
         {% endif %}
-        <li>
+        <li class="c3d-navbar-info c3d-navbar-machine">
             <a href="/printer/upgrade" class="c3d-navbar-block">
                 <span class="c3d-navbar-block-name">{% if printerName!="" %}{{printerName}}{% endif %}<span class="c3d-navbar-bit-chip navbar-bit-depth" style="display:none"><span id="navbar-bit-depth-text"></span></span></span>
                 <span class="c3d-navbar-block-sub"><span id="athena-version-str">1.0.8</span></span>
